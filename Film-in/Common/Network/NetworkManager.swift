@@ -25,12 +25,12 @@ final class DefaultNetworkManager: NetworkManager {
     }
 }
 
-extension MoyaProvider {
+fileprivate extension MoyaProvider {
     func request(_ target: Target) async -> Result<Response, MoyaError> {
-            await withCheckedContinuation { continuation in
-                self.request(target) { result in
-                    continuation.resume(returning: result)
-                }
+        await withCheckedContinuation { continuation in
+            self.request(target) { result in
+                continuation.resume(returning: result)
             }
         }
+    }
 }
