@@ -8,13 +8,13 @@
 import Foundation
 
 struct TMDBMovieResponseDTO: Decodable {
-    let backdropPath: String
+    let backdropPath: String? // upcoming에서 없을 수 있음
     let id: Int
     let title: String
     let originTitle: String
     let overview: String
     let posterPath: String
-    let mediaType: String
+    let mediaType: String? // nowPlaying에서 없을 수 있음
     let adult: Bool
     let originLanguage: String
     let genreIds: [Int]
