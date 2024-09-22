@@ -17,6 +17,8 @@ extension TMDBTargetType {
 enum TMDBRouter {
     case genres(_ dto: GenreRequestDTO)
     case trending(_ dto: TrendingRequestDTO)
+    case nowPlaying(_ dto: NowPlayingRequestDTO)
+    case upcoming(_ dto: UpcomingRequestDTO)
 }
 
 extension TMDBRouter: TMDBTargetType {
@@ -24,6 +26,8 @@ extension TMDBRouter: TMDBTargetType {
         switch self {
         case .genres: return "genre/movie/list"
         case .trending: return "trending/movie/day"
+        case .nowPlaying: return "movie/now_playing"
+        case .upcoming: return "movie/upcoming"
         }
     }
     
@@ -31,6 +35,8 @@ extension TMDBRouter: TMDBTargetType {
         switch self {
         case .genres: return .get
         case .trending: return .get
+        case .nowPlaying: return .get
+        case .upcoming: return .get
         }
     }
     
@@ -39,6 +45,10 @@ extension TMDBRouter: TMDBTargetType {
         case .genres(let dto):
             return .requestParameters(parameters: dto.asParameters, encoding: URLEncoding.queryString)
         case .trending(let dto):
+            return .requestParameters(parameters: dto.asParameters, encoding: URLEncoding.queryString)
+        case .nowPlaying(let dto):
+            return .requestParameters(parameters: dto.asParameters, encoding: URLEncoding.queryString)
+        case .upcoming(let dto):
             return .requestParameters(parameters: dto.asParameters, encoding: URLEncoding.queryString)
         }
     }
@@ -51,6 +61,16 @@ extension TMDBRouter: TMDBTargetType {
                 TMDBHeader.accept.rawValue: TMDBHeader.json.rawValue
             ]
         case .trending:
+            return [
+                TMDBHeader.authorization.rawValue: APIKEY.tmdb,
+                TMDBHeader.accept.rawValue: TMDBHeader.json.rawValue
+            ]
+        case .nowPlaying:
+            return [
+                TMDBHeader.authorization.rawValue: APIKEY.tmdb,
+                TMDBHeader.accept.rawValue: TMDBHeader.json.rawValue
+            ]
+        case .upcoming:
             return [
                 TMDBHeader.authorization.rawValue: APIKEY.tmdb,
                 TMDBHeader.accept.rawValue: TMDBHeader.json.rawValue
