@@ -9,12 +9,12 @@ import Foundation
 
 struct DiscoverResponseDTO: Decodable {
     let page: Int
-    let result: [TMDBMovieResponseDTO]
+    let results: [TMDBMovieResponseDTO]
     let totalPage: Int
     
     enum CodingKeys: String, CodingKey {
         case page
-        case result
+        case results
         case totalPage = "total_pages"
     }
 }
