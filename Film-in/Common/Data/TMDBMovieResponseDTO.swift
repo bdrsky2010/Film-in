@@ -10,19 +10,19 @@ import Foundation
 struct TMDBMovieResponseDTO: Decodable {
     let backdropPath: String? // upcoming에서 없을 수 있음
     let id: Int
-    let title: String
-    let originTitle: String
+    let title: String?
+    let originTitle: String?
     let overview: String
-    let posterPath: String
+    let posterPath: String?
     let mediaType: String? // nowPlaying에서 없을 수 있음
     let adult: Bool
     let originLanguage: String
     let genreIds: [Int]
     let popularity: Double
-    let releaseDate: String
-    let video: Bool
-    let voteAvg: Double
-    let voteCnt: Int
+    let releaseDate: String?
+    let video: Bool?
+    let voteAverage: Double
+    let voteCount: Int
     
     enum CodingKeys: String, CodingKey {
         case backdropPath = "backdrop_path"
@@ -38,7 +38,7 @@ struct TMDBMovieResponseDTO: Decodable {
         case popularity
         case releaseDate = "release_date"
         case video
-        case voteAvg = "vote_average"
-        case voteCnt = "vote_count"
+        case voteAverage = "vote_average"
+        case voteCount = "vote_count"
     }
 }
