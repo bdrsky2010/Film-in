@@ -6,6 +6,9 @@
 	<array>
 		<string>Karla-Bold.ttf</string>
 		<string>TheBewlay-Br1.ttf</string>
+		<string>NotoSansKR-Bold.ttf</string>
+		<string>NotoSansKR-SemiBold.ttf</string>
+		<string>NotoSansKR-Medium.ttf</string>
 	</array>
 </dict>
 </plist>
