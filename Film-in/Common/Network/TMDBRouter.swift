@@ -12,6 +12,13 @@ protocol TMDBTargetType: TargetType { }
 
 extension TMDBTargetType {
     var baseURL: URL { try! BaseURL.tmdb.asURL() }
+    var method: Moya.Method { .get }
+    var headers: [String : String]? {
+        return [
+            TMDBHeader.authorization.rawValue: APIKEY.tmdb,
+            TMDBHeader.accept.rawValue: TMDBHeader.json.rawValue
+        ]
+    }
 }
 
 enum TMDBRouter {
@@ -27,6 +34,8 @@ enum TMDBRouter {
     case movieSimiliar(_ dto: MovieSimiliarRequestDTO, movieId: String)
     case movieRecommendation(_ dto: MovieRecommendationRequestDTO, movieId: String)
     case movieImage(_ dto: MovieImageRequestDTO, movieId: String)
+    case movieVideo(_ dto: MovieVideoRequestDTO, movieId: String)
+    case peopleDetail(_ dto: PeopleDetailRequestDTO, personId: String)
 }
 
 extension TMDBRouter: TMDBTargetType {
@@ -44,10 +53,10 @@ extension TMDBRouter: TMDBTargetType {
         case .movieSimiliar(_, let movieId): return "movie/\(movieId)/similar"
         case .movieRecommendation(_, let movieId): return "movie/\(movieId)/recommendations"
         case .movieImage(_, let movieId): return "movie/\(movieId)/images"
+        case .movieVideo(_, let movieId): return "movie/\(movieId)/videos"
+        case .peopleDetail(_, let personId): return "person/\(personId)"
         }
     }
-    
-    var method: Moya.Method { .get }
     
     var task: Moya.Task {
         switch self {
@@ -75,13 +84,10 @@ extension TMDBRouter: TMDBTargetType {
             return .requestParameters(parameters: dto.asParameters, encoding: URLEncoding.queryString)
         case .movieImage(let dto, _):
             return .requestParameters(parameters: dto.asParameters, encoding: URLEncoding.queryString)
+        case .movieVideo(let dto, _):
+            return .requestParameters(parameters: dto.asParameters, encoding: URLEncoding.queryString)
+        case .peopleDetail(let dto, _):
+            return .requestParameters(parameters: dto.asParameters, encoding: URLEncoding.queryString)
         }
-    }
-    
-    var headers: [String : String]? {
-        return [
-            TMDBHeader.authorization.rawValue: APIKEY.tmdb,
-            TMDBHeader.accept.rawValue: TMDBHeader.json.rawValue
-        ]
     }
 }
