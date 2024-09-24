@@ -9,7 +9,7 @@ import Foundation
 import Moya
 
 protocol NetworkManager: AnyObject {
-    func request<T: Decodable>(_ target: TMDBRouter, of type: T.Type) async -> Result<Response, MoyaError>
+    func request(_ target: TMDBRouter) async -> Result<Response, MoyaError>
 }
 
 final class DefaultNetworkManager: NetworkManager {
@@ -19,7 +19,7 @@ final class DefaultNetworkManager: NetworkManager {
     
     private init() { }
     
-    func request<T: Decodable>(_ target: TMDBRouter, of type: T.Type) async -> Result<Response, MoyaError> {
+    func request(_ target: TMDBRouter) async -> Result<Response, MoyaError> {
         let result = await provider.request(target)
         return result
     }
