@@ -6,25 +6,6 @@
 //
 
 import Foundation
-/*
- {
-   "200": "Success",
-   "400": "BadRequest",
-   "401": "Unauthorized",
-   "403": "Forbidden",
-   "404": "NotFound",
-   "405": "MethodNotAllowed",
-   "406": "NotAcceptable",
-   "422": "UnprocessableEntity",
-   "429": "TooManyRequests",
-   "500": "InternalServerError",
-   "501": "NotImplemented",
-   "502": "BadGateway",
-   "503": "ServiceUnavailable",
-   "504": "GatewayTimeout"
- }
- */
-
 
 protocol TMDBRepository: AnyObject {
     func movieGenreRequest(query: MovieGenreQuery) async -> Result<[MovieGenre], TMDBError>
