@@ -52,7 +52,6 @@ struct GenreSelectView: View {
             } else {
                 NotConnectView(viewModel: viewModel)
                     .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .center)
-                    .border(.red)
             }
         }
         .sheet(isPresented: .constant(true)) {
