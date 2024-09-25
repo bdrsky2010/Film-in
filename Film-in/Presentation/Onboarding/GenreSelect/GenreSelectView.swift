@@ -8,6 +8,8 @@
 import SwiftUI
 
 struct GenreSelectView: View {
+    @AppStorage("onboarding") private var isOnboarding = false
+    
     @StateObject private var viewModel: GenreSelectViewModel
     
     private let columns = [GridItem(.flexible()), GridItem(.flexible()), GridItem(.flexible())]
@@ -76,6 +78,7 @@ struct GenreSelectView: View {
 
                 Button {
                     viewModel.action(.createUser)
+                    isOnboarding = true
                 } label: {
                     Text("done")
                         .font(.notoSansBold(size: 20))
