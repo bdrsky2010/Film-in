@@ -8,15 +8,8 @@
 import Foundation
 import Combine
 
-protocol BaseViewModel: ObservableObject {
-    associatedtype Input
-    associatedtype Output
-    associatedtype Action
-    
-    var input: Input { get set }
-    var output: Output { get set }
-    var cancellable: Set<AnyCancellable> { get set }
-    
-    func transform()
-    func action(_ action: Action)
+class BaseViewModel: ObservableObject {
+    deinit {
+        print("\(String(describing: self)) is deinit")
+    }
 }
