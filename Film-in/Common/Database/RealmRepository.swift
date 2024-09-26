@@ -11,12 +11,16 @@ import RealmSwift
 protocol DatabaseRepository: AnyObject {
     func createUser()
     func appendLikeGenres(genres: Set<MovieGenre>)
+    
+    var user: UserTable? { get }
 }
 
 final class RealmRepository: DatabaseRepository {
     static let shared = RealmRepository()
     
     private let realm = try! Realm()
+    
+    var user: UserTable? { realm.objects(UserTable.self).first }
     
     private init() { }
     
@@ -33,7 +37,6 @@ final class RealmRepository: DatabaseRepository {
     func appendLikeGenres(genres: Set<MovieGenre>) {
         do {
             try realm.write {
-                let user = realm.objects(UserTable.self).first
                 user?.selectedGenreIds.append(objectsIn: genres.map { $0.id })
             }
         } catch {
