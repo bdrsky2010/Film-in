@@ -29,13 +29,13 @@ enum TMDBRouter {
     case discover(_ dto: DiscoverRequestDTO)
     case searchMovie(_ dto: SearchMovieRequestDTO)
     case searchPerson(_ dto: SearchPersonRequestDTO)
-    case movieDetail(_ dto: MovieDetailRequestDTO, movieId: String)
-    case movieCredit(_ dto: MovieCreditRequestDTO, movieId: String)
-    case movieSimiliar(_ dto: MovieSimiliarRequestDTO, movieId: String)
-    case movieRecommendation(_ dto: MovieRecommendationRequestDTO, movieId: String)
-    case movieImage(_ dto: MovieImageRequestDTO, movieId: String)
-    case movieVideo(_ dto: MovieVideoRequestDTO, movieId: String)
-    case peopleDetail(_ dto: PeopleDetailRequestDTO, personId: String)
+    case movieDetail(_ dto: MovieDetailRequestDTO, movieId: Int)
+    case movieCredit(_ dto: MovieCreditRequestDTO, movieId: Int)
+    case movieSimiliar(_ dto: MovieSimilarRequestDTO, movieId: Int)
+    case movieRecommendation(_ dto: MovieRecommendationRequestDTO, movieId: Int)
+    case movieImage(_ dto: MovieImageRequestDTO, movieId: Int)
+    case movieVideo(_ dto: MovieVideoRequestDTO, movieId: Int)
+    case peopleDetail(_ dto: PeopleDetailRequestDTO, personId: Int)
 }
 
 extension TMDBRouter: TMDBTargetType {
