@@ -17,7 +17,8 @@ extension TrendingResponseDTO {
             movies: self.results
                 .map {
                     HomeMovie.Movie(
-                        id: $0.id,
+                        _id: $0.id,
+                        title: $0.title ?? "",
                         poster: $0.posterPath ?? ""
                     )
                 }
