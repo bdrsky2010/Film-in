@@ -68,3 +68,27 @@ struct MovieCreditResponseDTO: Decodable {
     let cast: [Cast]
     let crew: [Crew]
 }
+
+extension MovieCreditResponseDTO {
+    var toEntity: [CreditInfo] {
+        let casts = self.cast
+            .map {
+                CreditInfo(
+                    id: $0.id,
+                    name: $0.name,
+                    profilePath: $0.profilePath ?? "",
+                    role: $0.character
+                )
+            }
+        let crews = self.crew
+            .map {
+                CreditInfo(
+                    id: $0.id,
+                    name: $0.name,
+                    profilePath: $0.profilePath ?? "",
+                    role: $0.department
+                )
+            }
+        return casts + crews
+    }
+}
