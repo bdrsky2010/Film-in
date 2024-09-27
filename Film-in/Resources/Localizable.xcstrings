@@ -1,7 +1,39 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
-    "" : {
+    "%@" : {
+
+    },
+    "1h 35m" : {
+
+    },
+    "2024.09.25" : {
+
+    },
+    "apiRequestError" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Network Error Occurred"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ネットワーク エラーが発生しました"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "네트워크 에러 발생"
+          }
+        }
+      }
+    },
+    "Choose What\nYou Like" : {
 
     },
     "done" : {
@@ -44,6 +76,9 @@
         }
       }
     },
+    "Film-in" : {
+
+    },
     "genreSelectTitle" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -66,6 +101,15 @@
           }
         }
       }
+    },
+    "HOME" : {
+
+    },
+    "It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. The point of using Lorem Ipsum is that it has a more-or-less normal distribution of letters, as opposed to using 'Content here, content here', making it look like readable English." : {
+
+    },
+    "Joy (voice)" : {
+
     },
     "longLanguageCode" : {
       "extractionState" : "manual",
@@ -90,6 +134,32 @@
         }
       }
     },
+    "more" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "See More"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "もっと見る"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "더보기"
+          }
+        }
+      }
+    },
+    "MY" : {
+
+    },
     "notConnectInternet" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -109,6 +179,52 @@
           "stringUnit" : {
             "state" : "needs_review",
             "value" : "연결된 인터넷이 없습니다."
+          }
+        }
+      }
+    },
+    "nowPlaying" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "NowPlaying"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "現在の上映作品"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "현재상영작"
+          }
+        }
+      }
+    },
+    "recommend" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Recommend"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ユーザーにオススメの映画"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "사용자 추천영화"
           }
         }
       }
@@ -159,6 +275,9 @@
         }
       }
     },
+    "SEARCH" : {
+
+    },
     "shortLanguageCode" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -181,6 +300,68 @@
           }
         }
       }
+    },
+    "upcoming" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Upcoming"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "公開予定作"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "개봉예정작"
+          }
+        }
+      }
+    },
+    "WANT" : {
+
+    },
+    "WATHCED" : {
+
+    },
+    "동영상" : {
+
+    },
+    "배경화면" : {
+
+    },
+    "배우/제작진" : {
+
+    },
+    "영화제목" : {
+
+    },
+    "유사한 영화" : {
+
+    },
+    "이름이름이름이름이름이름" : {
+
+    },
+    "장르" : {
+
+    },
+    "장르장르" : {
+
+    },
+    "좋아하는 장르를\n선택하세요" : {
+
+    },
+    "포스터" : {
+
+    },
+    "好きな\nジャンルを\nお選びください" : {
+
     }
   },
   "version" : "1.0"
