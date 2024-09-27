@@ -26,8 +26,9 @@ extension DiscoverResponseDTO {
             totalPage: self.totalPage,
             movies: self.results
                 .map {
-                    .init(
-                        id: $0.id,
+                    HomeMovie.Movie(
+                        _id: $0.id,
+                        title: $0.title ?? "",
                         poster: $0.posterPath ?? ""
                     )
                 }
