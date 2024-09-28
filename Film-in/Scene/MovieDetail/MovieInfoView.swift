@@ -8,6 +8,7 @@
 import SwiftUI
 import Kingfisher
 import PopupView
+import YouTubePlayerKit
 
 struct MovieInfoView: View {
     @StateObject private var viewModel: MovieInfoViewModel
@@ -27,176 +28,211 @@ struct MovieInfoView: View {
             if !viewModel.output.networkConnect {
                 NotConnectView(viewModel: viewModel)
             } else {
-                HStack(alignment: .lastTextBaseline) {
-                    Text(viewModel.output.movieDetail.title)
-                        .font(.ibmPlexMonoSemiBold(size: 30))
-                        .foregroundStyle(.appText)
-                    Spacer()
-                    Image(systemName: "star.fill")
-                        .resizable()
-                        .frame(width: 30, height: 30)
-                        .foregroundStyle(.yellow)
-                    Text("\(viewModel.output.movieDetail.rating.formatted())")
-                        .font(.system(size: 30))
-                        .foregroundStyle(.appText)
-                }
-                .frame(maxWidth: .infinity, alignment: .leading)
-                
-                HStack(alignment: .lastTextBaseline) {
-                    Text(viewModel.output.movieDetail.releaseDate.replacingOccurrences(of: "-", with: "."))
-                    Text("\(viewModel.output.movieDetail.runtime / 60)h \(viewModel.output.movieDetail.runtime % 60)m")
-                        .padding(.leading, 8)
-                }
-                .font(.ibmPlexMonoSemiBold(size: 16))
-                .foregroundStyle(.appText)
-                .frame(maxWidth: .infinity, alignment: .leading)
-            
-                HStack {
-                    Button {
+                LazyVStack {
+                    HStack(alignment: .lastTextBaseline) {
+                        Text(viewModel.output.movieDetail.title)
+                            .lineLimit(2)
+                            .font(.ibmPlexMonoSemiBold(size: 30))
+                            .foregroundStyle(.appText)
+                        Spacer()
+                        Image(systemName: "star.fill")
+                            .resizable()
+                            .frame(width: 30, height: 30)
+                            .foregroundStyle(.yellow)
+                        Text("\(String(format: "%.1f", viewModel.output.movieDetail.rating))")
+                            .font(.system(size: 30))
+                            .foregroundStyle(.appText)
+                    }
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    
+                    HStack(alignment: .lastTextBaseline) {
+                        Text(viewModel.output.movieDetail.releaseDate.replacingOccurrences(of: "-", with: "."))
+                        Text("\(viewModel.output.movieDetail.runtime / 60)h \(viewModel.output.movieDetail.runtime % 60)m")
+                            .padding(.leading, 8)
+                    }
+                    .font(.ibmPlexMonoSemiBold(size: 16))
+                    .foregroundStyle(.appText)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    
+                    HStack {
+                        Button {
+                            
+                        } label: {
+                            Text("WANT")
+                                .font(.ibmPlexMonoSemiBold(size: 20))
+                                .frame(maxWidth: .infinity)
+                                .padding(.horizontal, 20)
+                                .padding(.vertical, 8)
+                                .background(Color(uiColor: .app).opacity(0.3))
+                                .foregroundStyle(.app)
+                        }
                         
-                    } label: {
-                        Text("WANT")
-                            .font(.ibmPlexMonoSemiBold(size: 20))
-                            .frame(maxWidth: .infinity)
-                            .padding(.horizontal, 20)
-                            .padding(.vertical, 8)
-                            .background(Color(uiColor: .app).opacity(0.3))
-                            .foregroundStyle(.app)
+                        Button {
+                            
+                        } label: {
+                            Text("WATHCED")
+                                .font(.ibmPlexMonoSemiBold(size: 20))
+                                .frame(maxWidth: .infinity)
+                                .padding(.horizontal, 20)
+                                .padding(.vertical, 8)
+                                .background(Color(uiColor: .app).opacity(0.3))
+                                .foregroundStyle(.app)
+                        }
                     }
                     
+                    InfoHeader(title: "줄거리")
+                        .padding(.top)
+                    Text(viewModel.output.movieDetail.overview)
+                        .font(.ibmPlexMonoMedium(size: 18))
+                        .foregroundStyle(.appText)
+                        .lineLimit(isFullOverview ? nil : 4)
+                        .multilineTextAlignment(.leading)
+                        .padding(4)
+                    
                     Button {
-                        
+                        withAnimation(.easeInOut) {
+                            isFullOverview.toggle()
+                        }
                     } label: {
-                        Text("WATHCED")
-                            .font(.ibmPlexMonoSemiBold(size: 20))
-                            .frame(maxWidth: .infinity)
-                            .padding(.horizontal, 20)
-                            .padding(.vertical, 8)
-                            .background(Color(uiColor: .app).opacity(0.3))
+                        Image(systemName: isFullOverview ? "chevron.up" : "chevron.down")
+                            .resizable()
+                            .frame(width: 20, height: 12)
                             .foregroundStyle(.app)
                     }
-                }
-                
-                InfoHeader(title: "줄거리")
-                    .padding(.top)
-                Text(viewModel.output.movieDetail.overview)
-                    .font(.ibmPlexMonoMedium(size: 18))
-                    .foregroundStyle(.appText)
-                    .lineLimit(isFullOverview ? nil : 4)
-                    .multilineTextAlignment(.leading)
-                    .padding(4)
-                
-                Button {
-                    withAnimation(.easeInOut) {
-                        isFullOverview.toggle()
-                    }
-                } label: {
-                    Image(systemName: isFullOverview ? "chevron.up" : "chevron.down")
-                        .resizable()
-                        .frame(width: 20, height: 12)
-                        .foregroundStyle(.app)
-                }
-                .padding()
-                
-                InfoHeader(title: "배우/제작진")
-                ScrollView(.horizontal) {
-                    LazyHStack(spacing: 12) {
-                        ForEach(0..<10) { _ in
-                            Button {
-                                
-                            } label: {
-                                VStack {
-                                    Circle()
-                                        .frame(width: 90, height: 90)
-                                        .tint(.appText)
-                                    Text("Joy (voice)")
-                                        .font(.ibmPlexMonoRegular(size: 16))
-                                        .foregroundStyle(.appText)
-                                        .frame(width: 90)
-                                    Text("이름이름이름이름이름이름")
-                                        .font(.ibmPlexMonoRegular(size: 16))
-                                        .foregroundStyle(.appText)
-                                        .frame(width: 90)
+                    .padding()
+                    
+                    InfoHeader(title: "배우/제작진")
+                    ScrollView(.horizontal) {
+                        LazyHStack(spacing: 12) {
+                            ForEach(viewModel.output.creditInfo, id: \.id) { person in
+                                Button {
+                                    print(person.role)
+                                    print(person.name)
+                                } label: {
+                                    VStack {
+                                        let url = URL(string: ImageURL.tmdb(image: person.profilePath).urlString)
+                                        PosterImage(
+                                            url: url,
+                                            size: CGSize(width: 90, height: 90),
+                                            title: person.name.replacingOccurrences(of: " ", with: "\n")
+                                        )
+                                        .clipShape(Circle())
+                                        .grayscale(1)
+                                        
+                                        Text("\(person.role.replacingOccurrences(of: " ", with: "\n"))")
+                                            .font(.ibmPlexMonoRegular(size: 14))
+                                            .foregroundStyle(.appText)
+                                            .frame(width: 90)
+                                        Text("\(person.name)")
+                                            .font(.ibmPlexMonoRegular(size: 14))
+                                            .foregroundStyle(.appText)
+                                            .frame(width: 90)
+                                    }
+                                    .frame(maxHeight: .infinity, alignment: .top)
                                 }
                             }
                         }
                     }
-                }
-                .padding(.vertical, 8)
-                
-                InfoHeader(title: "장르")
-                ScrollView(.horizontal) {
-                    LazyHStack(spacing: 12) {
-                        ForEach(0..<10) { _ in
-                            Text("장르장르")
-                                .font(.ibmPlexMonoMedium(size: 20))
-                                .foregroundStyle(.app)
-                                .padding(.horizontal)
-                                .padding(.vertical, 4)
-                                .overlay {
-                                    Rectangle()
-                                        .fill(Color(uiColor: .app).opacity(0.1))
-                                }
+                    .padding(.vertical, 8)
+                    
+                    InfoHeader(title: "장르")
+                    ScrollView(.horizontal) {
+                        LazyHStack(spacing: 12) {
+                            ForEach(viewModel.output.movieDetail.genres, id: \.id) { genre in
+                                Text("\(genre.name)")
+                                    .font(.ibmPlexMonoMedium(size: 20))
+                                    .foregroundStyle(.app)
+                                    .padding(.horizontal)
+                                    .padding(.vertical, 4)
+                                    .overlay {
+                                        Rectangle()
+                                            .fill(Color(uiColor: .app).opacity(0.1))
+                                    }
+                            }
                         }
                     }
-                }
-                .padding(.vertical, 8)
-                
-                InfoHeader(title: "유사한 영화")
-                ScrollView(.horizontal) {
-                    LazyHStack(spacing: 12) {
-                        ForEach(0..<10) { _ in
-                            Rectangle()
-                                .frame(
-                                    width: posterSize.width * 0.5,
-                                    height: posterSize.height * 0.5
+                    .padding(.vertical, 8)
+                    
+                    InfoHeader(title: "유사한 영화")
+                    ScrollView(.horizontal) {
+                        LazyHStack(spacing: 12) {
+                            ForEach(viewModel.output.movieSimilars) { similar in
+                                let url = URL(string: ImageURL.tmdb(image: similar.poster).urlString)
+                                PosterImage(
+                                    url: url,
+                                    size: CGSize(
+                                        width: posterSize.width * 0.5,
+                                        height: posterSize.height * 0.5
+                                    ),
+                                    title: similar.title
                                 )
                                 .padding(.horizontal, 8)
+                            }
                         }
                     }
-                }
-                .padding(.vertical, 8)
-                
-                InfoHeader(title: "배경화면")
-                ScrollView(.horizontal) {
-                    LazyHStack(spacing: 12) {
-                        ForEach(0..<10) { _ in
-                            Rectangle()
+                    .padding(.vertical, 8)
+                    
+                    InfoHeader(title: "배경화면")
+                    ScrollView(.horizontal) {
+                        LazyHStack(spacing: 12) {
+                            ForEach(viewModel.output.movieImages.backdrops) { backdrop in
+                                let url = URL(string: ImageURL.tmdb(image: backdrop.path).urlString)
+                                PosterImage(
+                                    url: url,
+                                    size: CGSize(
+                                        width: posterSize.height * 0.4 * backdrop.ratio,
+                                        height: posterSize.height * 0.4
+                                    ),
+                                    title: ""
+                                )
+                                .padding(.horizontal, 8)
+                            }
+                        }
+                    }
+                    .padding(.vertical, 8)
+                    
+                    InfoHeader(title: "포스터")
+                    ScrollView(.horizontal) {
+                        LazyHStack(spacing: 12) {
+                            ForEach(viewModel.output.movieImages.posters) { poster in
+                                let url = URL(string: ImageURL.tmdb(image: poster.path).urlString)
+                                PosterImage(
+                                    url: url,
+                                    size: CGSize(
+                                        width: Double(poster.width) * 0.1,
+                                        height: Double(poster.height) * 0.1
+                                    ),
+                                    title: ""
+                                )
+                                .padding(.horizontal, 8)
+                            }
+                        }
+                    }
+                    .padding(.vertical, 8)
+                    
+                    InfoHeader(title: "동영상")
+                    ScrollView(.horizontal) {
+                        LazyHStack(spacing: 12) {
+                            ForEach(viewModel.output.movieVideos) { video in
+                                let youTubePlayer = YouTubePlayer(source: .url(VideoURL.youtube(key: video.key).urlString))
+                                YouTubePlayerView(youTubePlayer) { state in
+                                    // Overlay ViewBuilder closure to place an overlay View
+                                    // for the current `YouTubePlayer.State`
+                                    switch state {
+                                    case .idle:
+                                        ProgressView()
+                                    case .ready:
+                                        EmptyView()
+                                    case .error(_):
+                                        Text(verbatim: "YouTube player couldn't be loaded")
+                                    }
+                                }
                                 .frame(
                                     width: posterSize.height * 0.4 * 1.778,
                                     height: posterSize.height * 0.4
                                 )
                                 .padding(.horizontal, 8)
-                        }
-                    }
-                }
-                .padding(.vertical, 8)
-                
-                InfoHeader(title: "포스터")
-                ScrollView(.horizontal) {
-                    LazyHStack(spacing: 12) {
-                        ForEach(0..<10) { _ in
-                            Rectangle()
-                                .frame(
-                                    width: posterSize.width * 0.5,
-                                    height: posterSize.height * 0.5
-                                )
-                                .padding(.horizontal, 8)
-                        }
-                    }
-                }
-                .padding(.vertical, 8)
-                
-                InfoHeader(title: "동영상")
-                ScrollView(.horizontal) {
-                    LazyHStack(spacing: 12) {
-                        ForEach(0..<10) { _ in
-                            Rectangle()
-                                .frame(
-                                    width: posterSize.width * 0.5,
-                                    height: posterSize.height * 0.5
-                                )
-                                .padding(.horizontal, 8)
+                            }
                         }
                     }
                 }
