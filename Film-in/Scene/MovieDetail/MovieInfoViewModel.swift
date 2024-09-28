@@ -43,7 +43,7 @@ extension MovieInfoViewModel {
         var movieDetail = MovieInfo(id: 0, title: "", overview: "", genres: [], runtime: 0, rating: 0.0, releaseDate: "")
         var creditInfo = [CreditInfo]()
         var movieSimilars = [MovieSimilar.Movie]()
-        var movieImages = MovieImages(backdrops: [], posterss: [])
+        var movieImages = MovieImages(backdrops: [], posters: [])
         var movieVideos = [MovieVideo]()
     }
     
