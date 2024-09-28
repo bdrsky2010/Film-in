@@ -218,6 +218,7 @@ struct PosterImage: View {
             .loadDiskFileSynchronously()
             .cacheMemoryOnly()
             .fade(duration: 0.25)
+            .aspectRatio(contentMode: .fill)
             .frame(width: size.width, height: size.height)
     }
 }
