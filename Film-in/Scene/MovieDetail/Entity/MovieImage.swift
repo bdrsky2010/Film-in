@@ -17,5 +17,5 @@ struct MovieImages{
     }
     
     let backdrops: [MovieImage]
-    let posterss: [MovieImage]
+    let posters: [MovieImage]
 }
