@@ -8,7 +8,8 @@
 import Foundation
 
 struct CreditInfo: Hashable, Identifiable {
-    let id: Int
+    let id = UUID()
+    let _id: Int
     let name: String
     let profilePath: String
     let role: String
