@@ -43,7 +43,7 @@ extension MovieImageResponseDTO {
                           path: $0.filePath
                     )
                 },
-            posterss: self.posters
+            posters: self.posters
                 .map {
                     .init(ratio: $0.aspectRatio,
                           width: $0.width,
