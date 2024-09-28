@@ -74,7 +74,7 @@ extension MovieCreditResponseDTO {
         let casts = self.cast
             .map {
                 CreditInfo(
-                    id: $0.id,
+                    _id: $0.id,
                     name: $0.name,
                     profilePath: $0.profilePath ?? "",
                     role: $0.character
@@ -83,7 +83,7 @@ extension MovieCreditResponseDTO {
         let crews = self.crew
             .map {
                 CreditInfo(
-                    id: $0.id,
+                    _id: $0.id,
                     name: $0.name,
                     profilePath: $0.profilePath ?? "",
                     role: $0.department
