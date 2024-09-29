@@ -16,6 +16,7 @@ protocol TMDBRepository: AnyObject {
     func detailRequest(query: MovieDetailQuery) async -> Result<MovieInfo, TMDBError>
     func creditRequest(query: MovieCreditQuery) async -> Result<[CreditInfo], TMDBError>
     func similarRequest(query: MovieSimilarQuery) async -> Result<MovieSimilar, TMDBError>
+    func similarRequest(query: MovieSimilarQuery) async -> Result<HomeMovie, TMDBError>
     func imagesRequest(query: MovieImagesQuery) async -> Result<MovieImages, TMDBError>
     func videosRequest(query: MovieVideosQuery) async -> Result<[MovieVideo], TMDBError>
 }
@@ -34,7 +35,7 @@ final class DefaultTMDBRepository: TMDBRepository {
         let result = await networkManager.request(.genres(requestDTO), of: GenreResponseDTO.self)
         switch result {
         case .success(let success):
-            return .success(success.toEntity)
+            return .success(success.toEntity())
         case .failure(let failure):
             return .failure(failure)
         }
@@ -45,7 +46,7 @@ final class DefaultTMDBRepository: TMDBRepository {
         let result = await networkManager.request(.trending(requestDTO), of: TrendingResponseDTO.self)
         switch result {
         case .success(let success):
-            return .success(success.toEntity)
+            return .success(success.toEntity())
         case .failure(let failure):
             return .failure(failure)
         }
@@ -63,7 +64,7 @@ final class DefaultTMDBRepository: TMDBRepository {
         )
         switch result {
         case .success(let success):
-            return .success(success.toEntity)
+            return .success(success.toEntity())
         case .failure(let failure):
             return .failure(failure)
         }
@@ -81,7 +82,7 @@ final class DefaultTMDBRepository: TMDBRepository {
         )
         switch result {
         case .success(let success):
-            return .success(success.toEntity)
+            return .success(success.toEntity())
         case .failure(let failure):
             return .failure(failure)
         }
@@ -100,7 +101,7 @@ final class DefaultTMDBRepository: TMDBRepository {
         )
         switch result {
         case .success(let success):
-            return .success(success.toEntity)
+            return .success(success.toEntity())
         case .failure(let failure):
             return .failure(failure)
         }
@@ -114,7 +115,7 @@ final class DefaultTMDBRepository: TMDBRepository {
         )
         switch result {
         case .success(let success):
-            return .success(success.toEntity)
+            return .success(success.toEntity())
         case .failure(let failure):
             return .failure(failure)
         }
@@ -128,7 +129,7 @@ final class DefaultTMDBRepository: TMDBRepository {
         )
         switch result {
         case .success(let success):
-            return .success(success.toEntity)
+            return .success(success.toEntity())
         case .failure(let failure):
             return .failure(failure)
         }
@@ -142,7 +143,21 @@ final class DefaultTMDBRepository: TMDBRepository {
         )
         switch result {
         case .success(let success):
-            return .success(success.toEntity)
+            return .success(success.toEntity())
+        case .failure(let failure):
+            return .failure(failure)
+        }
+    }
+    
+    func similarRequest(query: MovieSimilarQuery) async -> Result<HomeMovie, TMDBError> {
+        let requestDTO = MovieSimilarRequestDTO(language: query.language, page: query.page)
+        let result = await networkManager.request(
+            .movieSimiliar(requestDTO, movieId: query.movieId),
+            of: MovieSimilarResponseDTO.self
+        )
+        switch result {
+        case .success(let success):
+            return .success(success.toEntity())
         case .failure(let failure):
             return .failure(failure)
         }
@@ -156,7 +171,7 @@ final class DefaultTMDBRepository: TMDBRepository {
         )
         switch result {
         case .success(let success):
-            return .success(success.toEntity)
+            return .success(success.toEntity())
         case .failure(let failure):
             return .failure(failure)
         }
@@ -170,7 +185,7 @@ final class DefaultTMDBRepository: TMDBRepository {
         )
         switch result {
         case .success(let success):
-            return .success(success.toEntity)
+            return .success(success.toEntity())
         case .failure(let failure):
             return .failure(failure)
         }
