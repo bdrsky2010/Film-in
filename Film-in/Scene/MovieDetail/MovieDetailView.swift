@@ -13,8 +13,22 @@ struct MovieDetailView: View {
     
     var namespace: Namespace.ID
     
-    let movie: HomeMovie.Movie
-    let size: CGSize
+    private let movie: HomeMovie.Movie
+    private let size: CGSize
+    
+    init(
+        offset: Binding<CGFloat>,
+        showDetailView: Binding<Bool>,
+        namespace: Namespace.ID,
+        movie: HomeMovie.Movie,
+        size: CGSize
+    ) {
+        self._offset = offset
+        self._showDetailView = showDetailView
+        self.namespace = namespace
+        self.movie = movie
+        self.size = size
+    }
     
     var body: some View {
         VStack {

@@ -16,9 +16,13 @@ struct MovieInfoView: View {
     @State private var isFullOverview: Bool
     @State private var isPersonTap = false
     
-    let posterSize: CGSize
+    private let posterSize: CGSize
     
-    init(viewModel: MovieInfoViewModel, isFullOverview: Bool = false, posterSize: CGSize) {
+    init(
+        viewModel: MovieInfoViewModel,
+        isFullOverview: Bool = false,
+        posterSize: CGSize
+    ) {
         self._viewModel = StateObject(wrappedValue: viewModel)
         self._isFullOverview = State(wrappedValue: isFullOverview)
         self.posterSize = posterSize
