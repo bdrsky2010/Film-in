@@ -23,7 +23,7 @@ struct HomeMovie {
     let period: Period?
     let page: Int?
     let totalPage: Int?
-    let movies: [Movie]
+    var movies: [Movie]
     
     init(
         period: Period? = nil,
