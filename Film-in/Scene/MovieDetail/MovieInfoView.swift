@@ -32,7 +32,7 @@ struct MovieInfoView: View {
                     HStack(alignment: .lastTextBaseline) {
                         Text(viewModel.output.movieDetail.title)
                             .lineLimit(2)
-                            .font(.ibmPlexMonoSemiBold(size: 30))
+                            .font(.ibmPlexMonoSemiBold(size: 26))
                             .foregroundStyle(.appText)
                         Spacer()
                         Image(systemName: "star.fill")
@@ -40,7 +40,7 @@ struct MovieInfoView: View {
                             .frame(width: 30, height: 30)
                             .foregroundStyle(.yellow)
                         Text("\(String(format: "%.1f", viewModel.output.movieDetail.rating))")
-                            .font(.system(size: 30))
+                            .font(.system(size: 26))
                             .foregroundStyle(.appText)
                     }
                     .frame(maxWidth: .infinity, alignment: .leading)
@@ -80,7 +80,7 @@ struct MovieInfoView: View {
                         }
                     }
                     
-                    InfoHeader(title: "줄거리")
+                    InfoHeader(titleKey: "overview")
                         .padding(.top)
                     Text(viewModel.output.movieDetail.overview)
                         .font(.ibmPlexMonoMedium(size: 18))
@@ -101,7 +101,7 @@ struct MovieInfoView: View {
                     }
                     .padding()
                     
-                    InfoHeader(title: "배우/제작진")
+                    InfoHeader(titleKey: "castcrew")
                     ScrollView(.horizontal) {
                         LazyHStack(spacing: 12) {
                             ForEach(viewModel.output.creditInfo, id: \.id) { person in
@@ -135,7 +135,7 @@ struct MovieInfoView: View {
                     }
                     .padding(.vertical, 8)
                     
-                    InfoHeader(title: "장르")
+                    InfoHeader(titleKey: "genre")
                     ScrollView(.horizontal) {
                         LazyHStack(spacing: 12) {
                             ForEach(viewModel.output.movieDetail.genres, id: \.id) { genre in
@@ -153,7 +153,7 @@ struct MovieInfoView: View {
                     }
                     .padding(.vertical, 8)
                     
-                    InfoHeader(title: "유사한 영화")
+                    InfoHeader(titleKey: "simliar")
                     ScrollView(.horizontal) {
                         LazyHStack(spacing: 12) {
                             ForEach(viewModel.output.movieSimilars) { similar in
@@ -172,7 +172,7 @@ struct MovieInfoView: View {
                     }
                     .padding(.vertical, 8)
                     
-                    InfoHeader(title: "배경화면")
+                    InfoHeader(titleKey: "backdrop")
                     ScrollView(.horizontal) {
                         LazyHStack(spacing: 12) {
                             ForEach(viewModel.output.movieImages.backdrops) { backdrop in
@@ -191,7 +191,7 @@ struct MovieInfoView: View {
                     }
                     .padding(.vertical, 8)
                     
-                    InfoHeader(title: "포스터")
+                    InfoHeader(titleKey: "poster")
                     ScrollView(.horizontal) {
                         LazyHStack(spacing: 12) {
                             ForEach(viewModel.output.movieImages.posters) { poster in
@@ -210,7 +210,7 @@ struct MovieInfoView: View {
                     }
                     .padding(.vertical, 8)
                     
-                    InfoHeader(title: "동영상")
+                    InfoHeader(titleKey: "video")
                     ScrollView(.horizontal) {
                         LazyHStack(spacing: 12) {
                             ForEach(viewModel.output.movieVideos) { video in
@@ -241,7 +241,7 @@ struct MovieInfoView: View {
         }
         .scrollIndicators(.hidden)
         .padding(.horizontal)
-        .padding(.top, 24)
+        .padding(.top, 20)
         .task {
             viewModel.action(.viewOnTask)
         }
@@ -295,10 +295,10 @@ fileprivate struct NotConnectView: View {
 }
 
 fileprivate struct InfoHeader: View {
-    let title: LocalizedStringKey
+    let titleKey: LocalizedStringKey
     
     var body: some View {
-        Text(title)
+        Text(titleKey)
             .font(.ibmPlexMonoSemiBold(size: 24))
             .foregroundStyle(.appText)
             .frame(maxWidth: .infinity, alignment: .leading)
