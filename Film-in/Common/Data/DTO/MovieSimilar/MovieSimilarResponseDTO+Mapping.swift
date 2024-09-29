@@ -23,6 +23,7 @@ extension MovieSimilarResponseDTO {
     var toEntity: MovieSimilar {
         return MovieSimilar(
             page: self.page,
+            totalPage: self.totalPages,
             movies: self.results
                 .map {
                     MovieSimilar.Movie(
