@@ -7,7 +7,6 @@
 
 import SwiftUI
 import PopupView
-import Kingfisher
 
 struct Card: Hashable, Identifiable {
     let id = UUID()
@@ -200,26 +199,6 @@ struct ListHeader: View {
             }
         }
         .padding(.horizontal, 20)
-    }
-}
-
-struct PosterImage: View {
-    let url: URL?
-    let size: CGSize
-    let title: String
-    
-    var body: some View {
-        KFImage(url)
-            .resizable()
-            .placeholder{
-                Text(title)
-                    .foregroundStyle(.appText)
-            }
-            .loadDiskFileSynchronously()
-            .cacheMemoryOnly()
-            .fade(duration: 0.25)
-            .aspectRatio(contentMode: .fill)
-            .frame(width: size.width, height: size.height)
     }
 }
 
