@@ -12,9 +12,6 @@ final class HomeViewModel: BaseViewModel, ViewModelType {
     private let homeService: HomeService
     private let networkMonitor: NetworkMonitor
     
-    private var isRecommended = false
-    private var recommendTotalPage = 0
-    
     @Published var output = Output()
     
     var input = Input()
@@ -87,7 +84,10 @@ extension HomeViewModel {
             try await fetchTrending()
             try await fetchNowPlaying()
             try await fetchUpcoming()
-            try await fetchRecommend()
+            try await fetchRecommend(
+                isRecommended: false,
+                recommendTotalPage: 1
+            )
         } catch {
             output.isShowAlert = true
         }
@@ -141,7 +141,10 @@ extension HomeViewModel {
     }
     
     @MainActor
-    private func fetchRecommend() async throws {
+    private func fetchRecommend(
+        isRecommended: Bool,
+        recommendTotalPage: Int
+    ) async throws {
         let query = HomeMovieQuery(
             language: "longLanguageCode".localized,
             page: isRecommended ? Int.random(in: 1...recommendTotalPage) : 1,
@@ -151,13 +154,13 @@ extension HomeViewModel {
         switch result {
         case .success(let success):
             if isRecommended {
-                isRecommended = false
                 output.recommendMovies = success
             } else {
                 if let totalPage = success.totalPage {
-                    isRecommended = true
-                    recommendTotalPage = totalPage <= 500 ? totalPage : 500
-                    try await fetchRecommend()
+                    try await fetchRecommend(
+                        isRecommended: true,
+                        recommendTotalPage: totalPage <= 500 ? totalPage : 500
+                    )
                 } else {
                     output.recommendMovies = success
                 }

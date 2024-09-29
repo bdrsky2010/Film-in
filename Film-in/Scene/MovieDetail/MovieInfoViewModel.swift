@@ -13,8 +13,6 @@ final class MovieInfoViewModel: BaseViewModel, ViewModelType {
     private let networkMonitor: NetworkMonitor
     private let movieId: Int
     
-    private var noVideo = false
-    
     @Published var output = Output()
     
     var input = Input()
@@ -91,7 +89,7 @@ extension MovieInfoViewModel {
             try await fetchCredit()
             try await fetchSimilar()
             try await fetchImages()
-            try await fetchVideos()
+            try await fetchVideos(isRetry: false)
         } catch {
             output.isShowAlert = true
         }
@@ -150,17 +148,15 @@ extension MovieInfoViewModel {
     }
     
     @MainActor
-    private func fetchVideos() async throws {
-        let query = MovieVideosQuery(movieId: movieId, language: !noVideo ? "longLanguageCode".localized : "en-US")
+    private func fetchVideos(isRetry: Bool) async throws {
+        let query = MovieVideosQuery(movieId: movieId, language: !isRetry ? "longLanguageCode".localized : "en-US")
         let result = await movieInfoService.fetchMovieVideos(query: query)
         switch result {
         case .success(let success):
             if !success.isEmpty {
                 output.movieVideos = success
-                noVideo = false
             } else {
-                noVideo = true
-                try await fetchVideos()
+                try await fetchVideos(isRetry: true)
             }
         case .failure(let failure):
             print(#function, failure)
