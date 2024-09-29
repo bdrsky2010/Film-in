@@ -20,7 +20,7 @@ struct MovieSimilarResponseDTO: Decodable {
 }
 
 extension MovieSimilarResponseDTO {
-    var toEntity: MovieSimilar {
+    func toEntity() -> MovieSimilar {
         return MovieSimilar(
             page: self.page,
             totalPage: self.totalPages,
@@ -28,6 +28,21 @@ extension MovieSimilarResponseDTO {
                 .map {
                     MovieSimilar.Movie(
                         id: $0.id,
+                        title: $0.title ?? "",
+                        poster: $0.posterPath ?? ""
+                    )
+                }
+        )
+    }
+    
+    func toEntity() -> HomeMovie {
+        return HomeMovie(
+            page: self.page,
+            totalPage: self.totalPages,
+            movies: self.results
+                .map {
+                    HomeMovie.Movie(
+                        _id: $0.id,
                         title: $0.title ?? "",
                         poster: $0.posterPath ?? ""
                     )

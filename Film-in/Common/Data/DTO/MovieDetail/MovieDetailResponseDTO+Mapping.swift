@@ -77,7 +77,7 @@ struct MovieDetailResponseDTO: Decodable {
 }
 
 extension MovieDetailResponseDTO {
-    var toEntity: MovieInfo {
+    func toEntity() -> MovieInfo {
         return MovieInfo(
             id: self.id,
             title: self.title,

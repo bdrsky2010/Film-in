@@ -33,7 +33,7 @@ struct MovieImageResponseDTO: Decodable {
 }
 
 extension MovieImageResponseDTO {
-    var toEntity: MovieImages {
+    func toEntity() -> MovieImages {
         return MovieImages(
             backdrops: self.backdrops
                 .map {

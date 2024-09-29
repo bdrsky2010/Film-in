@@ -20,7 +20,7 @@ struct DiscoverResponseDTO: Decodable {
 }
 
 extension DiscoverResponseDTO {
-    var toEntity: HomeMovie {
+    func toEntity() -> HomeMovie {
         return HomeMovie(
             page: self.page,
             totalPage: self.totalPage,

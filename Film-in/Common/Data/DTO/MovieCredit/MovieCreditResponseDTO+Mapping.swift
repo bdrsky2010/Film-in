@@ -70,7 +70,7 @@ struct MovieCreditResponseDTO: Decodable {
 }
 
 extension MovieCreditResponseDTO {
-    var toEntity: [CreditInfo] {
+    func toEntity() -> [CreditInfo] {
         let casts = self.cast
             .map {
                 CreditInfo(

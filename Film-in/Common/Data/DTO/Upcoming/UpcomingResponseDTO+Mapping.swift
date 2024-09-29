@@ -14,7 +14,7 @@ struct UpcomingResponseDTO: Decodable {
 }
 
 extension UpcomingResponseDTO {
-    var toEntity: HomeMovie {
+    func toEntity() -> HomeMovie {
         return HomeMovie(
             period: .init(
                 minimum: dates.minimum,

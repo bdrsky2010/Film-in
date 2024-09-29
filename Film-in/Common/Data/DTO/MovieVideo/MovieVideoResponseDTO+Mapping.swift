@@ -39,7 +39,7 @@ struct MovieVideoResponseDTO: Decodable {
 }
 
 extension MovieVideoResponseDTO {
-    var toEntity: [MovieVideo] {
+    func toEntity() -> [MovieVideo] {
         return self.results
             .map {
                 MovieVideo(

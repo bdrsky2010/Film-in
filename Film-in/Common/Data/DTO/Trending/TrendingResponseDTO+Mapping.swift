@@ -12,7 +12,7 @@ struct TrendingResponseDTO: Decodable {
 }
 
 extension TrendingResponseDTO {
-    var toEntity: HomeMovie {
+    func toEntity() -> HomeMovie {
         return HomeMovie(
             movies: self.results
                 .map {

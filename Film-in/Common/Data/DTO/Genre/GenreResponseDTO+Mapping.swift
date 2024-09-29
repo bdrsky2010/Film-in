@@ -17,7 +17,7 @@ struct GenreResponseDTO: Decodable {
 }
 
 extension GenreResponseDTO {
-    var toEntity: [MovieGenre] {
+    func toEntity() -> [MovieGenre] {
         return self.genres
             .map {
                 MovieGenre(id: $0.id, name: $0.name)
