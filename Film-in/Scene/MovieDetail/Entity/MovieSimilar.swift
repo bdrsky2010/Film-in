@@ -15,5 +15,6 @@ struct MovieSimilar {
     }
     
     let page: Int
+    let totalPage: Int
     let movies: [Movie]
 }
