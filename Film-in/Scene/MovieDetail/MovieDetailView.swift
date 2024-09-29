@@ -71,6 +71,7 @@ struct MovieDetailView: View {
         .background(.background)
         .statusBar(hidden: true)
         .toolbar(.hidden, for: .tabBar)
+        .toolbar(.hidden, for: .navigationBar)
         .valueChanged(value: offset) { newValue in
             if newValue > 120 {
                 withAnimation(.easeInOut) {
