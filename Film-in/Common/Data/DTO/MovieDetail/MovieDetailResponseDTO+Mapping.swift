@@ -33,7 +33,7 @@ struct MovieDetailResponseDTO: Decodable {
     let genres: [Genre]
     let homepage: String
     let id: Int
-    let imdbId: String // imdb_id
+    let imdbId: String? // imdb_id
     let originCountry: [String] // origin_country
     let originalLanguage: String // original_language
     let originalTitle: String // original_title
