@@ -14,6 +14,7 @@ struct MovieInfoView: View {
     @StateObject private var viewModel: MovieInfoViewModel
     
     @State private var isFullOverview: Bool
+    @State private var isPersonTap = false
     
     let posterSize: CGSize
     
@@ -29,59 +30,62 @@ struct MovieInfoView: View {
                 NotConnectView(viewModel: viewModel)
             } else {
                 LazyVStack {
-                    HStack(alignment: .lastTextBaseline) {
-                        Text(viewModel.output.movieDetail.title)
-                            .lineLimit(2)
-                            .font(.ibmPlexMonoSemiBold(size: 26))
-                            .foregroundStyle(.appText)
-                        Spacer()
-                        Image(systemName: "star.fill")
-                            .resizable()
-                            .frame(width: 30, height: 30)
-                            .foregroundStyle(.yellow)
-                        Text("\(String(format: "%.1f", viewModel.output.movieDetail.rating))")
-                            .font(.system(size: 26))
-                            .foregroundStyle(.appText)
-                    }
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                    
-                    HStack(alignment: .lastTextBaseline) {
-                        Text(viewModel.output.movieDetail.releaseDate.replacingOccurrences(of: "-", with: "."))
-                        Text("\(viewModel.output.movieDetail.runtime / 60)h \(viewModel.output.movieDetail.runtime % 60)m")
-                            .padding(.leading, 8)
-                    }
-                    .font(.ibmPlexMonoSemiBold(size: 16))
-                    .foregroundStyle(.appText)
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                    
-                    HStack {
-                        Button {
-                            
-                        } label: {
-                            Text("WANT")
-                                .font(.ibmPlexMonoSemiBold(size: 20))
-                                .frame(maxWidth: .infinity)
-                                .padding(.horizontal, 20)
-                                .padding(.vertical, 8)
-                                .background(Color(uiColor: .app).opacity(0.3))
-                                .foregroundStyle(.app)
+                    VStack {
+                        HStack(alignment: .lastTextBaseline) {
+                            Text(viewModel.output.movieDetail.title)
+                                .lineLimit(2)
+                                .font(.ibmPlexMonoSemiBold(size: 26))
+                                .foregroundStyle(.appText)
+                            Spacer()
+                            Image(systemName: "star.fill")
+                                .resizable()
+                                .frame(width: 30, height: 30)
+                                .foregroundStyle(.yellow)
+                            Text("\(String(format: "%.1f", viewModel.output.movieDetail.rating))")
+                                .font(.system(size: 26))
+                                .foregroundStyle(.appText)
                         }
+                        .frame(maxWidth: .infinity, alignment: .leading)
                         
-                        Button {
+                        HStack(alignment: .lastTextBaseline) {
+                            Text(viewModel.output.movieDetail.releaseDate.replacingOccurrences(of: "-", with: "."))
+                            Text("\(viewModel.output.movieDetail.runtime / 60)h \(viewModel.output.movieDetail.runtime % 60)m")
+                                .padding(.leading, 8)
+                        }
+                        .font(.ibmPlexMonoSemiBold(size: 16))
+                        .foregroundStyle(.appText)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        
+                        HStack {
+                            Button {
+                                
+                            } label: {
+                                Text("WANT")
+                                    .font(.ibmPlexMonoSemiBold(size: 20))
+                                    .frame(maxWidth: .infinity)
+                                    .padding(.horizontal, 20)
+                                    .padding(.vertical, 8)
+                                    .background(Color(uiColor: .app).opacity(0.3))
+                                    .foregroundStyle(.app)
+                            }
                             
-                        } label: {
-                            Text("WATHCED")
-                                .font(.ibmPlexMonoSemiBold(size: 20))
-                                .frame(maxWidth: .infinity)
-                                .padding(.horizontal, 20)
-                                .padding(.vertical, 8)
-                                .background(Color(uiColor: .app).opacity(0.3))
-                                .foregroundStyle(.app)
+                            Button {
+                                
+                            } label: {
+                                Text("WATHCED")
+                                    .font(.ibmPlexMonoSemiBold(size: 20))
+                                    .frame(maxWidth: .infinity)
+                                    .padding(.horizontal, 20)
+                                    .padding(.vertical, 8)
+                                    .background(Color(uiColor: .app).opacity(0.3))
+                                    .foregroundStyle(.app)
+                            }
                         }
                     }
+                    .frame(height: 150, alignment: .top)
                     
                     InfoHeader(titleKey: "overview")
-                        .padding(.top)
+                        .padding(.top, 4)
                     Text(viewModel.output.movieDetail.overview)
                         .font(.ibmPlexMonoMedium(size: 18))
                         .foregroundStyle(.appText)
@@ -108,6 +112,7 @@ struct MovieInfoView: View {
                                 Button {
                                     print(person.role)
                                     print(person.name)
+                                    isPersonTap.toggle()
                                 } label: {
                                     VStack {
                                         let url = URL(string: ImageURL.tmdb(image: person.profilePath).urlString)
@@ -164,7 +169,7 @@ struct MovieInfoView: View {
                                         width: posterSize.width * 0.5,
                                         height: posterSize.height * 0.5
                                     ),
-                                    title: similar.title
+                                    title: similar.title 
                                 )
                                 .padding(.horizontal, 8)
                             }
@@ -244,6 +249,11 @@ struct MovieInfoView: View {
         .padding(.top, 20)
         .task {
             viewModel.action(.viewOnTask)
+        }
+        .sheet(isPresented: $isPersonTap) {
+            // TODO: Person Detail Info View
+            Text("나온당")
+                .presentationCornerRadius(0)
         }
         .popup(isPresented: $viewModel.output.isShowAlert) {
             VStack {
