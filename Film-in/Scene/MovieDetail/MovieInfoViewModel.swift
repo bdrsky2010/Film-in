@@ -87,7 +87,10 @@ extension MovieInfoViewModel {
         do {
             try await fetchDetail()
             try await fetchCredit()
-            try await fetchSimilar()
+            try await fetchSimilar(
+                isRandomed: false,
+                totalPage: 1
+            )
             try await fetchImages()
             try await fetchVideos(isRetry: false)
         } catch {
@@ -122,12 +125,26 @@ extension MovieInfoViewModel {
     }
     
     @MainActor
-    private func fetchSimilar() async throws {
-        let query = MovieSimilarQuery(movieId: movieId, language: "longLanguageCode".localized, page: 1)
+    private func fetchSimilar(
+        isRandomed: Bool,
+        totalPage: Int
+    ) async throws {
+        let query = MovieSimilarQuery(
+            movieId: movieId,
+            language: "longLanguageCode".localized,
+            page: isRandomed ? Int.random(in: 1...totalPage) : 1
+        )
         let result = await movieInfoService.fetchMovieSimilar(query: query)
         switch result {
         case .success(let success):
-            output.movieSimilars = success.movies
+            if isRandomed {
+                output.movieSimilars = success.movies
+            } else {
+                try await fetchSimilar(
+                    isRandomed: true,
+                    totalPage: success.totalPage <= 500 ? totalPage : 500
+                )
+            }
         case .failure(let failure):
             print(#function, failure)
             throw failure
