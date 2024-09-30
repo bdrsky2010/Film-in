@@ -36,6 +36,7 @@ enum TMDBRouter {
     case movieImage(_ dto: MovieImageRequestDTO, movieId: Int)
     case movieVideo(_ dto: MovieVideoRequestDTO, movieId: Int)
     case peopleDetail(_ dto: PeopleDetailRequestDTO, personId: Int)
+    case peopleMovie(_ dto: PeopleMovieRequestDTO, personId: Int)
 }
 
 extension TMDBRouter: TMDBTargetType {
@@ -55,6 +56,7 @@ extension TMDBRouter: TMDBTargetType {
         case .movieImage(_, let movieId): return "movie/\(movieId)/images"
         case .movieVideo(_, let movieId): return "movie/\(movieId)/videos"
         case .peopleDetail(_, let personId): return "person/\(personId)"
+        case .peopleMovie(_, let personId): return "person/\(personId)/movie_credits"
         }
     }
     
@@ -87,6 +89,8 @@ extension TMDBRouter: TMDBTargetType {
         case .movieVideo(let dto, _):
             return .requestParameters(parameters: dto.asParameters, encoding: URLEncoding.queryString)
         case .peopleDetail(let dto, _):
+            return .requestParameters(parameters: dto.asParameters, encoding: URLEncoding.queryString)
+        case .peopleMovie(let dto, _):
             return .requestParameters(parameters: dto.asParameters, encoding: URLEncoding.queryString)
         }
     }
