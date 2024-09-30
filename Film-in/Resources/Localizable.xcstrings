@@ -4,11 +4,15 @@
     "%@" : {
 
     },
-    "1h 35m" : {
-
-    },
-    "2024.09.25" : {
-
+    "%lldh %lldm" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$lldh %2$lldm"
+          }
+        }
+      }
     },
     "apiRequestError" : {
       "extractionState" : "manual",
@@ -29,6 +33,52 @@
           "stringUnit" : {
             "state" : "needs_review",
             "value" : "네트워크 에러 발생"
+          }
+        }
+      }
+    },
+    "backdrop" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "BACKDROP"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "かべがみ"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "배경화면"
+          }
+        }
+      }
+    },
+    "castcrew" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "CAST/CREW"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "キャスト/スタッフ"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "배우/제작진"
           }
         }
       }
@@ -59,25 +109,54 @@
         }
       }
     },
-    "Done" : {
-      "extractionState" : "stale",
+    "Film-in" : {
+
+    },
+    "filmography" : {
+      "extractionState" : "manual",
       "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Filmography"
+          }
+        },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "かんりょう"
+            "value" : "フィルモグラフィ"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "완료"
+            "value" : "필모그래피"
           }
         }
       }
     },
-    "Film-in" : {
-
+    "genre" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "GENRE"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ジャンル"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "장르"
+          }
+        }
+      }
     },
     "genreSelectTitle" : {
       "extractionState" : "manual",
@@ -103,12 +182,6 @@
       }
     },
     "HOME" : {
-
-    },
-    "It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. The point of using Lorem Ipsum is that it has a more-or-less normal distribution of letters, as opposed to using 'Content here, content here', making it look like readable English." : {
-
-    },
-    "Joy (voice)" : {
 
     },
     "longLanguageCode" : {
@@ -206,6 +279,52 @@
         }
       }
     },
+    "overview" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "OVERVIEW"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "あらすじ"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "줄거리"
+          }
+        }
+      }
+    },
+    "poster" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "POSTER"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ポスター"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "포스터"
+          }
+        }
+      }
+    },
     "recommend" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -218,13 +337,13 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "ユーザーにオススメの映画"
+            "value" : "おすすめの映画"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "사용자 추천영화"
+            "value" : "추천영화"
           }
         }
       }
@@ -301,6 +420,29 @@
         }
       }
     },
+    "simliar" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "SIMILAR"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "るいじ"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "유사한 영화"
+          }
+        }
+      }
+    },
     "upcoming" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -324,40 +466,36 @@
         }
       }
     },
+    "video" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "VIDEO"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "どうが"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "동영상"
+          }
+        }
+      }
+    },
     "WANT" : {
 
     },
     "WATHCED" : {
 
     },
-    "동영상" : {
-
-    },
-    "배경화면" : {
-
-    },
-    "배우/제작진" : {
-
-    },
-    "영화제목" : {
-
-    },
-    "유사한 영화" : {
-
-    },
-    "이름이름이름이름이름이름" : {
-
-    },
-    "장르" : {
-
-    },
-    "장르장르" : {
-
-    },
     "좋아하는 장르를\n선택하세요" : {
-
-    },
-    "포스터" : {
 
     },
     "好きな\nジャンルを\nお選びください" : {
