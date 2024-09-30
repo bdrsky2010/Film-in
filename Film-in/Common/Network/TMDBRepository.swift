@@ -19,6 +19,8 @@ protocol TMDBRepository: AnyObject {
     func similarRequest(query: MovieSimilarQuery) async -> Result<HomeMovie, TMDBError>
     func imagesRequest(query: MovieImagesQuery) async -> Result<MovieImages, TMDBError>
     func videosRequest(query: MovieVideosQuery) async -> Result<[MovieVideo], TMDBError>
+    func personDetailRequest(query: PersonQuery) async -> Result<PersonDetail, TMDBError>
+    func personMovieRequest(query: PersonQuery) async -> Result<PersonMovie, TMDBError>
 }
 
 final class DefaultTMDBRepository: TMDBRepository {
@@ -182,6 +184,34 @@ final class DefaultTMDBRepository: TMDBRepository {
         let result = await networkManager.request(
             .movieVideo(requestDTO, movieId: query.movieId),
             of: MovieVideoResponseDTO.self
+        )
+        switch result {
+        case .success(let success):
+            return .success(success.toEntity())
+        case .failure(let failure):
+            return .failure(failure)
+        }
+    }
+    
+    func personDetailRequest(query: PersonQuery) async -> Result<PersonDetail, TMDBError> {
+        let requestDTO = PeopleDetailRequestDTO(language: query.language)
+        let result = await networkManager.request(
+            .peopleDetail(requestDTO, personId: query.personId),
+            of: PeopleDetailResponseDTO.self
+        )
+        switch result {
+        case .success(let success):
+            return .success(success.toEntity())
+        case .failure(let failure):
+            return .failure(failure)
+        }
+    }
+    
+    func personMovieRequest(query: PersonQuery) async -> Result<PersonMovie, TMDBError> {
+        let requestDTO = PeopleMovieRequestDTO(language: query.language)
+        let result = await networkManager.request(
+            .peopleMovie(requestDTO, personId: query.personId),
+            of: PeopleMovieResponseDTO.self
         )
         switch result {
         case .success(let success):
