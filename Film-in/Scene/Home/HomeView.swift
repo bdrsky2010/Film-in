@@ -121,7 +121,15 @@ struct HomeView: View {
                 .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
                 .overlay {
                     if let movie, showDetailView {
-                        MovieDetailView(
+                        TransitionMovieDetailView(
+                            viewModel: MovieDetailViewModel(
+                                movieDetailService: DefaultMovieDetailService(
+                                    tmdbRepository: DefaultTMDBRepository.shared,
+                                    databaseRepository: RealmRepository.shared
+                                ),
+                                networkMonitor: NetworkMonitor.shared,
+                                movieId: movie._id
+                            ),
                             offset: $offset,
                             showDetailView: $showDetailView,
                             namespace: namespace,
