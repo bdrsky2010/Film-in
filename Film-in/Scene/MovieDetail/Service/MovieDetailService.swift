@@ -7,7 +7,7 @@
 
 import Foundation
 
-protocol MovieInfoService: AnyObject {
+protocol MovieDetailService: AnyObject {
     func fetchMovieDetail(query: MovieDetailQuery) async -> Result<MovieInfo, TMDBError>
     func fetchMovieCredit(query: MovieCreditQuery) async -> Result<[CreditInfo], TMDBError>
     func fetchMovieSimilar(query: MovieSimilarQuery) async -> Result<MovieSimilar, TMDBError>
@@ -15,7 +15,7 @@ protocol MovieInfoService: AnyObject {
     func fetchMovieVideos(query: MovieVideosQuery) async -> Result<[MovieVideo], TMDBError>
 }
 
-final class DefaultMovieInfoService: MovieInfoService {
+final class DefaultMovieDetailService: MovieDetailService {
     private let tmdbRepository: TMDBRepository
     private let databaseRepository: DatabaseRepository
     
@@ -32,7 +32,7 @@ final class DefaultMovieInfoService: MovieInfoService {
     }
 }
 
-extension DefaultMovieInfoService {
+extension DefaultMovieDetailService {
     func fetchMovieDetail(query: MovieDetailQuery) async -> Result<MovieInfo, TMDBError> {
         return await tmdbRepository.detailRequest(query: query)
     }

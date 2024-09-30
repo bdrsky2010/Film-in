@@ -8,23 +8,22 @@
 import Foundation
 import Combine
 
-final class MovieInfoViewModel: BaseViewModel, ViewModelType {
-    private let movieInfoService: MovieInfoService
+final class MovieDetailViewModel: BaseViewModel, ViewModelType {
+    private let movieDetailService: MovieDetailService
     private let networkMonitor: NetworkMonitor
-    private let movieId: Int
+    let movieId: Int
     
     @Published var output = Output()
     
     var input = Input()
     var cancellable = Set<AnyCancellable>()
     
-    
     init(
-        movieInfoService: MovieInfoService,
+        movieDetailService: MovieDetailService,
         networkMonitor: NetworkMonitor,
         movieId: Int
     ) {
-        self.movieInfoService = movieInfoService
+        self.movieDetailService = movieDetailService
         self.networkMonitor = networkMonitor
         self.movieId = movieId
         super.init()
@@ -32,7 +31,7 @@ final class MovieInfoViewModel: BaseViewModel, ViewModelType {
     }
 }
 
-extension MovieInfoViewModel {
+extension MovieDetailViewModel {
     struct Input {
         var viewOnTask = PassthroughSubject<Void, Never>()
     }
@@ -59,7 +58,7 @@ extension MovieInfoViewModel {
     }
 }
 
-extension MovieInfoViewModel {
+extension MovieDetailViewModel {
     enum Action {
         case viewOnTask
         case refresh
@@ -75,7 +74,7 @@ extension MovieInfoViewModel {
     }
 }
 
-extension MovieInfoViewModel {
+extension MovieDetailViewModel {
     @MainActor
     private func fetchMovieInfo() async {
         guard networkMonitor.networkType != .notConnect else {
@@ -101,7 +100,7 @@ extension MovieInfoViewModel {
     @MainActor
     private func fetchDetail() async throws {
         let query = MovieDetailQuery(movieId: movieId, language: "longLanguageCode".localized)
-        let result = await movieInfoService.fetchMovieDetail(query: query)
+        let result = await movieDetailService.fetchMovieDetail(query: query)
         switch result {
         case .success(let success):
             output.movieDetail = success
@@ -114,7 +113,7 @@ extension MovieInfoViewModel {
     @MainActor
     private func fetchCredit() async throws {
         let query = MovieCreditQuery(movieId: movieId, language: "longLanguageCode".localized)
-        let result = await movieInfoService.fetchMovieCredit(query: query)
+        let result = await movieDetailService.fetchMovieCredit(query: query)
         switch result {
         case .success(let success):
             output.creditInfo = success
@@ -134,7 +133,7 @@ extension MovieInfoViewModel {
             language: "longLanguageCode".localized,
             page: isRandomed ? Int.random(in: 1...totalPage) : 1
         )
-        let result = await movieInfoService.fetchMovieSimilar(query: query)
+        let result = await movieDetailService.fetchMovieSimilar(query: query)
         switch result {
         case .success(let success):
             if isRandomed {
@@ -154,7 +153,7 @@ extension MovieInfoViewModel {
     @MainActor
     private func fetchImages() async throws {
         let query = MovieImagesQuery(movieId: movieId, imageLanguage: "\("shortLanguageCode".localized),en,null")
-        let result = await movieInfoService.fetchMovieImages(query: query)
+        let result = await movieDetailService.fetchMovieImages(query: query)
         switch result {
         case .success(let success):
             output.movieImages = success
@@ -167,7 +166,7 @@ extension MovieInfoViewModel {
     @MainActor
     private func fetchVideos(isRetry: Bool) async throws {
         let query = MovieVideosQuery(movieId: movieId, language: !isRetry ? "longLanguageCode".localized : "en-US")
-        let result = await movieInfoService.fetchMovieVideos(query: query)
+        let result = await movieDetailService.fetchMovieVideos(query: query)
         switch result {
         case .success(let success):
             if !success.isEmpty {
