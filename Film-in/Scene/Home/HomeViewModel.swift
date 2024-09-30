@@ -17,7 +17,6 @@ final class HomeViewModel: BaseViewModel, ViewModelType {
     var input = Input()
     var cancellable = Set<AnyCancellable>()
     
-    
     init(
         homeService: HomeService,
         networkMonitor: NetworkMonitor
