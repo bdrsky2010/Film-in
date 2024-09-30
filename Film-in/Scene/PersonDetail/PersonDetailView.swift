@@ -28,7 +28,7 @@ struct PersonDetailView: View {
                 if !viewModel.output.networkConnect {
                     NotConnectView(viewModel: viewModel)
                         .frame(width: width)
-                        .padding(.top, 60)
+                        .padding(.top, 80)
                 } else {
                     VStack {
                         let url = URL(string: ImageURL.tmdb(image: viewModel.output.personDetail.profilePath).urlString)
