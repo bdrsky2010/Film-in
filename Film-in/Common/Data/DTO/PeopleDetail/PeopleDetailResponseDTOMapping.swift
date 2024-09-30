@@ -11,7 +11,7 @@ struct PeopleDetailResponseDTO: Decodable {
     let adult: Bool
     let alsoKnownAs: [String]
     let biography: String
-    let birthday: String
+    let birthday: String?
     let deathday: String?
     let gender: Int
     let homepage: String?
@@ -38,5 +38,17 @@ struct PeopleDetailResponseDTO: Decodable {
         case placeOfBirth = "place_of_birth"
         case popularity
         case profilePath = "profile_path"
+    }
+}
+
+extension PeopleDetailResponseDTO {
+    func toEntity() -> PersonDetail {
+        return PersonDetail(
+            id: self.id,
+            name: self.name,
+            birthday: self.birthday ?? "",
+            placeOfBirth: self.placeOfBirth,
+            profilePath: self.profilePath
+        )
     }
 }
