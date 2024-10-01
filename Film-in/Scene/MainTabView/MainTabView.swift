@@ -24,13 +24,13 @@ struct MainTabView: View {
                     Text("HOME")
                 }
             
-            Text("done")
-                .tabItem {
-                    Image("search")
-                    Text("SEARCH")
-                }
+//            Text("done")
+//                .tabItem {
+//                    Image("search")
+//                    Text("SEARCH")
+//                }
             
-            Text("done")
+            MyView()
                 .tabItem {
                     Image("movie")
                     Text("MY")
