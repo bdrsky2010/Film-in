@@ -15,6 +15,8 @@ struct TransitionMovieDetailView: View {
     @StateObject private var viewModel: MovieDetailViewModel
     
     @State private var isFullOverview: Bool
+    @State private var isDateSetup: Bool
+    @State private var dateSetupType: DateSetupType
     
     @Binding var offset: CGFloat
     @Binding var showDetailView: Bool
@@ -27,6 +29,8 @@ struct TransitionMovieDetailView: View {
     init(
         viewModel: MovieDetailViewModel,
         isFullOverview: Bool = false,
+        isDateSetup: Bool = false,
+        dateSetupType: DateSetupType = .want,
         offset: Binding<CGFloat>,
         showDetailView: Binding<Bool>,
         namespace: Namespace.ID,
@@ -35,6 +39,8 @@ struct TransitionMovieDetailView: View {
     ) {
         self._viewModel = StateObject(wrappedValue: viewModel)
         self._isFullOverview = State(wrappedValue: isFullOverview)
+        self._isDateSetup = State(wrappedValue: isDateSetup)
+        self._dateSetupType = State(wrappedValue: dateSetupType)
         self._offset = offset
         self._showDetailView = showDetailView
         self.namespace = namespace
@@ -106,7 +112,8 @@ struct TransitionMovieDetailView: View {
                                 
                                 HStack {
                                     Button {
-                                        
+                                        dateSetupType = .want
+                                        isDateSetup.toggle()
                                     } label: {
                                         Text("WANT")
                                             .font(.ibmPlexMonoSemiBold(size: 20))
@@ -118,7 +125,8 @@ struct TransitionMovieDetailView: View {
                                     }
                                     
                                     Button {
-                                        
+                                        dateSetupType = .watched
+                                        isDateSetup.toggle()
                                     } label: {
                                         Text("WATHCED")
                                             .font(.ibmPlexMonoSemiBold(size: 20))
@@ -234,7 +242,8 @@ struct TransitionMovieDetailView: View {
                                                 movie: .init(
                                                     _id: similar.id,
                                                     title: similar.title,
-                                                    poster: similar.poster
+                                                    poster: similar.poster,
+                                                    backdrop: similar.backdrop
                                                 ),
                                                 size: size,
                                                 viewModel: MovieDetailViewModel(
@@ -350,6 +359,22 @@ struct TransitionMovieDetailView: View {
                         showDetailView = false
                     }
                 }
+            }
+            .sheet(isPresented: $isDateSetup){
+                DateSetupView(
+                    viewModel: DateSetupViewModel(
+                        dateSetupService: DefaultDateSetupService(
+                            localNotificationManager: DefaultLocalNotificationManager.shared,
+                            databaseRepository: RealmRepository.shared
+                        ),
+                        movie: (movie._id, movie.title, movie.backdrop, movie.poster),
+                        type: dateSetupType
+                    ),
+                    isPresented: $isDateSetup
+                )
+            }
+            .valueChanged(value: dateSetupType) { newValue in
+                
             }
             .popup(isPresented: $viewModel.output.isShowAlert) {
                 VStack {

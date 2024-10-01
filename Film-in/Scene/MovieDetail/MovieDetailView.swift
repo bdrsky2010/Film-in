@@ -19,17 +19,23 @@ struct MovieDetailView: View {
     @StateObject private var viewModel: MovieDetailViewModel
     
     @State private var isFullOverview: Bool
+    @State private var isDateSetup: Bool
+    @State private var dateSetupType: DateSetupType
     
     init(
         movie: HomeMovie.Movie,
         size: CGSize,
         viewModel: MovieDetailViewModel,
-        isFullOverview: Bool = false
+        isFullOverview: Bool = false,
+        isDateSetup: Bool = false,
+        dateSetupType: DateSetupType = .want
     ) {
         self.movie = movie
         self.size = size
         self._viewModel = StateObject(wrappedValue: viewModel)
         self._isFullOverview = State(wrappedValue: isFullOverview)
+        self._isDateSetup = State(wrappedValue: isDateSetup)
+        self._dateSetupType = State(wrappedValue: dateSetupType)
     }
     
     var body: some View {
@@ -74,7 +80,8 @@ struct MovieDetailView: View {
                         
                         HStack {
                             Button {
-                                
+                                dateSetupType = .want
+                                isDateSetup.toggle()
                             } label: {
                                 Text("WANT")
                                     .font(.ibmPlexMonoSemiBold(size: 20))
@@ -86,7 +93,8 @@ struct MovieDetailView: View {
                             }
                             
                             Button {
-                                
+                                dateSetupType = .watched
+                                isDateSetup.toggle()
                             } label: {
                                 Text("WATHCED")
                                     .font(.ibmPlexMonoSemiBold(size: 20))
@@ -201,7 +209,8 @@ struct MovieDetailView: View {
                                         movie: .init(
                                             _id: similar.id,
                                             title: similar.title,
-                                            poster: similar.poster
+                                            poster: similar.poster,
+                                            backdrop: similar.backdrop
                                         ),
                                         size: size,
                                         viewModel: MovieDetailViewModel(
@@ -301,6 +310,7 @@ struct MovieDetailView: View {
         .padding()
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
         .background(.background)
+        .toolbar(.hidden, for: .tabBar)
         .popup(isPresented: $viewModel.output.isShowAlert) {
             VStack {
                 Text("apiRequestError")
@@ -324,6 +334,22 @@ struct MovieDetailView: View {
                 .animation(.bouncy)
                 .position(.top)
                 .dragToDismiss(true)
+        }
+        .sheet(isPresented: $isDateSetup){
+            DateSetupView(
+                viewModel: DateSetupViewModel(
+                    dateSetupService: DefaultDateSetupService(
+                        localNotificationManager: DefaultLocalNotificationManager.shared,
+                        databaseRepository: RealmRepository.shared
+                    ),
+                    movie: (movie._id, movie.title, movie.backdrop, movie.poster),
+                    type: dateSetupType
+                ),
+                isPresented: $isDateSetup
+            )
+        }
+        .valueChanged(value: dateSetupType) { newValue in
+            
         }
 //        .sheet(isPresented: $isPresent) {
 //            MovieInfoView(
@@ -379,7 +405,22 @@ fileprivate struct InfoHeader: View {
     }
 }
 
-//#Preview {
-//    @Namespace var namespace
-//    return TransitionMovieDetailView(offset: .constant(0), showDetailView: .constant(true), namespace: namespace, movie: .init(_id: 1022789, title: "인사이드 아웃 2", poster: "/x2BHx02jMbvpKjMvbf8XxJkYwHJ.jpg"), size: CGSize(width: 275.09999999999997, height: 412.65))
-//}
+#Preview {
+    MovieDetailView(
+        movie: .init(
+            _id: 1022789,
+            title: "인사이드 아웃 2",
+            poster: "/x2BHx02jMbvpKjMvbf8XxJkYwHJ.jpg",
+            backdrop: ""
+        ),
+        size: CGSize(width: 275.09999999999997, height: 412.65),
+        viewModel: MovieDetailViewModel(
+            movieDetailService: DefaultMovieDetailService(
+                tmdbRepository: DefaultTMDBRepository.shared,
+                databaseRepository: RealmRepository.shared
+            ),
+            networkMonitor: NetworkMonitor.shared,
+            movieId: 1022789
+        )
+    )
+}
