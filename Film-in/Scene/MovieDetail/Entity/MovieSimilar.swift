@@ -12,6 +12,7 @@ struct MovieSimilar {
         let id: Int
         let title: String
         let poster: String
+        let backdrop: String
     }
     
     let page: Int
