@@ -26,7 +26,8 @@ extension NowPlayingResponseDTO {
                     HomeMovie.Movie(
                         _id: $0.id,
                         title: $0.title ?? "",
-                        poster: $0.posterPath ?? ""
+                        poster: $0.posterPath ?? "",
+                        backdrop: $0.backdropPath ?? ""
                     )
                 }
         )
