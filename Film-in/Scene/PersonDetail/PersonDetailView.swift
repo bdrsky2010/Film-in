@@ -61,7 +61,7 @@ struct PersonDetailView: View {
                                     NavigationLink {
                                         
                                         MovieDetailView(
-                                            movie: .init(_id: movie.id, title: movie.title, poster: movie.poster),
+                                            movie: .init(_id: movie.id, title: movie.title, poster: movie.poster, backdrop: movie.backdrop),
                                             size: posterSize,
                                             viewModel: MovieDetailViewModel(
                                                 movieDetailService: DefaultMovieDetailService(
