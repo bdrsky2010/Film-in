@@ -109,9 +109,6 @@
         }
       }
     },
-    "Choose What\nYou Like" : {
-
-    },
     "done" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -657,12 +654,6 @@
 
     },
     "WATHCED" : {
-
-    },
-    "좋아하는 장르를\n선택하세요" : {
-
-    },
-    "好きな\nジャンルを\nお選びください" : {
 
     }
   },
