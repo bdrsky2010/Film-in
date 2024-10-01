@@ -4,11 +4,6 @@
 <dict>
 	<key>UIAppFonts</key>
 	<array>
-		<string>Karla-Bold.ttf</string>
-		<string>TheBewlay-Br1.ttf</string>
-		<string>NotoSansKR-Bold.ttf</string>
-		<string>NotoSansKR-SemiBold.ttf</string>
-		<string>NotoSansKR-Medium.ttf</string>
 		<string>IBMPlexMono-Medium.ttf</string>
 		<string>IBMPlexMono-Regular.ttf</string>
 		<string>IBMPlexMono-SemiBold.ttf</string>

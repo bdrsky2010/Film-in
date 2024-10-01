@@ -141,7 +141,7 @@ extension MovieListViewModel {
                 try await fetchRecommend(page: page)
             case .similar(let movieId):
                 try await fetchSimilar(movieId: movieId, page: page)
-            case .search(let text):
+            case .search(_ ):
                 break
             }
         } catch {
