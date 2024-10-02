@@ -122,9 +122,10 @@ extension DateSetupViewModel {
             isAlarm: output.isAlarm
         )
         
+        dateSetupService.saveWantOrWatchedMovie(query: query)
+        
         switch type {
         case .want:
-            dateSetupService.saveWantMovie(query: query)
             do {
                 if output.isAlarm {
                     try await dateSetupService.registPushAlarm(movie: (movie.movieId, movie.title), date: output.selection)
@@ -135,7 +136,6 @@ extension DateSetupViewModel {
                 output.isError = true
             }
         case .watched:
-            dateSetupService.saveWatchedMovie(query: query)
             output.isSuccess = true
         }
     }

@@ -11,10 +11,8 @@ import RealmSwift
 protocol DatabaseRepository: AnyObject {
     func createUser()
     func appendLikeGenres(genres: Set<MovieGenre>)
-    func appendWantMovie(data: WantWatchedMovieRequestDTO)
-    func appendWatchedMovie(data: WantWatchedMovieRequestDTO)
-    func deleteWatchedMovie(movieId: Int)
-    func deleteWantMovie(movieId: Int)
+    func appendWantOrWatchedMovie(data: WantWatchedMovieRequestDTO)
+    func deleteMovie(movieId: Int)
     func printFilePath()
     
     var user: UserTable? { get }
@@ -49,13 +47,11 @@ final class RealmRepository: DatabaseRepository {
         }
     }
     
-    func appendWantMovie(data: WantWatchedMovieRequestDTO) {
+    func appendWantOrWatchedMovie(data: WantWatchedMovieRequestDTO) {
         guard let user else { return }
         do {
             try realm.write {
-                if let movie = user.watchedMovies.last(where: { $0.id == data.movieId }) {
-                    realm.delete(movie)
-                } else if let movie = user.wantMovies.last(where: { $0.id == data.movieId }) {
+                if let movie = realm.objects(MovieTable.self).first(where: { $0.id == data.movieId }) {
                     realm.delete(movie)
                 }
                 let newMovie = MovieTable(
@@ -66,41 +62,11 @@ final class RealmRepository: DatabaseRepository {
                     status: data.type == .want ? (data.isAlarm ? .wantWithNotification : .want) : .watched,
                     date: data.date
                 )
-                user.wantMovies.append(newMovie)
-            }
-        } catch {
-            
-        }
-    }
-    
-    func appendWatchedMovie(data: WantWatchedMovieRequestDTO) {
-        guard let user else { return }
-        do {
-            try realm.write {
-                if let movie = user.wantMovies.last(where: { $0.id == data.movieId }) {
-                    realm.delete(movie)
-                }
-                let newMovie = MovieTable(
-                    id: data.movieId,
-                    title: data.title,
-                    backdrop: data.backdrop,
-                    poster: data.poster,
-                    status: data.type == .want ? (data.isAlarm ? .wantWithNotification : .want) : .watched,
-                    date: data.date
-                )
-                user.watchedMovies.append(newMovie)
-            }
-        } catch {
-            
-        }
-    }
-    
-    func deleteWantMovie(movieId: Int) {
-        guard let user else { return }
-        do {
-            try realm.write {
-                if let movie = user.wantMovies.last(where: { $0.id == movieId }) {
-                    realm.delete(movie)
+                
+                if data.type == .watched {
+                    user.watchedMovies.append(newMovie)
+                } else {
+                    user.wantMovies.append(newMovie)
                 }
             }
         } catch {
@@ -108,13 +74,12 @@ final class RealmRepository: DatabaseRepository {
         }
     }
     
-    func deleteWatchedMovie(movieId: Int) {
+    func deleteMovie(movieId: Int) {
         guard let user else { return }
         do {
             try realm.write {
-                if let movie = user.watchedMovies.last(where: { $0.id == movieId }) {
-                    realm.delete(movie)
-                }
+                guard let movie = realm.objects(MovieTable.self).first(where: { $0.id == movieId }) else { return }
+                realm.delete(movie)
             }
         } catch {
             

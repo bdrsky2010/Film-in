@@ -11,8 +11,7 @@ protocol DateSetupService: AnyObject {
     func requestPermission() async throws
     func registPushAlarm(movie: (id: Int, title: String), date: Date) async throws
     func goToSetting()
-    func saveWantMovie(query: WantWatchedMovieQuery)
-    func saveWatchedMovie(query: WantWatchedMovieQuery)
+    func saveWantOrWatchedMovie(query: WantWatchedMovieQuery)
 }
 
 final class DefaultDateSetupService {
@@ -45,7 +44,7 @@ extension DefaultDateSetupService: DateSetupService {
         localNotificationManager.moveToSettings()
     }
     
-    func saveWantMovie(query: WantWatchedMovieQuery) {
+    func saveWantOrWatchedMovie(query: WantWatchedMovieQuery) {
         let requestDTO = WantWatchedMovieRequestDTO(
             movieId: query.movieId,
             title: query.title,
@@ -56,20 +55,6 @@ extension DefaultDateSetupService: DateSetupService {
             isAlarm: query.isAlarm
         )
         
-        databaseRepository.appendWantMovie(data: requestDTO)
-    }
-    
-    func saveWatchedMovie(query: WantWatchedMovieQuery) {
-        let requestDTO = WantWatchedMovieRequestDTO(
-            movieId: query.movieId,
-            title: query.title,
-            backdrop: query.backdrop,
-            poster: query.poster,
-            date: query.date,
-            type: query.type,
-            isAlarm: query.isAlarm
-        )
-        
-        databaseRepository.appendWatchedMovie(data: requestDTO)
+        databaseRepository.appendWantOrWatchedMovie(data: requestDTO)
     }
 }
