@@ -16,6 +16,7 @@ enum AuthorizationError: Error {
 protocol LocalNotificationManager: AnyObject {
     func requestPermission() async throws
     func schedule(movie: (id: Int, title: String), date: Date) async throws
+    func removeNotification(movieId: Int) async throws
     func moveToSettings()
 }
 
@@ -32,12 +33,10 @@ final class DefaultLocalNotificationManager {
 }
 
 extension DefaultLocalNotificationManager: LocalNotificationManager {
-    @MainActor
     func requestPermission() async throws {
         try await center.requestAuthorization(options: [.alert, .badge, .sound])
     }
     
-    @MainActor
     func schedule(movie: (id: Int, title: String), date: Date) async throws {
         // Obtain the notification settings.
         let settings = await center.notificationSettings()
@@ -64,6 +63,18 @@ extension DefaultLocalNotificationManager: LocalNotificationManager {
     
         // 알림 예약
         try await center.add(request)
+        print(await center.pendingNotificationRequests())
+    }
+    
+    func removeNotification(movieId: Int) async {
+        let pendingNotificationRequests = await center.pendingNotificationRequests()
+        let identifiers = pendingNotificationRequests.filter {
+            guard let id = $0.content.userInfo["id"] as? Int else { return false }
+            return id == movieId
+        }.map {
+            $0.identifier
+        }
+        center.removePendingNotificationRequests(withIdentifiers: identifiers)
         print(await center.pendingNotificationRequests())
     }
     
