@@ -109,6 +109,52 @@
         }
       }
     },
+    "delete" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "DELETE"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "さくじょ"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "삭제"
+          }
+        }
+      }
+    },
+    "deleteRequestPhrase" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Do you want to\ndelete this?"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "削除しますか？"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "삭제하시겠습니까?"
+          }
+        }
+      }
+    },
     "done" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -325,7 +371,7 @@
         }
       }
     },
-    "notificationRequestComment" : {
+    "notificationRequestPhrase" : {
       "extractionState" : "manual",
       "localizations" : {
         "en" : {
@@ -532,7 +578,7 @@
         }
       }
     },
-    "saveComment" : {
+    "saveRequestPhrase" : {
       "extractionState" : "manual",
       "localizations" : {
         "en" : {
