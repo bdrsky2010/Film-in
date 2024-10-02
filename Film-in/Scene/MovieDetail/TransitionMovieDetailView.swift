@@ -252,7 +252,7 @@ struct TransitionMovieDetailView: View {
                                                         databaseRepository: RealmRepository.shared
                                                     ),
                                                     networkMonitor: NetworkMonitor.shared,
-                                                    movieId: movie._id
+                                                    movieId: similar.id
                                                 )
                                             )
                                         } label: {
