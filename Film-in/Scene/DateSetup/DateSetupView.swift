@@ -83,7 +83,7 @@ struct DateSetupView: View {
         }
         .popup(isPresented: $viewModel.output.isDone) {
             VStack {
-                Text("saveComment")
+                Text("saveRequestPhrase")
                     .font(.ibmPlexMonoSemiBold(size: 20))
                 
                 Spacer()
@@ -124,7 +124,7 @@ struct DateSetupView: View {
         }
         .popup(isPresented: $viewModel.output.isError) {
             VStack {
-                Text("notificationRequestComment")
+                Text("notificationRequestPhrase")
                     .font(.ibmPlexMonoSemiBold(size: 20))
                 
                 Spacer()
