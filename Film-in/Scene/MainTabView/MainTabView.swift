@@ -30,7 +30,14 @@ struct MainTabView: View {
 //                    Text("SEARCH")
 //                }
             
-            MyView()
+            MyView(
+                viewModel: MyViewModel(
+                    myViewService: DefaultMyViewService(
+                        databaseRepository: RealmRepository.shared,
+                        localNotificationManager: DefaultLocalNotificationManager.shared
+                    )
+                )
+            )
                 .tabItem {
                     Image("movie")
                     Text("MY")
