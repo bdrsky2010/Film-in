@@ -7,11 +7,19 @@
 
 import SwiftUI
 import RealmSwift
+import PopupView
 
 struct MyView: View {
     @ObservedResults(UserTable.self) var user
+    @StateObject private var viewModel: MyViewModel
     @State private var selection = Date()
     @State private var posterSize: CGSize = .zero
+    
+    init(viewModel: MyViewModel, selection: Date = Date(), posterSize: CGSize = .zero) {
+        self._viewModel = StateObject(wrappedValue: viewModel)
+        self._selection = State(wrappedValue: selection)
+        self._posterSize = State(wrappedValue: posterSize)
+    }
     
     var body: some View {
         NavigationStack {
@@ -27,7 +35,8 @@ struct MyView: View {
                             .foregroundStyle(.appText)
                             .frame(maxWidth: proxy.size.width, alignment: .leading)
                         
-                        ForEach(user.first?.wantMovies.filter({ Calendar.current.isDate(selection, inSameDayAs: $0.date) }) ?? [], id: \.id) { movie in
+                        let wantMovies = user.first?.wantMovies.filter({ Calendar.current.isDate(selection, inSameDayAs: $0.date) }) ?? []
+                        ForEach(wantMovies, id: \.id) { movie in
                             ZStack {
                                 let url = URL(string: ImageURL.tmdb(image: movie.backdrop).urlString)
                                 PosterImage(
@@ -76,13 +85,19 @@ struct MyView: View {
                                 .opacity(0)
                             }
                         }
+                        .onDelete { indexSet in
+                            guard let index = indexSet.first else { return }
+                            let wantMovieId = wantMovies[index].id
+                            viewModel.action(.deleteGesture(movieId: wantMovieId))
+                        }
                         
                         Text("WATCHED")
                             .font(.ibmPlexMonoSemiBold(size: 24))
                             .foregroundStyle(.appText)
                             .frame(maxWidth: proxy.size.width, alignment: .leading)
                         
-                        ForEach(user.first?.watchedMovies.filter({ Calendar.current.isDate(selection, inSameDayAs: $0.date) }) ?? [], id: \.id) { movie in
+                        let watchedMovies = user.first?.watchedMovies.filter({ Calendar.current.isDate(selection, inSameDayAs: $0.date) }) ?? []
+                        ForEach(watchedMovies, id: \.id) { movie in
                             ZStack {
                                 let url = URL(string: ImageURL.tmdb(image: movie.backdrop).urlString)
                                 PosterImage(
@@ -130,6 +145,11 @@ struct MyView: View {
                                 }
                                 .opacity(0)
                             }
+                        }
+                        .onDelete { indexSet in
+                            guard let index = indexSet.first else { return }
+                            let watchedMovieId = watchedMovies[index].id
+                            viewModel.action(.deleteGesture(movieId: watchedMovieId))
                         }
                     }
                     .task {
@@ -140,9 +160,59 @@ struct MyView: View {
             }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
+        .popup(isPresented: $viewModel.output.isRequestDelete) {
+            VStack {
+                Text("deleteRequestPhrase")
+                    .font(.ibmPlexMonoSemiBold(size: 20))
+                
+                Spacer()
+                
+                HStack {
+                    Button {
+                        
+                    } label: {
+                        Text("cancel")
+                            .font(.ibmPlexMonoSemiBold(size: 20))
+                            .frame(maxWidth: .infinity)
+                            .padding(.horizontal, 20)
+                            .padding(.vertical, 8)
+                            .background(Color(uiColor: .app).opacity(0.3))
+                            .foregroundStyle(.app)
+                    }
+                    
+                    Button {
+                        viewModel.action(.realDelete(movieId: viewModel.output.deleteMovieId))
+                    } label: {
+                        Text("delete")
+                            .font(.ibmPlexMonoSemiBold(size: 20))
+                            .frame(maxWidth: .infinity)
+                            .padding(.horizontal, 20)
+                            .padding(.vertical, 8)
+                            .background(Color(uiColor: .app).opacity(0.3))
+                            .foregroundStyle(.app)
+                    }
+                }
+            }
+            .frame(width: 300, height: 120, alignment: .top)
+            .padding()
+            .background(.background)
+        } customize: {
+            $0
+                .closeOnTapOutside(true)
+                .backgroundColor(.appText.opacity(0.5))
+        }
+        
+        
     }
 }
 
 #Preview {
-    MyView()
+    MyView(
+        viewModel: MyViewModel(
+            myViewService: DefaultMyViewService(
+                databaseRepository: RealmRepository.shared,
+                localNotificationManager: DefaultLocalNotificationManager.shared
+            )
+        )
+    )
 }
