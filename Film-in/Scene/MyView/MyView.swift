@@ -62,21 +62,23 @@ struct MyView: View {
                                 }
                                 
                                 NavigationLink {
-                                    MovieDetailView(
-                                        movie: .init(
-                                            _id: movie.id,
-                                            title: movie.title,
-                                            poster: movie.poster,
-                                            backdrop: movie.backdrop
-                                        ),
-                                        size: posterSize,
-                                        viewModel: MovieDetailViewModel(
-                                            movieDetailService: DefaultMovieDetailService(
-                                                tmdbRepository: DefaultTMDBRepository.shared,
-                                                databaseRepository: RealmRepository.shared
+                                    LazyView(
+                                        MovieDetailView(
+                                            movie: .init(
+                                                _id: movie.id,
+                                                title: movie.title,
+                                                poster: movie.poster,
+                                                backdrop: movie.backdrop
                                             ),
-                                            networkMonitor: NetworkMonitor.shared,
-                                            movieId: movie.id
+                                            size: posterSize,
+                                            viewModel: MovieDetailViewModel(
+                                                movieDetailService: DefaultMovieDetailService(
+                                                    tmdbRepository: DefaultTMDBRepository.shared,
+                                                    databaseRepository: RealmRepository.shared
+                                                ),
+                                                networkMonitor: NetworkMonitor.shared,
+                                                movieId: movie.id
+                                            )
                                         )
                                     )
                                 } label: {

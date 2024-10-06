@@ -38,16 +38,18 @@ struct MovieListView: View {
                     LazyVGrid(columns: gridItemLayout, spacing: 8) {
                         ForEach(viewModel.output.movies.movies, id: \.id) { movie in
                             NavigationLink {
-                                MovieDetailView(
-                                    movie: movie,
-                                    size: posterSize,
-                                    viewModel: MovieDetailViewModel(
-                                        movieDetailService: DefaultMovieDetailService(
-                                            tmdbRepository: DefaultTMDBRepository.shared,
-                                            databaseRepository: RealmRepository.shared
-                                        ),
-                                        networkMonitor: NetworkMonitor.shared,
-                                        movieId: movie._id
+                                LazyView(
+                                    MovieDetailView(
+                                        movie: movie,
+                                        size: posterSize,
+                                        viewModel: MovieDetailViewModel(
+                                            movieDetailService: DefaultMovieDetailService(
+                                                tmdbRepository: DefaultTMDBRepository.shared,
+                                                databaseRepository: RealmRepository.shared
+                                            ),
+                                            networkMonitor: NetworkMonitor.shared,
+                                            movieId: movie._id
+                                        )
                                     )
                                 )
                             } label: {
