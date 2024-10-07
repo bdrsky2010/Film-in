@@ -132,14 +132,16 @@ struct MovieDetailView: View {
                         LazyHStack(spacing: 12) {
                             ForEach(viewModel.output.creditInfo, id: \.id) { person in
                                 NavigationLink {
-                                    PersonDetailView(
-                                        viewModel: PersonDetailViewModel(
-                                            personDetailService: DefaultPersonDetailService(
-                                                tmdbRepository: DefaultTMDBRepository.shared,
-                                                databaseRepository: RealmRepository.shared
-                                            ),
-                                            networkMonitor: NetworkMonitor.shared,
-                                            personId: person._id
+                                    LazyView(
+                                        PersonDetailView(
+                                            viewModel: PersonDetailViewModel(
+                                                personDetailService: DefaultPersonDetailService(
+                                                    tmdbRepository: DefaultTMDBRepository.shared,
+                                                    databaseRepository: RealmRepository.shared
+                                                ),
+                                                networkMonitor: NetworkMonitor.shared,
+                                                personId: person._id
+                                            )
                                         )
                                     )
                                 } label: {
@@ -205,21 +207,23 @@ struct MovieDetailView: View {
                         LazyHStack(spacing: 12) {
                             ForEach(viewModel.output.movieSimilars) { similar in
                                 NavigationLink {
-                                    MovieDetailView(
-                                        movie: .init(
-                                            _id: similar.id,
-                                            title: similar.title,
-                                            poster: similar.poster,
-                                            backdrop: similar.backdrop
-                                        ),
-                                        size: size,
-                                        viewModel: MovieDetailViewModel(
-                                            movieDetailService: DefaultMovieDetailService(
-                                                tmdbRepository: DefaultTMDBRepository.shared,
-                                                databaseRepository: RealmRepository.shared
+                                    LazyView(
+                                        MovieDetailView(
+                                            movie: .init(
+                                                _id: similar.id,
+                                                title: similar.title,
+                                                poster: similar.poster,
+                                                backdrop: similar.backdrop
                                             ),
-                                            networkMonitor: NetworkMonitor.shared,
-                                            movieId: similar.id
+                                            size: size,
+                                            viewModel: MovieDetailViewModel(
+                                                movieDetailService: DefaultMovieDetailService(
+                                                    tmdbRepository: DefaultTMDBRepository.shared,
+                                                    databaseRepository: RealmRepository.shared
+                                                ),
+                                                networkMonitor: NetworkMonitor.shared,
+                                                movieId: similar.id
+                                            )
                                         )
                                     )
                                 } label: {
