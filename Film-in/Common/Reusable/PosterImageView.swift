@@ -20,7 +20,7 @@ struct PosterImage: View {
                 Text(title)
                     .foregroundStyle(.appText)
             }
-            .loadDiskFileSynchronously()
+            .cancelOnDisappear(true)
             .cacheMemoryOnly()
             .fade(duration: 0.25)
             .aspectRatio(contentMode: .fill)
