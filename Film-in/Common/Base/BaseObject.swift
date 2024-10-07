@@ -8,7 +8,7 @@
 import Foundation
 import Combine
 
-class BaseViewModel: ObservableObject {
+class BaseObject: ObservableObject {
     init() {
         print("\(String(describing: self)) is init")
     }
