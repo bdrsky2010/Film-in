@@ -8,7 +8,7 @@
 import Foundation
 import Combine
 
-final class MyViewModel: BaseViewModel, ViewModelType {
+final class MyViewModel: BaseObject, ViewModelType {
     private let myViewService: MyViewService
     
     @Published var output = Output()

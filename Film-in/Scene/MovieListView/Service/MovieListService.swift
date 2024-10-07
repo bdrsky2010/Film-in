@@ -14,7 +14,7 @@ protocol MovieListService: AnyObject {
     func fetchMovieSimilar(query: MovieSimilarQuery) async -> Result<HomeMovie, TMDBError>
 }
 
-final class DefaultMovieListService: MovieListService {
+final class DefaultMovieListService: BaseObject, MovieListService {
     private let tmdbRepository: TMDBRepository
     private let databaseRepository: DatabaseRepository
     
@@ -24,10 +24,6 @@ final class DefaultMovieListService: MovieListService {
     ) {
         self.tmdbRepository = tmdbRepository
         self.databaseRepository = databaseRepository
-    }
-    
-    deinit {
-        print("\(String(describing: self)) is deinit")
     }
 }
 

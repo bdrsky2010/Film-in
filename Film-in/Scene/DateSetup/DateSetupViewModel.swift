@@ -8,7 +8,7 @@
 import Foundation
 import Combine
 
-final class DateSetupViewModel: BaseViewModel, ViewModelType {
+final class DateSetupViewModel: BaseObject, ViewModelType {
     private let dateSetupService: DateSetupService
     let movie: (movieId: Int, title: String, backdrop: String, poster: String)
     

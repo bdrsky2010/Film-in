@@ -14,7 +14,7 @@ protocol DateSetupService: AnyObject {
     func saveWantOrWatchedMovie(query: WantWatchedMovieQuery)
 }
 
-final class DefaultDateSetupService {
+final class DefaultDateSetupService: BaseObject {
     private let localNotificationManager: LocalNotificationManager
     private let databaseRepository: DatabaseRepository
     
@@ -24,10 +24,6 @@ final class DefaultDateSetupService {
     ) {
         self.localNotificationManager = localNotificationManager
         self.databaseRepository = databaseRepository
-    }
-    
-    deinit {
-        print("\(String(describing: self)) is deinit")
     }
 }
 

@@ -8,7 +8,7 @@
 import Foundation
 import Combine
 
-final class MovieDetailViewModel: BaseViewModel, ViewModelType {
+final class MovieDetailViewModel: BaseObject, ViewModelType {
     private let movieDetailService: MovieDetailService
     private let networkMonitor: NetworkMonitor
     let movieId: Int

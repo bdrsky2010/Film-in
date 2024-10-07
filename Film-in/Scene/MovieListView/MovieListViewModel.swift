@@ -16,7 +16,7 @@ enum UsedTo {
     case search(_ text: String)
 }
 
-final class MovieListViewModel: BaseViewModel, ViewModelType {
+final class MovieListViewModel: BaseObject, ViewModelType {
     private let movieListService: MovieListService
     private let networkMonitor: NetworkMonitor
     private let usedTo: UsedTo

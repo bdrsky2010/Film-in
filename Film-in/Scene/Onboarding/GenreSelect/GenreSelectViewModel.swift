@@ -8,7 +8,7 @@
 import Foundation
 import Combine
 
-final class GenreSelectViewModel: BaseViewModel, ViewModelType {
+final class GenreSelectViewModel: BaseObject, ViewModelType {
     private let genreSelectService: GenreSelectService
     private let networkMonitor: NetworkMonitor
     

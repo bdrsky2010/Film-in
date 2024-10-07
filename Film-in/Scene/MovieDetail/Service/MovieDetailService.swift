@@ -15,7 +15,7 @@ protocol MovieDetailService: AnyObject {
     func fetchMovieVideos(query: MovieVideosQuery) async -> Result<[MovieVideo], TMDBError>
 }
 
-final class DefaultMovieDetailService: MovieDetailService {
+final class DefaultMovieDetailService: BaseObject, MovieDetailService {
     private let tmdbRepository: TMDBRepository
     private let databaseRepository: DatabaseRepository
     
@@ -25,10 +25,6 @@ final class DefaultMovieDetailService: MovieDetailService {
     ) {
         self.tmdbRepository = tmdbRepository
         self.databaseRepository = databaseRepository
-    }
-    
-    deinit {
-        print("\(String(describing: self)) is deinit")
     }
 }
 

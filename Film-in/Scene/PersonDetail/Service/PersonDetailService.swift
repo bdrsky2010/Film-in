@@ -12,7 +12,7 @@ protocol PersonDetailService {
     func fetchPersonMovie(query: PersonQuery) async -> Result<PersonMovie, TMDBError>
 }
 
-final class DefaultPersonDetailService: PersonDetailService {
+final class DefaultPersonDetailService: BaseObject, PersonDetailService {
     private let tmdbRepository: TMDBRepository
     private let databaseRepository: DatabaseRepository
     
@@ -22,10 +22,6 @@ final class DefaultPersonDetailService: PersonDetailService {
     ) {
         self.tmdbRepository = tmdbRepository
         self.databaseRepository = databaseRepository
-    }
-    
-    deinit {
-        print("\(String(describing: self)) is deinit")
     }
 }
 

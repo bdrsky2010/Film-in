@@ -14,7 +14,7 @@ protocol HomeService: AnyObject {
     func fetchDiscover(query: HomeMovieQuery) async -> Result<HomeMovie, TMDBError>
 }
 
-final class DefaultHomeService: HomeService {
+final class DefaultHomeService: BaseObject, HomeService {
     private let tmdbRepository: TMDBRepository
     private let databaseRepository: DatabaseRepository
     
@@ -24,10 +24,6 @@ final class DefaultHomeService: HomeService {
     ) {
         self.tmdbRepository = tmdbRepository
         self.databaseRepository = databaseRepository
-    }
-    
-    deinit {
-        print("\(String(describing: self)) is deinit")
     }
     
     func fetchTrending(query: TrendingQuery) async -> Result<HomeMovie, TMDBError> {

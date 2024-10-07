@@ -8,7 +8,7 @@
 import Foundation
 import Combine
 
-final class HomeViewModel: BaseViewModel, ViewModelType {
+final class HomeViewModel: BaseObject, ViewModelType {
     private let homeService: HomeService
     private let networkMonitor: NetworkMonitor
     

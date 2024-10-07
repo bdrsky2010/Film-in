@@ -8,7 +8,7 @@
 import Foundation
 import Combine
 
-final class PersonDetailViewModel: BaseViewModel, ViewModelType {
+final class PersonDetailViewModel: BaseObject, ViewModelType {
     private let personDetailService: PersonDetailService
     private let networkMonitor: NetworkMonitor
     private let personId: Int

@@ -12,7 +12,7 @@ protocol GenreSelectService: AnyObject {
     func createUser(genres: Set<MovieGenre>)
 }
 
-final class DefaultGenreSelectService: GenreSelectService {
+final class DefaultGenreSelectService: BaseObject, GenreSelectService {
     private let tmdbRepository: TMDBRepository
     private let databaseRepository: DatabaseRepository
     
@@ -22,10 +22,6 @@ final class DefaultGenreSelectService: GenreSelectService {
     ) {
         self.tmdbRepository = tmdbRepository
         self.databaseRepository = databaseRepository
-    }
-    
-    deinit {
-        print("\(String(describing: self)) is deinit")
     }
     
     func fetchGenres(query: MovieGenreQuery) async -> Result<[MovieGenre], TMDBError> {
