@@ -6,10 +6,11 @@
 //
 
 import Foundation
+import Combine
 
 protocol PersonDetailService {
-    func fetchPersonDetail(query: PersonQuery) async -> Result<PersonDetail, TMDBError>
-    func fetchPersonMovie(query: PersonQuery) async -> Result<PersonMovie, TMDBError>
+    func fetchPersonDetail(query: PersonQuery) -> Future<Result<PersonDetail, TMDBError>, Never>
+    func fetchPersonMovie(query: PersonQuery) -> Future<Result<PersonMovie, TMDBError>, Never>
 }
 
 final class DefaultPersonDetailService: BaseObject, PersonDetailService {
@@ -26,11 +27,33 @@ final class DefaultPersonDetailService: BaseObject, PersonDetailService {
 }
 
 extension DefaultPersonDetailService {
-    func fetchPersonDetail(query: PersonQuery) async -> Result<PersonDetail, TMDBError> {
-        return await tmdbRepository.personDetailRequest(query: query)
+    func fetchPersonDetail(query: PersonQuery) -> Future<Result<PersonDetail, TMDBError>, Never> {
+        return Future { promise in
+            Task { [weak self] in
+                guard let self else { return }
+                let result = await tmdbRepository.personDetailRequest(query: query)
+                switch result {
+                case .success(let success):
+                    promise(.success(.success(success)))
+                case .failure(let failure):
+                    promise(.success(.failure(failure)))
+                }
+            }
+        }
     }
     
-    func fetchPersonMovie(query: PersonQuery) async -> Result<PersonMovie, TMDBError> {
-        return await tmdbRepository.personMovieRequest(query: query)
+    func fetchPersonMovie(query: PersonQuery) -> Future<Result<PersonMovie, TMDBError>, Never> {
+        return Future { promise in
+            Task { [weak self] in
+                guard let self else { return }
+                let result = await tmdbRepository.personMovieRequest(query: query)
+                switch result {
+                case .success(let success):
+                    promise(.success(.success(success)))
+                case .failure(let failure):
+                    promise(.success(.failure(failure)))
+                }
+            }
+        }
     }
 }
