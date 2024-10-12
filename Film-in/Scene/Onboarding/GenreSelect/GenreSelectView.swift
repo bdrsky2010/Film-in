@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import PopupView
 
 struct GenreSelectView: View {
     @AppStorage("onboarding") private var isOnboarding = false
@@ -99,6 +100,30 @@ struct GenreSelectView: View {
         .frame(maxWidth: .infinity)
         .task {
             viewModel.action(.viewOnTask)
+        }
+        .popup(isPresented: $viewModel.output.isShowAlert) {
+            VStack {
+                Text("apiRequestError")
+                    .font(.ibmPlexMonoSemiBold(size: 20))
+                    .padding(.top)
+                Button {
+                    viewModel.action(.refresh)
+                } label: {
+                    Text("refresh")
+                        .font(.ibmPlexMonoMedium(size: 20))
+                        .underline()
+                        .foregroundStyle(.white)
+                }
+                .padding(.bottom, 4)
+            }
+            .frame(maxWidth: .infinity)
+            .background(.red)
+        } customize: {
+            $0
+                .type(.floater(verticalPadding: 0, horizontalPadding: 0, useSafeAreaInset: true))
+                .animation(.bouncy)
+                .position(.top)
+                .dragToDismiss(true)
         }
     }
 }
