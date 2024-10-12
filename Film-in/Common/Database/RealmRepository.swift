@@ -75,7 +75,6 @@ final class RealmRepository: DatabaseRepository {
     }
     
     func deleteMovie(movieId: Int) {
-        guard let user else { return }
         do {
             try realm.write {
                 guard let movie = realm.objects(MovieTable.self).first(where: { $0.id == movieId }) else { return }
