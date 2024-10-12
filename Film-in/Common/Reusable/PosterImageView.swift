@@ -21,7 +21,6 @@ struct PosterImage: View {
                     .foregroundStyle(.appText)
             }
             .cancelOnDisappear(true)
-            .cacheMemoryOnly()
             .fade(duration: 0.25)
             .aspectRatio(contentMode: .fill)
             .frame(width: size.width, height: size.height)
