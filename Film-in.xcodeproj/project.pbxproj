@@ -476,9 +476,9 @@
 		7B984B8B2C9C6F9100881C5C /* Home */ = {
 			isa = PBXGroup;
 			children = (
+				7B984C832CA5A2C100881C5C /* Custom */,
 				7B984C652CA4D5FE00881C5C /* Entity */,
 				7B984C642CA4D5F800881C5C /* Service */,
-				7B984C832CA5A2C100881C5C /* Custom */,
 				7B984C682CA4D6E800881C5C /* HomeView.swift */,
 				7B984CC02CA9B20D00881C5C /* SeeMoreView.swift */,
 				7B984C6A2CA4D6F000881C5C /* HomeViewModel.swift */,
