@@ -16,7 +16,7 @@ enum UsedTo {
     case search(_ text: String)
 }
 
-final class MovieListViewModel: BaseViewModel, ViewModelType {
+final class MovieListViewModel: BaseObject, ViewModelType {
     private let movieListService: MovieListService
     private let networkMonitor: NetworkMonitor
     private let usedTo: UsedTo
@@ -57,28 +57,18 @@ extension MovieListViewModel {
     
     func transform() {
         input.viewOnTask
-            .sink {
-                Task { [weak self] in
-                    guard let self else { return }
-                    await MainActor.run { [weak self] in
-                        guard let self else { return }
-                        output.isShowAlert = false
-                    }
-                    await firstFetch()
-                }
+            .sink { [weak self] in
+                guard let self else { return }
+                output.isShowAlert = false
+                firstFetch()
             }
             .store(in: &cancellable)
         
         input.nextPage
-            .sink {
-                Task { [weak self] in
-                    guard let self else { return }
-                    await MainActor.run { [weak self] in
-                        guard let self else { return }
-                        output.isShowAlert = false
-                    }
-                    await nextFetch()
-                }
+            .sink { [weak self] in
+                guard let self else { return }
+                output.isShowAlert = false
+                nextFetch()
             }
             .store(in: &cancellable)
     }
@@ -104,162 +94,133 @@ extension MovieListViewModel {
 }
 
 extension MovieListViewModel {
-    @MainActor
-    private func firstFetch() async {
+    private func firstFetch() {
         guard networkMonitor.networkType != .notConnect else {
             output.networkConnect = false
             return
         }
         output.networkConnect = true
         
-        await fetchMovie(page: 1)
+        fetchMovie(page: 1)
     }
     
-    @MainActor
-    private func nextFetch() async {
+    private func nextFetch() {
         guard networkMonitor.networkType != .notConnect else {
             output.networkConnect = false
             return
         }
         output.networkConnect = true
-        output.isPagination = true
-        defer { output.isPagination = false }
+        output.isPagination = true // 페이지네이션 시작 설정
+        defer { output.isPagination = false }  // 페이지네이션 완료 설정
         
         guard !isLastPage else { return }
-        await fetchMovie(page: recentPage + 1)
-    }
-    
-    @MainActor
-    private func fetchMovie(page: Int) async {
-        do {
-            switch usedTo {
-            case .nowPlaying:
-                try await fetchNowPlaying(page: page)
-            case .upcoming:
-                try await fetchUpcoming(page: page)
-            case .recommend:
-                try await fetchRecommend(page: page)
-            case .similar(let movieId):
-                try await fetchSimilar(movieId: movieId, page: page)
-            case .search(_ ):
-                break
-            }
-        } catch {
-            output.isShowAlert = true
-        }
+        fetchMovie(page: recentPage + 1)
     }
 }
 
 extension MovieListViewModel {
-    @MainActor
-    private func fetchNowPlaying(page: Int) async throws {
+    private func fetchMovie(page: Int) {
+        switch usedTo {
+        case .nowPlaying:
+            fetchNowPlaying(page: page)
+        case .upcoming:
+            fetchUpcoming(page: page)
+        case .recommend:
+            fetchRecommend(page: page)
+        case .similar(let movieId):
+            fetchSimilar(movieId: movieId, page: page)
+        case .search(_ ):
+            break
+        }
+    }
+    
+    private func fetchNowPlaying(page: Int) {
         let query = HomeMovieQuery(
             language: "longLanguageCode".localized,
             page: page,
             region: "regionCode".localized
         )
-        let result = await movieListService.fetchNowPlaying(query: query)
-        switch result {
-        case .success(let success):
-            if page == 1 {
-                output.movies = success
-            } else {
-                output.movies.movies.append(contentsOf: success.movies)
+        let publisher = movieListService.fetchNowPlaying(query: query)
+        
+        publisher
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] result in
+                guard let self else { return }
+                resultHandler(result, page: page)
             }
-            
-            if let responsePage = success.page,
-               let responseTotalPage = success.totalPage
-            {
-                recentPage = responsePage
-                isLastPage = responsePage == responseTotalPage
-            }
-        case .failure(let failure):
-            print(#function, failure)
-            throw failure
-        }
+            .store(in: &cancellable)
     }
     
-    @MainActor
-    private func fetchUpcoming(page: Int) async throws {
+    private func fetchUpcoming(page: Int) {
         let query = HomeMovieQuery(
             language: "longLanguageCode".localized,
             page: page,
             region: "regionCode".localized
         )
-        let result = await movieListService.fetchUpcoming(query: query)
-        switch result {
-        case .success(let success):
-            if page == 1 {
-                output.movies = success
-            } else {
-                output.movies.movies.append(contentsOf: success.movies)
+        let publisher = movieListService.fetchUpcoming(query: query)
+        
+        publisher
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] result in
+                guard let self else { return }
+                resultHandler(result, page: page)
             }
-            
-            if let responsePage = success.page,
-               let responseTotalPage = success.totalPage
-            {
-                recentPage = responsePage
-                isLastPage = responsePage == responseTotalPage
-            }
-        case .failure(let failure):
-            print(#function, failure)
-            throw failure
-        }
+            .store(in: &cancellable)
     }
     
-    @MainActor
-    private func fetchRecommend(page: Int) async throws {
+    private func fetchRecommend(page: Int) {
         let query = HomeMovieQuery(
             language: "longLanguageCode".localized,
             page: page,
             region: "regionCode".localized
         )
-        let result = await movieListService.fetchDiscover(query: query)
-        switch result {
-        case .success(let success):
-            if page == 1 {
-                output.movies = success
-            } else {
-                output.movies.movies.append(contentsOf: success.movies)
+        let publisher = movieListService.fetchDiscover(query: query)
+        
+        publisher
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] result in
+                guard let self else { return }
+                resultHandler(result, page: page)
             }
-            
-            if let responsePage = success.page,
-               let responseTotalPage = success.totalPage
-            {
-                recentPage = responsePage
-                isLastPage = responsePage == responseTotalPage
-            }
-        case .failure(let failure):
-            print(#function, failure)
-            throw failure
-        }
+            .store(in: &cancellable)
     }
     
-    @MainActor
-    private func fetchSimilar(movieId: Int, page: Int) async throws {
+    private func fetchSimilar(movieId: Int, page: Int) {
         let query = MovieSimilarQuery(
             movieId: movieId,
             language: "longLanguageCode".localized,
             page: page
         )
-        let result = await movieListService.fetchMovieSimilar(query: query)
+        let publisher = movieListService.fetchMovieSimilar(query: query)
+        
+        publisher
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] result in
+                guard let self else { return }
+                resultHandler(result, page: page)
+            }
+            .store(in: &cancellable)
+    }
+}
+
+extension MovieListViewModel {
+    private func resultHandler(_ result: Result<HomeMovie, TMDBError>, page: Int) {
         switch result {
-        case .success(let success):
+        case .success(let movies):
             if page == 1 {
-                output.movies = success
+                output.movies = movies
             } else {
-                output.movies.movies.append(contentsOf: success.movies)
+                output.movies.movies.append(contentsOf: movies.movies)
             }
             
-            if let responsePage = success.page,
-               let responseTotalPage = success.totalPage
+            if let responsePage = movies.page,
+               let responseTotalPage = movies.totalPage
             {
                 recentPage = responsePage
                 isLastPage = responsePage == responseTotalPage
             }
-        case .failure(let failure):
-            print(#function, failure)
-            throw failure
+        case .failure(let error):
+            if !output.isShowAlert { output.isShowAlert = true }
         }
     }
 }

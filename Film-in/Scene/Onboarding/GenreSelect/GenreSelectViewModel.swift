@@ -8,7 +8,7 @@
 import Foundation
 import Combine
 
-final class GenreSelectViewModel: BaseViewModel, ViewModelType {
+final class GenreSelectViewModel: BaseObject, ViewModelType {
     private let genreSelectService: GenreSelectService
     private let networkMonitor: NetworkMonitor
     
@@ -39,6 +39,7 @@ extension GenreSelectViewModel {
     
     struct Output {
         var networkConnect = true
+        var isShowAlert = false
         var genres = [MovieGenre]()
         var selectedGenres = Set<MovieGenre>()
         var selectedGenreRows = [[MovieGenre]]()
@@ -46,11 +47,9 @@ extension GenreSelectViewModel {
     
     func transform() {
         input.viewOnTask
-            .sink {
-                Task { [weak self] in
-                    guard let self else { return }
-                    await fetchGenres()
-                }
+            .sink { [weak self] in
+                guard let self else { return }
+                fetchGenres()
             }
             .store(in: &cancellable)
         
@@ -92,21 +91,26 @@ extension GenreSelectViewModel {
             .store(in: &cancellable)
     }
     
-    @MainActor
-    private func fetchGenres() async {
+    private func fetchGenres() {
         guard networkMonitor.networkType != .notConnect else {
             output.networkConnect = false
             return
         }
         output.networkConnect = true
         let query = MovieGenreQuery(language: "longLanguageCode".localized)
-        let result = await genreSelectService.fetchGenres(query: query)
-        switch result {
-        case .success(let success):
-            output.genres = success
-        case .failure(let failure):
-            print(failure)
-        }
+        let publisher = genreSelectService.fetchGenres(query: query)
+        publisher
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] result in
+                guard let self else { return }
+                switch result {
+                case .success(let genres):
+                    output.genres = genres
+                case .failure(let error):
+                    output.isShowAlert = true
+                }
+            }
+            .store(in: &cancellable)
     }
 }
 

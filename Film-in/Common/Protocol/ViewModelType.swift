@@ -8,7 +8,7 @@
 import Foundation
 import Combine
 
-protocol ViewModelType where Self: BaseViewModel {
+protocol ViewModelType: ObservableObject where Self: BaseObject {
     associatedtype Input
     associatedtype Output
     associatedtype Action

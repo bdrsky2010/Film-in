@@ -8,7 +8,7 @@
 import Foundation
 import Combine
 
-final class DateSetupViewModel: BaseViewModel, ViewModelType {
+final class DateSetupViewModel: BaseObject, ViewModelType {
     private let dateSetupService: DateSetupService
     let movie: (movieId: Int, title: String, backdrop: String, poster: String)
     
@@ -57,24 +57,28 @@ extension DateSetupViewModel {
             .store(in: &cancellable)
         
         input.requestPermission
-            .sink { _ in
-                Task { [weak self] in
-                    guard let self else { return }
-                    do {
-                        try await dateSetupService.requestPermission()
-                    } catch {
-                        output.isError = true
+            .sink { [weak self] _ in
+                guard let self else { return }
+                let publisher = dateSetupService.requestPermission()
+                publisher
+                    .receive(on: DispatchQueue.main)
+                    .sink { [weak self] result in
+                        guard let self else { return }
+                        switch result {
+                        case .success():
+                            break
+                        case .failure(_):
+                            output.isError = true
+                        }
                     }
-                }
+                    .store(in: &cancellable)
             }
             .store(in: &cancellable)
         
         input.wantOrWatched
-            .sink { _ in
-                Task { [weak self] in
-                    guard let self else { return }
-                    await saveMovie()
-                }
+            .sink { [weak self] _ in
+                guard let self else { return }
+                saveMovie()
             }
             .store(in: &cancellable)
         
@@ -110,8 +114,7 @@ extension DateSetupViewModel {
 }
 
 extension DateSetupViewModel {
-    @MainActor
-    private func saveMovie() async {
+    private func saveMovie() {
         let query = WantWatchedMovieQuery(
             movieId: movie.movieId,
             title: movie.title,
@@ -126,14 +129,24 @@ extension DateSetupViewModel {
         
         switch type {
         case .want:
-            do {
-                if output.isAlarm {
-                    try await dateSetupService.registPushAlarm(movie: (movie.movieId, movie.title), date: output.selection)
-                }
-                output.isSuccess = true
-            } catch {
-                output.isSuccess = false
-                output.isError = true
+            if output.isAlarm {
+                let publisher = dateSetupService.registPushAlarm(
+                    movie: (movie.movieId, movie.title),
+                    date: output.selection
+                )
+                publisher
+                    .receive(on: DispatchQueue.main)
+                    .sink { [weak self] result in
+                        guard let self else { return }
+                        switch result {
+                        case .success():
+                            output.isSuccess = true
+                        case .failure(_):
+                            output.isSuccess = false
+                            output.isError = true
+                        }
+                    }
+                    .store(in: &cancellable)
             }
         case .watched:
             output.isSuccess = true

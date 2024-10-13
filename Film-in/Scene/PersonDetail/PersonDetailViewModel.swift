@@ -8,7 +8,7 @@
 import Foundation
 import Combine
 
-final class PersonDetailViewModel: BaseViewModel, ViewModelType {
+final class PersonDetailViewModel: BaseObject, ViewModelType {
     private let personDetailService: PersonDetailService
     private let networkMonitor: NetworkMonitor
     private let personId: Int
@@ -45,11 +45,9 @@ extension PersonDetailViewModel {
     
     func transform() {
         input.viewOnTask
-            .sink {
-                Task { [weak self] in
-                    guard let self else { return }
-                    await fetchPersonInfo()
-                }
+            .sink { [weak self] in
+                guard let self else { return }
+                fetchPersonInfo()
             }
             .store(in: &cancellable)
     }
@@ -72,45 +70,48 @@ extension PersonDetailViewModel {
 }
 
 extension PersonDetailViewModel {
-    @MainActor
-    private func fetchPersonInfo() async {
+    private func fetchPersonInfo() {
         guard networkMonitor.networkType != .notConnect else {
             output.networkConnect = false
             return
         }
         output.networkConnect = true
         
-        do {
-            try await fetchPersonDetail()
-            try await fetchPersonMovie()
-        } catch {
-            output.isShowAlert = true
-        }
+        fetchPersonDetail()
+        fetchPersonMovie()
     }
     
-    @MainActor
-    private func fetchPersonDetail() async throws {
+    private func fetchPersonDetail() {
         let query = PersonQuery(language: "longLanguageCode".localized, personId: personId)
-        let result = await personDetailService.fetchPersonDetail(query: query)
-        switch result {
-        case .success(let success):
-            output.personDetail = success
-        case .failure(let failure):
-            print(#function, failure)
-            throw failure
-        }
+        let publisher = personDetailService.fetchPersonDetail(query: query)
+        publisher
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] result in
+                guard let self else { return }
+                switch result {
+                case .success(let personDetail):
+                    output.personDetail = personDetail
+                case .failure(let error):
+                    if !output.isShowAlert { output.isShowAlert = true }
+                }
+            }
+            .store(in: &cancellable)
     }
     
-    @MainActor
-    private func fetchPersonMovie() async throws {
+    private func fetchPersonMovie() {
         let query = PersonQuery(language: "longLanguageCode".localized, personId: personId)
-        let result = await personDetailService.fetchPersonMovie(query: query)
-        switch result {
-        case .success(let success):
-            output.personMovie = success
-        case .failure(let failure):
-            print(#function, failure)
-            throw failure
-        }
+        let publisher = personDetailService.fetchPersonMovie(query: query)
+        publisher
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] result in
+                guard let self else { return }
+                switch result {
+                case .success(let personMovie):
+                    output.personMovie = personMovie
+                case .failure(let error):
+                    if !output.isShowAlert { output.isShowAlert = true }
+                }
+            }
+            .store(in: &cancellable)
     }
 }

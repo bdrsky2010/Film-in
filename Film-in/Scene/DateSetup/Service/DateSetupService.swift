@@ -6,15 +6,20 @@
 //
 
 import Foundation
+import Combine
+
+enum NotificationError: Error {
+    case failure
+}
 
 protocol DateSetupService: AnyObject {
-    func requestPermission() async throws
-    func registPushAlarm(movie: (id: Int, title: String), date: Date) async throws
+    func requestPermission() -> Future<Result<Void, NotificationError>, Never>
+    func registPushAlarm(movie: (id: Int, title: String), date: Date) -> Future<Result<Void, NotificationError>, Never>
     func goToSetting()
     func saveWantOrWatchedMovie(query: WantWatchedMovieQuery)
 }
 
-final class DefaultDateSetupService {
+final class DefaultDateSetupService: BaseObject {
     private let localNotificationManager: LocalNotificationManager
     private let databaseRepository: DatabaseRepository
     
@@ -25,19 +30,35 @@ final class DefaultDateSetupService {
         self.localNotificationManager = localNotificationManager
         self.databaseRepository = databaseRepository
     }
-    
-    deinit {
-        print("\(String(describing: self)) is deinit")
-    }
 }
 
 extension DefaultDateSetupService: DateSetupService {
-    func requestPermission() async throws {
-        try await localNotificationManager.requestPermission()
+    func requestPermission() -> Future<Result<Void, NotificationError>, Never> {
+        return Future { promise in
+            Task { [weak self] in
+                guard let self else { return }
+                do {
+                    try await localNotificationManager.requestPermission()
+                    promise(.success(.success(())))
+                } catch {
+                    promise(.success(.failure(.failure)))
+                }
+            }
+        }
     }
     
-    func registPushAlarm(movie: (id: Int, title: String), date: Date) async throws {
-        try await localNotificationManager.schedule(movie: movie, date: date)
+    func registPushAlarm(movie: (id: Int, title: String), date: Date) -> Future<Result<Void, NotificationError>, Never> {
+        return Future { promise in
+            Task { [weak self] in
+                guard let self else { return }
+                do {
+                    try await localNotificationManager.schedule(movie: movie, date: date)
+                    promise(.success(.success(())))
+                } catch {
+                    promise(.success(.failure(.failure)))
+                }
+            }
+        }
     }
     
     func goToSetting() {

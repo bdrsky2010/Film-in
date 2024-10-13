@@ -8,7 +8,7 @@
 import Foundation
 import Combine
 
-final class MovieDetailViewModel: BaseViewModel, ViewModelType {
+final class MovieDetailViewModel: BaseObject, ViewModelType {
     private let movieDetailService: MovieDetailService
     private let networkMonitor: NetworkMonitor
     let movieId: Int
@@ -48,11 +48,9 @@ extension MovieDetailViewModel {
     
     func transform() {
         input.viewOnTask
-            .sink {
-                Task { [weak self] in
-                    guard let self else { return }
-                    await fetchMovieInfo()
-                }
+            .sink { [weak self] in
+                guard let self else { return }
+                fetchMovieInfo()
             }
             .store(in: &cancellable)
     }
@@ -75,108 +73,116 @@ extension MovieDetailViewModel {
 }
 
 extension MovieDetailViewModel {
-    @MainActor
-    private func fetchMovieInfo() async {
+    private func fetchMovieInfo() {
         guard networkMonitor.networkType != .notConnect else {
             output.networkConnect = false
             return
         }
         output.networkConnect = true
         
-        do {
-            try await fetchDetail()
-            try await fetchCredit()
-            try await fetchSimilar(
-                isRandomed: false,
-                totalPage: 1
-            )
-            try await fetchImages()
-            try await fetchVideos(isRetry: false)
-        } catch {
-            output.isShowAlert = true
-        }
+        fetchDetail()
+        fetchCredit()
+        fetchSimilar(isRandomed: true, totalPage: 1)
+        fetchImages()
+        fetchVideos(isRetry: false)
     }
     
-    @MainActor
-    private func fetchDetail() async throws {
+    private func fetchDetail() {
         let query = MovieDetailQuery(movieId: movieId, language: "longLanguageCode".localized)
-        let result = await movieDetailService.fetchMovieDetail(query: query)
-        switch result {
-        case .success(let success):
-            output.movieDetail = success
-        case .failure(let failure):
-            print(#function, failure)
-            throw failure
-        }
+        let publisher = movieDetailService.fetchMovieDetail(query: query)
+        publisher
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] result in
+                guard let self else { return }
+                switch result {
+                case .success(let movieInfo):
+                    output.movieDetail = movieInfo
+                case .failure(let error):
+                    if !output.isShowAlert { output.isShowAlert = true }
+                }
+            }
+            .store(in: &cancellable)
     }
     
-    @MainActor
-    private func fetchCredit() async throws {
+    private func fetchCredit() {
         let query = MovieCreditQuery(movieId: movieId, language: "longLanguageCode".localized)
-        let result = await movieDetailService.fetchMovieCredit(query: query)
-        switch result {
-        case .success(let success):
-            output.creditInfo = success
-        case .failure(let failure):
-            print(#function, failure)
-            throw failure
-        }
+        let publisher = movieDetailService.fetchMovieCredit(query: query)
+        publisher
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] result in
+                guard let self else { return }
+                switch result {
+                case .success(let creditInfo):
+                    output.creditInfo = creditInfo
+                case .failure(let error):
+                    if !output.isShowAlert { output.isShowAlert = true }
+                }
+            }
+            .store(in: &cancellable)
     }
     
-    @MainActor
     private func fetchSimilar(
         isRandomed: Bool,
         totalPage: Int
-    ) async throws {
+    ) {
         let query = MovieSimilarQuery(
             movieId: movieId,
             language: "longLanguageCode".localized,
             page: isRandomed ? Int.random(in: 1...totalPage) : 1
         )
-        let result = await movieDetailService.fetchMovieSimilar(query: query)
-        switch result {
-        case .success(let success):
-            if isRandomed {
-                output.movieSimilars = success.movies
-            } else {
-                try await fetchSimilar(
-                    isRandomed: true,
-                    totalPage: success.totalPage <= 500 ? totalPage : 500
-                )
+        let publisher = movieDetailService.fetchMovieSimilar(query: query)
+        publisher
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] result in
+                guard let self else { return }
+                switch result {
+                case .success(let similar):
+                    if isRandomed {
+                        output.movieSimilars = similar.movies
+                    } else {
+                        fetchSimilar(
+                            isRandomed: true,
+                            totalPage: similar.totalPage <= 500 ? totalPage : 500
+                        )
+                    }
+                case .failure(let error):
+                    if !output.isShowAlert { output.isShowAlert = true }
+                }
             }
-        case .failure(let failure):
-            print(#function, failure)
-            throw failure
-        }
+            .store(in: &cancellable)
     }
     
-    @MainActor
-    private func fetchImages() async throws {
+    private func fetchImages() {
         let query = MovieImagesQuery(movieId: movieId, imageLanguage: "\("shortLanguageCode".localized),en,null")
-        let result = await movieDetailService.fetchMovieImages(query: query)
-        switch result {
-        case .success(let success):
-            output.movieImages = success
-        case .failure(let failure):
-            print(#function, failure)
-            throw failure
-        }
+        let publisher = movieDetailService.fetchMovieImages(query: query)
+        publisher
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] result in
+                guard let self else { return }
+                switch result {
+                case .success(let images):
+                    output.movieImages = images
+                case .failure(let error):
+                    if !output.isShowAlert { output.isShowAlert = true }
+                }
+            }
+            .store(in: &cancellable)
     }
     
-    @MainActor
-    private func fetchVideos(isRetry: Bool) async throws {
+    private func fetchVideos(isRetry: Bool) {
         let query = MovieVideosQuery(movieId: movieId, language: !isRetry ? "longLanguageCode".localized : "en-US")
-        let result = await movieDetailService.fetchMovieVideos(query: query)
-        switch result {
-        case .success(let success):
-            if !success.isEmpty {
-                output.movieVideos = success
-            } else {
-                try await fetchVideos(isRetry: true)
+        let publisher = movieDetailService.fetchMovieVideos(query: query)
+        publisher
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] result in
+                guard let self else { return }
+                switch result {
+                case .success(let videos):
+                    output.movieVideos = videos
+                case .failure(let error):
+                    if !output.isShowAlert { output.isShowAlert = true }
+                }
             }
-        case .failure(let failure):
-            print(#function, failure)
-            throw failure
-        }
+            .store(in: &cancellable)
     }
 }

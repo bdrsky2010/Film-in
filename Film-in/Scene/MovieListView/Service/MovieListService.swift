@@ -6,15 +6,16 @@
 //
 
 import Foundation
+import Combine
 
 protocol MovieListService: AnyObject {
-    func fetchNowPlaying(query: HomeMovieQuery) async -> Result<HomeMovie, TMDBError>
-    func fetchUpcoming(query: HomeMovieQuery) async -> Result<HomeMovie, TMDBError>
-    func fetchDiscover(query: HomeMovieQuery) async -> Result<HomeMovie, TMDBError>
-    func fetchMovieSimilar(query: MovieSimilarQuery) async -> Result<HomeMovie, TMDBError>
+    func fetchNowPlaying(query: HomeMovieQuery) -> Future<Result<HomeMovie, TMDBError>, Never>
+    func fetchUpcoming(query: HomeMovieQuery) -> Future<Result<HomeMovie, TMDBError>, Never>
+    func fetchDiscover(query: HomeMovieQuery) -> Future<Result<HomeMovie, TMDBError>, Never>
+    func fetchMovieSimilar(query: MovieSimilarQuery) -> Future<Result<HomeMovie, TMDBError>, Never>
 }
 
-final class DefaultMovieListService: MovieListService {
+final class DefaultMovieListService: BaseObject, MovieListService {
     private let tmdbRepository: TMDBRepository
     private let databaseRepository: DatabaseRepository
     
@@ -25,32 +26,72 @@ final class DefaultMovieListService: MovieListService {
         self.tmdbRepository = tmdbRepository
         self.databaseRepository = databaseRepository
     }
-    
-    deinit {
-        print("\(String(describing: self)) is deinit")
-    }
 }
 
 extension DefaultMovieListService {
-    func fetchNowPlaying(query: HomeMovieQuery) async -> Result<HomeMovie, TMDBError> {
-        return await tmdbRepository.nowPlayingRequest(query: query)
+    func fetchNowPlaying(query: HomeMovieQuery) -> Future<Result<HomeMovie, TMDBError>, Never> {
+        return Future { promise in
+            Task { [weak self] in
+                guard let self else { return }
+                let result = await tmdbRepository.nowPlayingRequest(query: query)
+                switch result {
+                case .success(let success):
+                    promise(.success(.success(success)))
+                case .failure(let failure):
+                    promise(.success(.failure(failure)))
+                }
+            }
+        }
     }
     
-    func fetchUpcoming(query: HomeMovieQuery) async -> Result<HomeMovie, TMDBError> {
-        return await tmdbRepository.upcomingRequest(query: query)
+    func fetchUpcoming(query: HomeMovieQuery) -> Future<Result<HomeMovie, TMDBError>, Never> {
+        return Future { promise in
+            Task { [weak self] in
+                guard let self else { return }
+                let result = await tmdbRepository.upcomingRequest(query: query)
+                switch result {
+                case .success(let success):
+                    promise(.success(.success(success)))
+                case .failure(let failure):
+                    promise(.success(.failure(failure)))
+                }
+            }
+        }
     }
     
     @MainActor
-    func fetchDiscover(query: HomeMovieQuery) async -> Result<HomeMovie, TMDBError> {
-        let query = HomeMovieQuery(
-            language: query.language,
-            page: query.page,
-            region: query.region,
-            withGenres: databaseRepository.user?.selectedGenreIds.map { String($0) }.joined(separator: "|"))
-        return await tmdbRepository.discoverRequest(query: query)
+    func fetchDiscover(query: HomeMovieQuery) -> Future<Result<HomeMovie, TMDBError>, Never> {
+        return Future { promise in
+            Task { [weak self] in
+                guard let self else { return }
+                let _query = HomeMovieQuery(
+                    language: query.language,
+                    page: query.page,
+                    region: query.region,
+                    withGenres: databaseRepository.user?.selectedGenreIds.map { String($0) }.joined(separator: "|"))
+                let result = await tmdbRepository.discoverRequest(query: _query)
+                switch result {
+                case .success(let success):
+                    promise(.success(.success(success)))
+                case .failure(let failure):
+                    promise(.success(.failure(failure)))
+                }
+            }
+        }
     }
     
-    func fetchMovieSimilar(query: MovieSimilarQuery) async -> Result<HomeMovie, TMDBError> {
-        return await tmdbRepository.similarRequest(query: query)
+    func fetchMovieSimilar(query: MovieSimilarQuery) -> Future<Result<HomeMovie, TMDBError>, Never> {
+        return Future { promise in
+            Task { [weak self] in
+                guard let self else { return }
+                let result: Result<HomeMovie, TMDBError> = await tmdbRepository.similarRequest(query: query)
+                switch result {
+                case .success(let success):
+                    promise(.success(.success(success)))
+                case .failure(let failure):
+                    promise(.success(.failure(failure)))
+                }
+            }
+        }
     }
 }

@@ -6,16 +6,17 @@
 //
 
 import Foundation
+import Combine
 
 protocol MovieDetailService: AnyObject {
-    func fetchMovieDetail(query: MovieDetailQuery) async -> Result<MovieInfo, TMDBError>
-    func fetchMovieCredit(query: MovieCreditQuery) async -> Result<[CreditInfo], TMDBError>
-    func fetchMovieSimilar(query: MovieSimilarQuery) async -> Result<MovieSimilar, TMDBError>
-    func fetchMovieImages(query: MovieImagesQuery) async -> Result<MovieImages, TMDBError>
-    func fetchMovieVideos(query: MovieVideosQuery) async -> Result<[MovieVideo], TMDBError>
+    func fetchMovieDetail(query: MovieDetailQuery) -> Future<Result<MovieInfo, TMDBError>, Never>
+    func fetchMovieCredit(query: MovieCreditQuery) -> Future<Result<[CreditInfo], TMDBError>, Never>
+    func fetchMovieSimilar(query: MovieSimilarQuery) -> Future<Result<MovieSimilar, TMDBError>, Never>
+    func fetchMovieImages(query: MovieImagesQuery) -> Future<Result<MovieImages, TMDBError>, Never>
+    func fetchMovieVideos(query: MovieVideosQuery) -> Future<Result<[MovieVideo], TMDBError>, Never>
 }
 
-final class DefaultMovieDetailService: MovieDetailService {
+final class DefaultMovieDetailService: BaseObject, MovieDetailService {
     private let tmdbRepository: TMDBRepository
     private let databaseRepository: DatabaseRepository
     
@@ -26,30 +27,81 @@ final class DefaultMovieDetailService: MovieDetailService {
         self.tmdbRepository = tmdbRepository
         self.databaseRepository = databaseRepository
     }
-    
-    deinit {
-        print("\(String(describing: self)) is deinit")
-    }
 }
 
 extension DefaultMovieDetailService {
-    func fetchMovieDetail(query: MovieDetailQuery) async -> Result<MovieInfo, TMDBError> {
-        return await tmdbRepository.detailRequest(query: query)
+    func fetchMovieDetail(query: MovieDetailQuery) -> Future<Result<MovieInfo, TMDBError>, Never> {
+        return Future { promise in
+            Task { [weak self] in
+                guard let self else { return }
+                let result = await tmdbRepository.detailRequest(query: query)
+                switch result {
+                case .success(let success):
+                    promise(.success(.success(success)))
+                case .failure(let failure):
+                    promise(.success(.failure(failure)))
+                }
+            }
+        }
     }
     
-    func fetchMovieCredit(query: MovieCreditQuery) async -> Result<[CreditInfo], TMDBError> {
-        return await tmdbRepository.creditRequest(query: query)
+    func fetchMovieCredit(query: MovieCreditQuery) -> Future<Result<[CreditInfo], TMDBError>, Never> {
+        return Future { promise in
+            Task { [weak self] in
+                guard let self else { return }
+                let result = await tmdbRepository.creditRequest(query: query)
+                switch result {
+                case .success(let success):
+                    promise(.success(.success(success)))
+                case .failure(let failure):
+                    promise(.success(.failure(failure)))
+                }
+            }
+        }
     }
     
-    func fetchMovieSimilar(query: MovieSimilarQuery) async -> Result<MovieSimilar, TMDBError> {
-        return await tmdbRepository.similarRequest(query: query)
+    func fetchMovieSimilar(query: MovieSimilarQuery) -> Future<Result<MovieSimilar, TMDBError>, Never> {
+        return Future { promise in
+            Task { [weak self] in
+                guard let self else { return }
+                let result: Result<MovieSimilar, TMDBError> = await tmdbRepository.similarRequest(query: query)
+                switch result {
+                case .success(let success):
+                    promise(.success(.success(success)))
+                case .failure(let failure):
+                    promise(.success(.failure(failure)))
+                }
+            }
+        }
     }
     
-    func fetchMovieImages(query: MovieImagesQuery) async -> Result<MovieImages, TMDBError> {
-        return await tmdbRepository.imagesRequest(query: query)
+    func fetchMovieImages(query: MovieImagesQuery) -> Future<Result<MovieImages, TMDBError>, Never> {
+        return Future { promise in
+            Task { [weak self] in
+                guard let self else { return }
+                let result = await tmdbRepository.imagesRequest(query: query)
+                switch result {
+                case .success(let success):
+                    promise(.success(.success(success)))
+                case .failure(let failure):
+                    promise(.success(.failure(failure)))
+                }
+            }
+        }
     }
     
-    func fetchMovieVideos(query: MovieVideosQuery) async -> Result<[MovieVideo], TMDBError> {
-        return await tmdbRepository.videosRequest(query: query)
+    func fetchMovieVideos(query: MovieVideosQuery) -> Future<Result<[MovieVideo], TMDBError>, Never> {
+        return Future { promise in
+            Task { [weak self] in
+                guard let self else { return }
+                let result = await tmdbRepository.videosRequest(query: query)
+                switch result {
+                case .success(let success):
+                    promise(.success(.success(success)))
+                case .failure(let failure):
+                    promise(.success(.failure(failure)))
+                }
+            }
+        }
     }
 }

@@ -8,7 +8,7 @@
 import Foundation
 import Combine
 
-final class HomeViewModel: BaseViewModel, ViewModelType {
+final class HomeViewModel: BaseObject, ViewModelType {
     private let homeService: HomeService
     private let networkMonitor: NetworkMonitor
     
@@ -44,11 +44,9 @@ extension HomeViewModel {
     
     func transform() {
         input.viewOnTask
-            .sink {
-                Task { [weak self] in
-                    guard let self else { return }
-                    await fetchMovies()
-                }
+            .sink { [weak self] in
+                guard let self else { return }
+                fetchMovies()
             }
             .store(in: &cancellable)
     }
@@ -71,102 +69,113 @@ extension HomeViewModel {
 }
 
 extension HomeViewModel {
-    @MainActor
-    private func fetchMovies() async {
+    private func fetchMovies() {
         guard networkMonitor.networkType != .notConnect else {
             output.networkConnect = false
             return
         }
         output.networkConnect = true
         
-        do {
-            try await fetchTrending()
-            try await fetchNowPlaying()
-            try await fetchUpcoming()
-            try await fetchRecommend(
-                isRecommended: false,
-                recommendTotalPage: 1
-            )
-        } catch {
-            output.isShowAlert = true
-        }
+        fetchTrending()
+        fetchNowPlaying()
+        fetchUpcoming()
+        fetchRecommend(
+            isRecommended: false,
+            recommendTotalPage: 1
+        )
     }
     
-    @MainActor
-    private func fetchTrending() async throws {
+    private func fetchTrending() {
         let query = TrendingQuery(language: "longLanguageCode".localized)
-        let result = await homeService.fetchTrending(query: query)
-        switch result {
-        case .success(let success):
-            output.trendingMovies = success
-        case .failure(let failure):
-            print(#function, failure)
-            throw failure
-        }
+        let publisher = homeService.fetchTrending(query: query)
+        publisher
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] result in
+                guard let self else { return }
+                switch result {
+                case .success(let trending):
+                    output.trendingMovies = trending
+                case .failure(let error):
+                    if !output.isShowAlert { output.isShowAlert = true }
+                }
+            }
+            .store(in: &cancellable)
     }
     
-    @MainActor
-    private func fetchNowPlaying() async throws {
+    private func fetchNowPlaying() {
         let query = HomeMovieQuery(
             language: "longLanguageCode".localized,
             page: 1,
             region: "regionCode".localized
         )
-        let result = await homeService.fetchNowPlaying(query: query)
-        switch result {
-        case .success(let success):
-            output.nowPlayingMovies = success
-        case .failure(let failure):
-            print(#function, failure)
-            throw failure
-        }
+        let publisher = homeService.fetchNowPlaying(query: query)
+        publisher
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] result in
+                guard let self else { return }
+                switch result {
+                case .success(let nowPlaying):
+                    output.nowPlayingMovies = nowPlaying
+                case .failure(let error):
+                    if !output.isShowAlert { output.isShowAlert = true }
+                }
+            }
+            .store(in: &cancellable)
     }
     
-    @MainActor
-    private func fetchUpcoming() async throws {
+    private func fetchUpcoming() {
         let query = HomeMovieQuery(
             language: "longLanguageCode".localized,
             page: 1,
             region: "regionCode".localized
         )
-        let result = await homeService.fetchUpcoming(query: query)
-        switch result {
-        case .success(let success):
-            output.upcomingMovies = success
-        case .failure(let failure):
-            print(#function, failure)
-            throw failure
-        }
+        let publisher = homeService.fetchUpcoming(query: query)
+        publisher
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] result in
+                guard let self else { return }
+                switch result {
+                case .success(let upcoming):
+                    output.upcomingMovies = upcoming
+                case .failure(let error):
+                    if !output.isShowAlert { output.isShowAlert = true }
+                }
+            }
+            .store(in: &cancellable)
     }
     
-    @MainActor
     private func fetchRecommend(
         isRecommended: Bool,
         recommendTotalPage: Int
-    ) async throws {
+    ) {
         let query = HomeMovieQuery(
             language: "longLanguageCode".localized,
             page: isRecommended ? Int.random(in: 1...recommendTotalPage) : 1,
             region: "regionCode".localized
         )
-        let result = await homeService.fetchDiscover(query: query)
-        switch result {
-        case .success(let success):
-            if isRecommended {
-                output.recommendMovies = success
-            } else {
-                if let totalPage = success.totalPage {
-                    try await fetchRecommend(
-                        isRecommended: true,
-                        recommendTotalPage: totalPage <= 500 ? totalPage : 500
-                    )
-                } else {
-                    output.recommendMovies = success
+        let publisher = homeService.fetchDiscover(query: query)
+        publisher
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] result in
+                guard let self else { return }
+                switch result {
+                case .success(let recommend):
+                    if isRecommended {
+                        output.recommendMovies = recommend
+                    } else {
+                        if let totalPage = recommend.totalPage {
+                            fetchRecommend(
+                                isRecommended: true,
+                                recommendTotalPage: totalPage <= 500 ? totalPage : 500
+                            )
+                        } else {
+                            output.recommendMovies = recommend
+                        }
+                    }
+                case .failure(let error):
+                    if !output.isShowAlert { output.isShowAlert = true }
                 }
             }
-        case .failure(let failure):
-            print(#function, failure)
-            throw failure
-        }
+            .store(in: &cancellable)
     }
 }

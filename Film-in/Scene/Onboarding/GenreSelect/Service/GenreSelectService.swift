@@ -6,13 +6,14 @@
 //
 
 import Foundation
+import Combine
 
 protocol GenreSelectService: AnyObject {
-    func fetchGenres(query: MovieGenreQuery) async -> Result<[MovieGenre], TMDBError>
+    func fetchGenres(query: MovieGenreQuery) -> Future<Result<[MovieGenre], TMDBError>, Never>
     func createUser(genres: Set<MovieGenre>)
 }
 
-final class DefaultGenreSelectService: GenreSelectService {
+final class DefaultGenreSelectService: BaseObject, GenreSelectService {
     private let tmdbRepository: TMDBRepository
     private let databaseRepository: DatabaseRepository
     
@@ -24,12 +25,19 @@ final class DefaultGenreSelectService: GenreSelectService {
         self.databaseRepository = databaseRepository
     }
     
-    deinit {
-        print("\(String(describing: self)) is deinit")
-    }
-    
-    func fetchGenres(query: MovieGenreQuery) async -> Result<[MovieGenre], TMDBError> {
-        return await tmdbRepository.movieGenreRequest(query: query)
+    func fetchGenres(query: MovieGenreQuery) -> Future<Result<[MovieGenre], TMDBError>, Never> {
+        return Future { promise in
+            Task { [weak self] in
+                guard let self else { return }
+                let result = await tmdbRepository.movieGenreRequest(query: query)
+                switch result {
+                case .success(let success):
+                    promise(.success(.success(success)))
+                case .failure(let failure):
+                    promise(.success(.failure(failure)))
+                }
+            }
+        }
     }
     
     func createUser(genres: Set<MovieGenre>) {

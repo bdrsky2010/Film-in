@@ -11,7 +11,7 @@ protocol MyViewService: AnyObject {
     func requestDeleteMovie(movieId: Int)
 }
 
-final class DefaultMyViewService: MyViewService {
+final class DefaultMyViewService: BaseObject, MyViewService {
     private let databaseRepository: DatabaseRepository
     private let localNotificationManager: LocalNotificationManager
     
