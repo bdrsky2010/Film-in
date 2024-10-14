@@ -12,11 +12,11 @@
 </p>
 
 <p align="center"> 
-    <img src="./images/map.gif" align="center" width="19%">
-    <img src="./images/write.gif" align="center" width="19%"> 
-    <img src="./images/post.gif" align="center" width="19%"> 
-    <img src="./images/profile.gif" align="center" width="19%"> 
-    <img src="./images/cost.gif" align="center" width="19%">   
+    <img src="./images/main.gif" align="center" width="19%">
+    <img src="./images/alarm.gif" align="center" width="19%"> 
+    <img src="./images/person.gif" align="center" width="19%"> 
+    <img src="./images/movie_list.gif" align="center" width="19%"> 
+    <img src="./images/saved_list.gif" align="center" width="19%">   
 </p>
 <br>
 
@@ -44,3 +44,38 @@
   - 2024.09.12 - 2024.10.01 (약 19일)
 - 버전
   -  iOS 16.4 +
+
+<br>
+
+# 프로젝트 기술스택
+- 활용기술
+  - SwiftUI, Combine, Swift Concurrency
+  - MVVM, Input-Output, Clean Architecture
+  - CodeBasedUI
+- 라이브러리
+
+|라이브러리|사용목적|
+|-|-|
+|Realm|Local DB 구축|
+|Moya|추상화된 네트워크 통신 활용|
+|PopupView|간편한 팝업 UI 구성|
+|Kingfisher|이미지 로드 및 캐싱 처리|
+|YouTubePlayerKit|간편한 YouTube Player UI 구성|
+<br>
+
+# 앱 아키텍쳐
+<p align="center"> 
+    <img src="./images/architecture.png" align="center" width="80%"> 
+</p>
+
+> MVVM(Input/Output) + Clean Architecture
+- Input/Output 패턴을 활용하여 단방향 데이터바인딩
+- ViewModel, Service, Repository 로 나눠지는 역할에 따른 로직 모듈화
+- Router 패턴을 활용하여 반복되는 네트워크 작업을 추상화
+- DIP(의존성 역전 원칙)을 준수
+  - 추상화된 Protocol을 채택하여 객체의 생성과 사용을 분리
+  - 이를 통하여 하위모듈에서 구현체가 아닌 추상화된 타입에 의존 
+
+<br>
+
+# 트러블 슈팅
