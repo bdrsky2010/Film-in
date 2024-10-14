@@ -1,12 +1,15 @@
 # 🎬 Film-in
- <br>
+
+<br>
 <div align=center>
     <img src="https://img.shields.io/badge/Swift-v5.10-F05138?style=plastic&logo=swift&logoColor=F05138">
     <img src="https://img.shields.io/badge/Xcode-v15.4-147EFB?style=plastic&logo=swift&logoColor=147EFB">
     <img src="https://img.shields.io/badge/iOS-16.4+-F05138?style=plastic&logo=apple&logoColor=#000000">
 </div>
+<p align="center">
+    <img src="https://github.com/user-attachments/assets/a26770b1-0776-4405-a692-e59bb9633899"> 
+</p>
 <br>
-
 <p align="center"> 
     <img src="./images/map.gif" align="center" width="19%">
     <img src="./images/write.gif" align="center" width="19%"> 
@@ -14,7 +17,7 @@
     <img src="./images/profile.gif" align="center" width="19%"> 
     <img src="./images/cost.gif" align="center" width="19%">   
 </p>
-<br> 
+<br>
 
 # 앱 한 줄 소개
 `🎬 본 영화 및 볼 예정인 영화를 간단하게 저장하는 앱, 근데 이제 알림을 곁들인.`
