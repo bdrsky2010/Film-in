@@ -1,5 +1,5 @@
 # 🎬 Film-in
-
+[(/images/download.png)](https://apps.apple.com/kr/app/film-in/id6736368535)
 <br>
 <div align=center>
     <img src="https://img.shields.io/badge/Swift-v5.10-F05138?style=plastic&logo=swift&logoColor=F05138">
@@ -51,7 +51,6 @@
 - 활용기술
   - SwiftUI, Combine, Swift Concurrency
   - MVVM, Input-Output, Clean Architecture
-  - CodeBasedUI
 - 라이브러리
 
 |라이브러리|사용목적|
@@ -61,6 +60,7 @@
 |PopupView|간편한 팝업 UI 구성|
 |Kingfisher|이미지 로드 및 캐싱 처리|
 |YouTubePlayerKit|간편한 YouTube Player UI 구성|
+|Firebase Crashlytics|앱 안정성 개선|
 <br>
 
 # 앱 아키텍쳐
@@ -79,3 +79,38 @@
 <br>
 
 # 트러블 슈팅
+
+### 메모리 사용량을 줄이기 위한 노력
+
+<details>
+<summary>Kingfisher 사용 중 일어난 일</summary>
+<div>
+
+
+
+</div>
+</details>
+
+<br>
+
+<details>
+<summary>Lazy하게 View를 Load해보자</summary>
+<div>
+
+
+
+</div>
+</details>
+
+<br>
+
+### Memory Leak
+
+<details>
+<summary>init이 된 후 deinit이 되지 않는 이슈</summary>
+<div>
+
+
+
+</div>
+</details>
