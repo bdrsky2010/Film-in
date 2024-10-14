@@ -21,7 +21,7 @@
 <br>
 
 # 앱 한 줄 소개
-`🎬 본 영화 및 볼 예정인 영화를 간단하게 저장하는 앱, 근데 이제 알림을 곁들인. [![클릭 시 앱 다운로드 페이지로 이동](/images/download.png)](https://apps.apple.com/kr/app/film-in/id6736368535)`
+> 🎬 본 영화 및 볼 예정인 영화를 간단하게 저장하는 앱, 근데 이제 알림을 곁들인. ([Appstore](https://apps.apple.com/kr/app/film-in/id6736368535))
 
 <br>
 
