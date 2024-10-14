@@ -1,5 +1,5 @@
 # 🎬 Film-in
-[(/images/download.png)](https://apps.apple.com/kr/app/film-in/id6736368535)
+[![클릭 시 앱 다운로드 페이지로 이동](/images/download.png)](https://apps.apple.com/kr/app/film-in/id6736368535)
 <br>
 <div align=center>
     <img src="https://img.shields.io/badge/Swift-v5.10-F05138?style=plastic&logo=swift&logoColor=F05138">
