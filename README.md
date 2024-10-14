@@ -7,7 +7,7 @@
     <img src="https://img.shields.io/badge/iOS-16.4+-F05138?style=plastic&logo=apple&logoColor=#000000">
 </div>
 <p align="center">
-    <img src="https://github.com/user-attachments/assets/a26770b1-0776-4405-a692-e59bb9633899"> 
+    <img src="https://github.com/user-attachments/assets/b5ad5591-f554-43ba-b0dc-134c9ce41d80"> 
 </p>
 <br>
 <p align="center"> 
