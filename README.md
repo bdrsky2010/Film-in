@@ -1,2 +1,42 @@
-# Film-in
- Film-in
+# 🎬 Film-in
+ <br>
+<div align=center>
+    <img src="https://img.shields.io/badge/Swift-v5.10-F05138?style=plastic&logo=swift&logoColor=F05138">
+    <img src="https://img.shields.io/badge/Xcode-v15.4-147EFB?style=plastic&logo=swift&logoColor=147EFB">
+    <img src="https://img.shields.io/badge/iOS-16.4+-F05138?style=plastic&logo=apple&logoColor=#000000">
+</div>
+<br>
+
+<p align="center"> 
+    <img src="./images/map.gif" align="center" width="19%">
+    <img src="./images/write.gif" align="center" width="19%"> 
+    <img src="./images/post.gif" align="center" width="19%"> 
+    <img src="./images/profile.gif" align="center" width="19%"> 
+    <img src="./images/cost.gif" align="center" width="19%">   
+</p>
+<br> 
+
+# 앱 한 줄 소개
+`🎬 본 영화 및 볼 예정인 영화를 간단하게 저장하는 앱, 근데 이제 알림을 곁들인.`
+
+<br>
+
+# 주요기능
+- 사용자의 선호 장르에 대한 맞춤 영화 추천
+- 최근 인기 작품, 현재 상영작, 개봉 예정작 확인
+- 배우 / 제작진 상세 정보 확인
+- 관람 예정 영화에 대한 알림 설정 및 푸시 알림 제공
+- 저장된 본 영화 및 볼 영화를 날짜별로 필터링하여 확인
+- 다국어 지원
+    - 이 앱은 한국어, 영어, 일본어를 지원하며, 모든 주요 텍스트 및 영화 정보가 각 언어로 번역되어 있음.
+    - 사용자의 설정된 국가에 맞게 언어가 번역되어 출력됨.
+
+<br>
+
+# 프로젝트 환경
+- 인원
+  - iOS 1명
+- 기간
+  - 2024.09.12 - 2024.10.01 (약 19일)
+- 버전
+  -  iOS 16.4 +
