@@ -6,10 +6,11 @@
     <img src="https://img.shields.io/badge/Xcode-v15.4-147EFB?style=plastic&logo=swift&logoColor=147EFB">
     <img src="https://img.shields.io/badge/iOS-16.4+-F05138?style=plastic&logo=apple&logoColor=#000000">
 </div>
+<br>
 <p align="center">
     <img src="https://github.com/user-attachments/assets/b5ad5591-f554-43ba-b0dc-134c9ce41d80"> 
 </p>
-<br>
+
 <p align="center"> 
     <img src="./images/map.gif" align="center" width="19%">
     <img src="./images/write.gif" align="center" width="19%"> 
