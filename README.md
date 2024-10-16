@@ -383,7 +383,60 @@ Kingfisher 자체적으로 디바이스의 성능 저하를 방지하며
 <summary>Lazy하게 View를 Load해보자</summary>
 <div>
 
+<br>
+SwiftUI에서 NavigationLink의 기본 동작 방식은
+<br> 
+링크가 눌리기 전에 destination에 해당하는 뷰를 미리 준비하게 되고
+<br>
+그로 인해 실제로 해당 뷰가 화면에 Load 되지 않더라도 미리 초기화가
+<br>
+이뤄지면서 메모리에 할당된다.
 
+이는 SwiftUI에서 자체적으로
+<br>
+사용자가 링크를 눌렀을 때 즉각적인 화면전환이 이뤄질 수 있도록
+<br>
+빠른 UI 업데이트를 진행하기 위함일 것이다.
+
+이러한 작동 방식을 이유로 destination에 뷰를 직접적으로 호출하게 되면
+<br>
+사용자가 링크를 누르지 않을 수도 있는 상황에서도 미리 뷰를 초기화하기 때문에
+<br>
+불필요한 메모리 사용이 이뤄질 수 있으며, 이에따라 성능저하 이슈가 일어날 가능성이
+<br>
+존재한다.
+
+이러한 불필요한 메모리 사용, 이로인해 생길 수 있는 성능저하를 방지하기 위해
+<br>
+Custom으로 작성된 Closure로 Wrapping된 LazyView를 구성
+<p align="center"> 
+    <img src="./images/Lazy_1.png" align="center" width="80%"> 
+</p>
+
+<br>
+실제로 메모리 사용량을 확인해 보면
+<br>
+LazyView로 Wrapping 하기 전
+<br>
+상황을 확인해보면 Label이 보이게 되는 즉시
+<br>
+destination에 해당하는 View도 init이 되는 것을 확인할 수 있으며,
+<br>
+메모리 사용도 대략 843MB 사용하게 되는데
+
+https://github.com/user-attachments/assets/16c8a833-c133-4bbc-8be0-de3f9cc45527
+
+LazyView로 Wrapping 한 후
+<br> 
+상황을 확인해 보면 Label이 보이게 되는 즉시
+<br>
+destination에 해당하는 View가 init이 이뤄지지 않게 되었으며,
+<br>
+메모리 사용도 대략 761MB로 전보다 적은 양의 메모리를
+<br>
+사용하는 것을 확인할 수 있다.
+
+https://github.com/user-attachments/assets/b32427c7-4cbe-4999-adc3-6a7e5362b591
 
 </div>
 </details>
