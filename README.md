@@ -376,8 +376,6 @@ Kingfisher 자체적으로 디바이스의 성능 저하를 방지하며
 </div>
 </details>
 
-<br>
-
 <details>
 <summary>Lazy하게 View를 Load해보자</summary>
 <div>
