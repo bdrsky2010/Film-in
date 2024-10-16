@@ -88,7 +88,6 @@
 
 ### init이 된 후 deinit이 되지 않는 이슈
 
-<br>
 계속해서 init만 일어날 뿐, deinit이 호출되지 않는 현상을 발견
 
 <p align="center"> 
@@ -382,8 +381,8 @@ Kingfisher 자체적으로 디바이스의 성능 저하를 방지하며
 <details>
 <summary>Lazy하게 View를 Load해보자</summary>
 <div>
+### Lazy하게 View를 Load해보자
 
-<br>
 SwiftUI에서 NavigationLink의 기본 동작 방식은
 <br> 
 링크가 눌리기 전에 destination에 해당하는 뷰를 미리 준비하게 되고
