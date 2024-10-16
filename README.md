@@ -111,7 +111,7 @@ View가 Appear 되는 시점에 viewModel에 task가 되었라는 Action을 취�
     viewModel.action(.viewOnTask)
 }
 ```
-
+<br>
 
 구독을 통해 영화 상세 정보를 Fetch 해오게 된다.
 ```swift
@@ -124,7 +124,7 @@ input.viewOnTask
     }
     .store(in: &cancellable)
 ```
-
+<br>
 
 코드 상에서 강제적으로 구독을 해지시킨다면 어떻게 될까?
 ```swift
@@ -137,7 +137,7 @@ input.viewOnTask
     }
     .cancel()
 ```
-
+<br>
 
 위에서 계속 init만 일어나던 객체들이
 <br>
@@ -167,6 +167,7 @@ event를 방출하자마자 바로 구독이 해제가 되어버리는 것 같�
     <img src="./images/Leak_4.png" align="center" width="40%"> 
 </p>
 
+<br>
 해결해야 하는 문제는 두 가지
 1. 구독 후 `sink { }`내부에서 비동기로 API를 호출할 경우 해지가 되지 않는 현상
 2. `cancel()`을 통해 강제적으로 구독을 해지할 경우, `sink { }`내부 코드가 작동이 되지 않는 현상
