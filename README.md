@@ -87,20 +87,22 @@
 <div>
 
 1️⃣ 메모리가 줄어들지는 않고 쌓이기만 하는 이유
-<br>
+
+
 계속해서 init만 일어날 뿐, deinit이 호출되지 않는 현상을 발견
 
 <p align="center"> 
     <img src="./images/Leak_1.png" align="center" width="80%"> 
 </p>
 
+<br>
 앱을 트래킹한 결과 메모리 Leak이 일어나고 있음을 확인
 
 <p align="center"> 
     <img src="./images/Leak_2.png" align="center" width="80%"> 
 </p>
 
-
+<br>
 상황을 생각해 봤을 때 View에서 일어나는 Action이
 <br>
 View가 Appear 되는 시점에 viewModel에 task가 되었라는 Action을 취하고
