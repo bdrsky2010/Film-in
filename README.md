@@ -272,6 +272,7 @@ Task가 완료된 시점에 `Publisher`에게 명시적으로 알려줬다.
 <p align="center"> 
     <img src="./images/Leak_12.png" align="center" width="80%"> 
 </p>
+<br>
 
 </div>
 </details>
@@ -279,10 +280,98 @@ Task가 완료된 시점에 `Publisher`에게 명시적으로 알려줬다.
 ### 메모리 사용량을 줄이기 위한 노력
 
 <details>
-<summary>Kingfisher 사용 중 일어난 일</summary>
+<summary>메모리를 적게 사용해야만 효율적일까?</summary>
 <div>
 
-### Kingfisher 사용 중 일어난 일
+### 메모리를 적게 사용해야만 효율적일까?
+<br>
+1️⃣ 메모리가 줄어들지는 않고 쌓이기만 하는 이유
+
+이미지의 사용량이 많아 기본적으로 메모리의 사용량이 높았는데
+<p align="center"> 
+    <img src="./images/kingfisher_1.png" align="center" width="80%"> 
+</p>
+
+<br>
+뒤로가기 버튼을 통해 View를 Pop하더라도
+메모리 사용량이 줄어들기는 커녕 더 늘어났다.
+<p align="center"> 
+    <img src="./images/kingfisher_2.png" align="center" width="80%"> 
+</p>
+
+<br>
+늘어난 건 둘째치고 왜 화면을 나갔는데 줄어들지 않는걸까?
+그 이유는 바로 Kingfisher의 이미지 캐싱 기능이었다.
+
+2️⃣ 단순하게 메모리 사용량을 줄여버린 나
+
+정말 1차원적인 생각을 해버린 나는
+단순하게 그러면 캐싱한 데이터를 메모리에서 지워버리면 되는 거 아닌가?
+라는 안일한 생각을 해버리게 되면서 뷰가 `disappear` 상태가 될 경우 
+캐시 메모리를 비워버렸다.
+<p align="center"> 
+    <img src="./images/kingfisher_3.png" align="center" width="80%"> 
+</p>
+<p align="center"> 
+    <img src="./images/kingfisher_4.png" align="center" width="80%"> 
+</p>
+
+<br>
+뒤로가기 버튼을 눌렀더니
+메모리가 100MB 정도 줄었다!
+<p align="center"> 
+    <img src="./images/kingfisher_5.png" align="center" width="80%"> 
+</p>
+
+<br>
+하지만 예상하지 못한 결과를 가져온 것이다.
+(결과 보자마자 코드 삭제했습니다.)
+https://github.com/user-attachments/assets/4b7c526d-08e2-4cab-aed2-cf5ddb31063c
+
+3️⃣ 메모리를 적게 사용해야만 성능 향상에 도달할 수 있을까?
+
+내 생각은 아니다 라고 결론이 났다.
+
+Kingfisher는 두 가지 캐시 계층을 두고 사용하고 있는데 하나는 메모리 캐시, 또 하나는 디스크 캐시를
+<br>
+사용하면서 이미 불러왔던 이미지라면 더 빠르게 로드를 할 수 있도록 캐싱을 하고있다.
+
+즉, 메모리 캐시에서 이미지를 찾지 못해 캐시 미스가 일어난 경우
+<br>
+디스크 캐시에서 이미지를 불러오는 방식이다.
+
+또한, Kingfisher는 메모리 사용을 과도하게 사용하여 앱이 Crash가 되지 않도록
+<br>
+기본적으로 최대 약 25%의 메모리를 사용하면서 오래 사용되지 않은 이미지를 먼저 제거하는
+<br>
+LRU 캐싱 방식으로 캐시 메모리를 관리하고 있으며,
+<br> 
+디스크 캐시도 동일한 방식으로 메모리 관리가 이루어지고 있다.
+<br>
+(물론, 메모리 사용량 및 유효기간을 사용자가 직접 설정이 가능)
+
+결론적으로 캐시 메모리를 비워가면서 까지 메모리를 줄였을 경우
+<br>
+화면이 Push가 되고 Pop 되는 과정에 이미지가 새로 로드가 되면서
+<br>
+사용성에 있어서 좋지 않은 상황도 일어났으며
+
+Kingfisher 자체적으로 디바이스의 성능 저하를 방지하며
+<br>
+효율적으로 메모리를 관리하고 있기 때문에 꼭 메모리를 적게 사용해야만
+<br>
+성능 향상이 이뤄지는 것은 아니라고 생각이 된다.
+<br>
+(View가 쌓이면서 메모리가 쌓이는 부분은 개선이 필요할 것 같다.)
+
+> Kingfisher의 공식 문서를 보다보니 재밌는 부분이 있었는데
+> Kingfisher 4에서는 기본적으로 메모리 사용량의 Limit이 정해져있지 않아
+> 무한으로 캐시 메모리로 이미지를 계속 보내는 방식이 사용되었으나
+> 사용자의 앱이 Crash가 발생한다는 소식이 자주 들리게되면서
+> Kingfisher 5에서 기본 메모리 최대 사용량이 25% 제한이 생겼다.
+> https://github.com/onevcat/Kingfisher/wiki/New-In-Kingfisher-5
+
+
 
 </div>
 </details>
