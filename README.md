@@ -89,7 +89,8 @@
 <br>
 1️⃣ 메모리가 줄어들지는 않고 쌓이기만 하는 이유
 
-**계속해서** init만 일어날 뿐, deinit이 호출되지 않는 현상을 발견
+<br>
+계속해서 init만 일어날 뿐, deinit이 호출되지 않는 현상을 발견
 
 <p align="center"> 
     <img src="./images/Leak_1.png" align="center" width="80%"> 
