@@ -219,7 +219,7 @@ extension MovieListViewModel {
                 recentPage = responsePage
                 isLastPage = responsePage == responseTotalPage
             }
-        case .failure(let error):
+        case .failure(_):
             if !output.isShowAlert { output.isShowAlert = true }
         }
     }

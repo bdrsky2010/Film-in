@@ -97,7 +97,7 @@ extension MovieDetailViewModel {
                 switch result {
                 case .success(let movieInfo):
                     output.movieDetail = movieInfo
-                case .failure(let error):
+                case .failure(_):
                     if !output.isShowAlert { output.isShowAlert = true }
                 }
             }
@@ -114,7 +114,7 @@ extension MovieDetailViewModel {
                 switch result {
                 case .success(let creditInfo):
                     output.creditInfo = creditInfo
-                case .failure(let error):
+                case .failure(_):
                     if !output.isShowAlert { output.isShowAlert = true }
                 }
             }
@@ -145,7 +145,7 @@ extension MovieDetailViewModel {
                             totalPage: similar.totalPage <= 500 ? totalPage : 500
                         )
                     }
-                case .failure(let error):
+                case .failure(_):
                     if !output.isShowAlert { output.isShowAlert = true }
                 }
             }
@@ -162,7 +162,7 @@ extension MovieDetailViewModel {
                 switch result {
                 case .success(let images):
                     output.movieImages = images
-                case .failure(let error):
+                case .failure(_):
                     if !output.isShowAlert { output.isShowAlert = true }
                 }
             }
@@ -179,7 +179,7 @@ extension MovieDetailViewModel {
                 switch result {
                 case .success(let videos):
                     output.movieVideos = videos
-                case .failure(let error):
+                case .failure(_):
                     if !output.isShowAlert { output.isShowAlert = true }
                 }
             }

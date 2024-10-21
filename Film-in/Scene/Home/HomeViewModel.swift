@@ -95,7 +95,7 @@ extension HomeViewModel {
                 switch result {
                 case .success(let trending):
                     output.trendingMovies = trending
-                case .failure(let error):
+                case .failure(_):
                     if !output.isShowAlert { output.isShowAlert = true }
                 }
             }
@@ -116,7 +116,7 @@ extension HomeViewModel {
                 switch result {
                 case .success(let nowPlaying):
                     output.nowPlayingMovies = nowPlaying
-                case .failure(let error):
+                case .failure(_):
                     if !output.isShowAlert { output.isShowAlert = true }
                 }
             }
@@ -137,7 +137,7 @@ extension HomeViewModel {
                 switch result {
                 case .success(let upcoming):
                     output.upcomingMovies = upcoming
-                case .failure(let error):
+                case .failure(_):
                     if !output.isShowAlert { output.isShowAlert = true }
                 }
             }
@@ -172,7 +172,7 @@ extension HomeViewModel {
                             output.recommendMovies = recommend
                         }
                     }
-                case .failure(let error):
+                case .failure(_):
                     if !output.isShowAlert { output.isShowAlert = true }
                 }
             }

@@ -91,7 +91,7 @@ extension PersonDetailViewModel {
                 switch result {
                 case .success(let personDetail):
                     output.personDetail = personDetail
-                case .failure(let error):
+                case .failure(_):
                     if !output.isShowAlert { output.isShowAlert = true }
                 }
             }
@@ -108,7 +108,7 @@ extension PersonDetailViewModel {
                 switch result {
                 case .success(let personMovie):
                     output.personMovie = personMovie
-                case .failure(let error):
+                case .failure(_):
                     if !output.isShowAlert { output.isShowAlert = true }
                 }
             }

@@ -106,7 +106,7 @@ extension GenreSelectViewModel {
                 switch result {
                 case .success(let genres):
                     output.genres = genres
-                case .failure(let error):
+                case .failure(_):
                     output.isShowAlert = true
                 }
             }
