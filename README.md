@@ -107,7 +107,7 @@
 
 <br>
 앱을 트래킹한 결과 메모리 Leak이 일어나고 있음을 확인
-
+<br>
 <p align="center"> 
     <img src="./images/Leak_2.png" align="center" width="80%"> 
 </p>
