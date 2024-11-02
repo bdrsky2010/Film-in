@@ -116,6 +116,7 @@
 상황을 생각해 봤을 때 View에서 일어나는 Action이
 <br>
 View가 Appear 되는 시점에 viewModel에 task가 되었라는 Action을 취하고
+
 ```swift
 .task {
     viewModel.action(.viewOnTask)
