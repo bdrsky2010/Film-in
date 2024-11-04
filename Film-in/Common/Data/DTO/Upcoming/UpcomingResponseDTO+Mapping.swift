@@ -11,6 +11,14 @@ struct UpcomingResponseDTO: Decodable {
     let dates: PeriodResponseDTO
     let page: Int
     let results: [TMDBMovieResponseDTO]
+    let totalPages: Int
+    
+    enum CodingKeys: String, CodingKey {
+        case dates
+        case page
+        case results
+        case totalPages = "total_pages"
+    }
 }
 
 extension UpcomingResponseDTO {
@@ -21,6 +29,7 @@ extension UpcomingResponseDTO {
                 maximum: dates.maximum
             ),
             page: self.page,
+            totalPage: self.totalPages,
             movies: self.results
                 .map {
                     HomeMovie.Movie(
