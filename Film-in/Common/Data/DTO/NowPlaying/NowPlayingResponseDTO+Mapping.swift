@@ -11,13 +11,13 @@ struct NowPlayingResponseDTO: Decodable {
     let dates: PeriodResponseDTO
     let page: Int
     let results: [TMDBMovieResponseDTO]
-    let totalPages: Int
+    let totalPage: Int
     
     enum CodingKeys: String, CodingKey {
         case dates
         case page
         case results
-        case totalPages = "total_pages"
+        case totalPage = "total_pages"
     }
 }
 
@@ -29,14 +29,14 @@ extension NowPlayingResponseDTO {
                 maximum: dates.maximum
             ),
             page: self.page,
-            totalPage: self.totalPages,
+            totalPage: self.totalPage,
             movies: self.results
                 .map {
                     HomeMovie.Movie(
                         _id: $0.id,
-                        title: $0.title ?? "",
-                        poster: $0.posterPath ?? "",
-                        backdrop: $0.backdropPath ?? ""
+                        title: $0.title,
+                        poster: $0.posterPath,
+                        backdrop: $0.backdropPath
                     )
                 }
         )
