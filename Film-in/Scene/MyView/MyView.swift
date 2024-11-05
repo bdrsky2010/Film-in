@@ -15,7 +15,11 @@ struct MyView: View {
     @State private var selection = Date()
     @State private var posterSize: CGSize = .zero
     
-    init(viewModel: MyViewModel, selection: Date = Date(), posterSize: CGSize = .zero) {
+    init(
+        viewModel: MyViewModel,
+        selection: Date = Date(),
+        posterSize: CGSize = .zero
+    ) {
         self._viewModel = StateObject(wrappedValue: viewModel)
         self._selection = State(wrappedValue: selection)
         self._posterSize = State(wrappedValue: posterSize)
