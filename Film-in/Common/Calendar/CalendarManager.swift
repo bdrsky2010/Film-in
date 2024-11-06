@@ -8,11 +8,41 @@
 import Foundation
 
 protocol CalendarManager {
-    func generateDays()
+    func generateDays() -> [Date]
 }
 
 final class DefaultCalendarManager: CalendarManager {
-    func generateDays() {
+    func generateDays() -> [Date] {
         var days = [Date]()
+        
+        let calendar = Calendar.current
+        let components = calendar.dateComponents([.year, .month], from: Date())
+        guard let firstOfMonth = calendar.date(from: components),
+              let range = calendar.range(of: .day, in: .month, for: firstOfMonth)
+        else { return [] }
+        
+        let firstWeekDay = calendar.component(.weekday, from: firstOfMonth)
+        
+        let leadingEmptyDays = (firstWeekDay + 5) % 7
+        
+        for _ in 0..<leadingEmptyDays {
+            days.append(Date.distantPast)
+        }
+        
+        for day in range {
+            if let date = calendar.date(byAdding: .day, value: day - 1, to: firstOfMonth) {
+                days.append(date)
+            }
+        }
+        
+        let trailingEmptyDays = 7 - (days.count % 7)
+        
+        if trailingEmptyDays < 7 {
+            for _ in 0..<trailingEmptyDays {
+                days.append(Date.distantFuture)
+            }
+        }
+        
+        return days
     }
 }
