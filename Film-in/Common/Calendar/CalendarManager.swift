@@ -9,14 +9,17 @@ import Foundation
 
 protocol CalendarManager {
     func generateDays() -> [Date]
+    func changeMonth(by value: Int)
 }
 
 final class DefaultCalendarManager: CalendarManager {
+    private var currentDate = Date()
+    
     func generateDays() -> [Date] {
         var days = [Date]()
         
         let calendar = Calendar.current
-        let components = calendar.dateComponents([.year, .month], from: Date())
+        let components = calendar.dateComponents([.year, .month], from: currentDate)
         guard let firstOfMonth = calendar.date(from: components),
               let range = calendar.range(of: .day, in: .month, for: firstOfMonth)
         else { return [] }
@@ -44,5 +47,11 @@ final class DefaultCalendarManager: CalendarManager {
         }
         
         return days
+    }
+    
+    func changeMonth(by value: Int) {
+        if let newDate = Calendar.current.date(byAdding: .month, value: value, to: currentDate) {
+            currentDate = newDate
+        }
     }
 }
