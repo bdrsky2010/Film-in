@@ -7,16 +7,27 @@
 
 import Foundation
 
+struct Day {
+    let date: Date
+    var isData: Bool
+    
+    init(date: Date, isData: Bool = false) {
+        self.date = date
+        self.isData = isData
+    }
+}
+
 protocol CalendarManager {
     func generateDays() -> [Date]
     func changeMonth(by value: Int)
+    func selectDay(_ date: Date) -> Date?
 }
 
 final class DefaultCalendarManager: CalendarManager {
     private var currentDate = Date()
     
-    func generateDays() -> [Date] {
-        var days = [Date]()
+    func generateDays() -> [Day] {
+        var days = [Day]()
         
         let calendar = Calendar.current
         let components = calendar.dateComponents([.year, .month], from: currentDate)
@@ -29,12 +40,12 @@ final class DefaultCalendarManager: CalendarManager {
         let leadingEmptyDays = (firstWeekDay + 5) % 7
         
         for _ in 0..<leadingEmptyDays {
-            days.append(Date.distantPast)
+            days.append(Day(date: Date.distantPast))
         }
         
         for day in range {
             if let date = calendar.date(byAdding: .day, value: day - 1, to: firstOfMonth) {
-                days.append(date)
+                days.append(Day(date: date))
             }
         }
         
@@ -42,7 +53,7 @@ final class DefaultCalendarManager: CalendarManager {
         
         if trailingEmptyDays < 7 {
             for _ in 0..<trailingEmptyDays {
-                days.append(Date.distantFuture)
+                days.append(Day(date: Date.distantFuture))
             }
         }
         
@@ -53,5 +64,12 @@ final class DefaultCalendarManager: CalendarManager {
         if let newDate = Calendar.current.date(byAdding: .month, value: value, to: currentDate) {
             currentDate = newDate
         }
+    }
+    
+    func selectDay(_ date: Date) -> Date? {
+        if date != Date.distantPast && date != Date.distantFuture {
+            return date
+        }
+        return nil
     }
 }
