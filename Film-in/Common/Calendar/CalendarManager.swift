@@ -26,8 +26,8 @@ protocol CalendarManager {
 final class DefaultCalendarManager: CalendarManager {
     private var currentDate = Date()
     
-    func generateDays() -> [Day] {
-        var days = [Day]()
+    func generateDays() -> [Date] {
+        var days = [Date]()
         
         let calendar = Calendar.current
         let components = calendar.dateComponents([.year, .month], from: currentDate)
@@ -40,12 +40,12 @@ final class DefaultCalendarManager: CalendarManager {
         let leadingEmptyDays = (firstWeekDay + 5) % 7
         
         for _ in 0..<leadingEmptyDays {
-            days.append(Day(date: Date.distantPast))
+            days.append(Date.distantPast)
         }
         
         for day in range {
             if let date = calendar.date(byAdding: .day, value: day - 1, to: firstOfMonth) {
-                days.append(Day(date: date))
+                days.append(date)
             }
         }
         
@@ -53,7 +53,7 @@ final class DefaultCalendarManager: CalendarManager {
         
         if trailingEmptyDays < 7 {
             for _ in 0..<trailingEmptyDays {
-                days.append(Day(date: Date.distantFuture))
+                days.append(Date.distantFuture)
             }
         }
         
