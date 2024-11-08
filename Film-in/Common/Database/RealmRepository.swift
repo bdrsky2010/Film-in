@@ -65,8 +65,10 @@ final class RealmRepository: DatabaseRepository {
                 
                 if data.type == .watched {
                     user.watchedMovies.append(newMovie)
+                    user.watchedMovies.sort(by: { $0.date < $1.date }) // 내림차순 정렬
                 } else {
                     user.wantMovies.append(newMovie)
+                    user.wantMovies.sort(by: { $0.date < $1.date }) // 내림차순 정렬
                 }
             }
         } catch {
