@@ -18,52 +18,34 @@ struct Day {
 }
 
 protocol CalendarManager {
-    func generateDays() -> [Date]
-    func changeMonth(by value: Int)
+    func generateDays(for date: Date) -> [Date]
+    func changeMonth(by value: Int, for currentDate: Date) -> Date?
     func selectDay(_ date: Date) -> Date?
 }
 
 final class DefaultCalendarManager: CalendarManager {
     private var currentDate = Date()
     
-    func generateDays() -> [Date] {
-        var days = [Date]()
-        
+    func generateDays(for date: Date) -> [Date] {
         let calendar = Calendar.current
-        let components = calendar.dateComponents([.year, .month], from: currentDate)
-        guard let firstOfMonth = calendar.date(from: components),
-              let range = calendar.range(of: .day, in: .month, for: firstOfMonth)
-        else { return [] }
         
-        let firstWeekDay = calendar.component(.weekday, from: firstOfMonth)
-        
-        let leadingEmptyDays = (firstWeekDay + 5) % 7
-        
-        for _ in 0..<leadingEmptyDays {
-            days.append(Date.distantPast)
+        // 해당 날짜의 year와 month만 추출
+        guard let monthRange = calendar.range(of: .day, in: .month, for: date),
+              let startOfMonth = calendar.date(from: calendar.dateComponents([.year, .month], from: date)) else {
+            return []
         }
         
-        for day in range {
-            if let date = calendar.date(byAdding: .day, value: day - 1, to: firstOfMonth) {
-                days.append(date)
-            }
+        // monthRange 범위로 날짜 배열 생성
+        return monthRange.compactMap { day in
+            calendar.date(byAdding: .day, value: day - 1, to: startOfMonth)
         }
-        
-        let trailingEmptyDays = 7 - (days.count % 7)
-        
-        if trailingEmptyDays < 7 {
-            for _ in 0..<trailingEmptyDays {
-                days.append(Date.distantFuture)
-            }
-        }
-        
-        return days
     }
     
-    func changeMonth(by value: Int) {
-        if let newDate = Calendar.current.date(byAdding: .month, value: value, to: currentDate) {
-            currentDate = newDate
+    func changeMonth(by value: Int, for currentDate: Date) -> Date? {
+        guard let newDate = Calendar.current.date(byAdding: .month, value: value, to: currentDate) else {
+            return nil
         }
+        return newDate
     }
     
     func selectDay(_ date: Date) -> Date? {
