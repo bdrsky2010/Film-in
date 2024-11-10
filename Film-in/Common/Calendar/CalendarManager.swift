@@ -58,8 +58,6 @@ final class DefaultCalendarManager: CalendarManager {
         }
         
         return days
-
-        
     }
     
     func changeMonth(by value: Int, for currentDate: Date) -> Date? {
