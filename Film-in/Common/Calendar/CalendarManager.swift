@@ -27,18 +27,39 @@ final class DefaultCalendarManager: CalendarManager {
     private var currentDate = Date()
     
     func generateDays(for date: Date) -> [Date] {
+        var days = [Date]()
+        
         let calendar = Calendar.current
+        let components = calendar.dateComponents([.year, .month], from: Date())
+        guard let firstOfMonth = calendar.date(from: components),
+              let range = calendar.range(of: .day, in: .month, for: firstOfMonth)
+        else { return [] }
         
-        // 해당 날짜의 year와 month만 추출
-        guard let monthRange = calendar.range(of: .day, in: .month, for: date),
-              let startOfMonth = calendar.date(from: calendar.dateComponents([.year, .month], from: date)) else {
-            return []
+        let firstWeekDay = calendar.component(.weekday, from: firstOfMonth)
+        
+        let leadingEmptyDays = (firstWeekDay + 6) % 7 // 일 월 화 수 목 금 토
+        
+        for _ in 0..<leadingEmptyDays {
+            days.append(Date.distantPast)
         }
         
-        // monthRange 범위로 날짜 배열 생성
-        return monthRange.compactMap { day in
-            calendar.date(byAdding: .day, value: day - 1, to: startOfMonth)
+        for day in range {
+            if let date = calendar.date(byAdding: .day, value: day, to: firstOfMonth) {
+                days.append(date)
+            }
         }
+        
+        let trailingEmptyDays = 7 - (days.count % 7)
+        
+        if trailingEmptyDays < 7 {
+            for _ in 0..<trailingEmptyDays {
+                days.append(Date.distantFuture)
+            }
+        }
+        
+        return days
+
+        
     }
     
     func changeMonth(by value: Int, for currentDate: Date) -> Date? {
