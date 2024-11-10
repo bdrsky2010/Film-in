@@ -27,6 +27,7 @@ final class MyViewModel: BaseObject, ViewModelType {
 
 extension MyViewModel {
     struct Input {
+        var viewOnTask = PassthroughSubject<Void, Never>()
         var deleteGesture = PassthroughSubject<Int, Never>()
         var realDeleteMovie = PassthroughSubject<Int, Never>()
     }
@@ -37,6 +38,14 @@ extension MyViewModel {
     }
     
     func transform() {
+        input.viewOnTask
+            .sink { [weak self] _ in
+                guard let self else { return }
+                let days = myViewService.generateDays()
+                print(days)
+            }
+            .store(in: &cancellable)
+        
         input.deleteGesture
             .sink { [weak self] movieId in
                 guard let self else { return }
@@ -56,12 +65,15 @@ extension MyViewModel {
 
 extension MyViewModel {
     enum Action {
+        case viewOnTask
         case deleteGesture(movieId: Int)
         case realDelete(movieId: Int)
     }
     
     func action(_ action: Action) {
         switch action {
+        case .viewOnTask:
+            input.viewOnTask.send(())
         case .deleteGesture(let movieId):
             input.deleteGesture.send(movieId)
         case .realDelete(let movieId):

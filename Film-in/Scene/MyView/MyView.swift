@@ -32,6 +32,8 @@ struct MyView: View {
                     .datePickerStyle(.graphical)
                     .tint(.app)
                 
+//                CalendarView(viewModel: viewModel)
+                
                 GeometryReader { proxy in
                     List {
                         Text("WANT")
@@ -160,6 +162,8 @@ struct MyView: View {
                     }
                     .task {
                         posterSize = CGSize(width: proxy.size.width * 0.7, height: proxy.size.width * 0.7 * 1.5)
+                        
+                        viewModel.action(.viewOnTask)
                     }
                     .listStyle(.plain)
                 }
@@ -217,7 +221,8 @@ struct MyView: View {
         viewModel: MyViewModel(
             myViewService: DefaultMyViewService(
                 databaseRepository: RealmRepository.shared,
-                localNotificationManager: DefaultLocalNotificationManager.shared
+                localNotificationManager: DefaultLocalNotificationManager.shared,
+                calendarManager: DefaultCalendarManager()
             )
         )
     )

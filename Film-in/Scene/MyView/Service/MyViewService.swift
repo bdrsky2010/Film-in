@@ -49,7 +49,7 @@ extension DefaultMyViewService: MyViewService {
     func generateDays() -> [Day] {
         guard let user = databaseRepository.user else { return [] }
         
-        let days = calendarManager.generateDays()
+        let days = calendarManager.generateDays(for: Date())
         
         let result = days.map {
             let isData = binarySearchMovie(user.wantMovies, $0) || binarySearchMovie(user.watchedMovies, $0)
