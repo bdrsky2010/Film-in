@@ -63,7 +63,6 @@ extension DefaultMyViewService: MyViewService {
         var left = 0
         var right = list.count - 1
         var mid: Int
-        
         while left <= right {
             mid = (left + right) / 2
 
@@ -107,10 +106,18 @@ private extension Date {
         static func == (lhs: Date, rhs: Date) -> Bool {
             let left = lhs.yearMonthDay
             let right = rhs.yearMonthDay
-            
-            return left.year == right.year &&
-                   left.month == right.month &&
-                   left.day == right.day
+            print(left, right)
+            if let lYear = left.year,
+               let lMonth = left.month,
+               let lDay = left.day,
+               let rYear = right.year,
+               let rMonth = right.month,
+               let rDay = right.day {
+                return lYear == rYear &&
+                lMonth == rMonth &&
+                lDay == rDay
+            }
+            return false
         }
 
         static func > (lhs: Date, rhs: Date) -> Bool {
