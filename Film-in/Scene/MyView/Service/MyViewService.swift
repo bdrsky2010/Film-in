@@ -52,7 +52,11 @@ extension DefaultMyViewService: MyViewService {
         let days = calendarManager.generateDays(for: Date())
         
         let result = days.map {
-            let isData = binarySearchMovie(user.wantMovies, $0) || binarySearchMovie(user.watchedMovies, $0)
+            let calendar = Calendar.current
+            guard let date = calendar.date(byAdding: .day, value: -1, to: $0) else {
+                return Day(date: $0, isData: false)
+            }
+            let isData = binarySearchMovie(user.wantMovies, date) || binarySearchMovie(user.watchedMovies, date)
             return Day(date: $0, isData: isData)
         }
         
@@ -76,70 +80,67 @@ extension DefaultMyViewService: MyViewService {
 }
 
 private extension Date {
-    private var yearMonthDay: DateComponents {
-            let calendar = Calendar.current
-            return calendar.dateComponents([.year, .month, .day], from: self)
-        }
-
-        static func < (lhs: Date, rhs: Date) -> Bool {
-            let left = lhs.yearMonthDay
-            let right = rhs.yearMonthDay
+    private var leftYearMonthDay: DateComponents {
+        let calendar = Calendar.current
+        return calendar.dateComponents([.year, .month, .day], from: self)
+    }
+    
+    private var rightYearMonthDay: DateComponents {
+        let calendar = Calendar.current
+        return calendar.dateComponents([.year, .month, .day], from: self)
+    }
+    
+    static func < (lhs: Date, rhs: Date) -> Bool {
+        let left = lhs.leftYearMonthDay
+        let right = rhs.rightYearMonthDay
+        
+        if let lYear = left.year,
+           let lMonth = left.month,
+           let lDay = left.day,
+           let rYear = right.year,
+           let rMonth = right.month,
+           let rDay = right.day {
             
-            if let lYear = left.year,
-               let lMonth = left.month,
-               let lDay = left.day,
-               let rYear = right.year,
-               let rMonth = right.month,
-               let rDay = right.day {
-               
-                if lYear != rYear {
-                    return lYear < rYear
-                }
-                if lMonth != rMonth {
-                    return lMonth < rMonth
-                }
-                return lDay < rDay
+            if lYear != rYear {
+                return lYear < rYear
             }
-            return false
-        }
-
-        static func == (lhs: Date, rhs: Date) -> Bool {
-            let left = lhs.yearMonthDay
-            let right = rhs.yearMonthDay
-            print(left, right)
-            if let lYear = left.year,
-               let lMonth = left.month,
-               let lDay = left.day,
-               let rYear = right.year,
-               let rMonth = right.month,
-               let rDay = right.day {
-                return lYear == rYear &&
-                lMonth == rMonth &&
-                lDay == rDay
+            if lMonth != rMonth {
+                return lMonth < rMonth
             }
-            return false
+            return lDay < rDay
         }
-
-        static func > (lhs: Date, rhs: Date) -> Bool {
-            let left = lhs.yearMonthDay
-            let right = rhs.yearMonthDay
+        return false
+    }
+    
+    static func == (lhs: Date, rhs: Date) -> Bool {
+        let left = lhs.leftYearMonthDay
+        let right = rhs.rightYearMonthDay
+        
+        return left.year == right.year &&
+        left.month == right.month &&
+        left.day == right.day
+    }
+    
+    static func > (lhs: Date, rhs: Date) -> Bool {
+        let left = lhs.leftYearMonthDay
+        let right = rhs.rightYearMonthDay
+        
+        if let lYear = left.year,
+           let lMonth = left.month,
+           let lDay = left.day,
+           let rYear = right.year,
+           let rMonth = right.month,
+           let rDay = right.day {
             
-            if let lYear = left.year,
-               let lMonth = left.month,
-               let lDay = left.day,
-               let rYear = right.year,
-               let rMonth = right.month,
-               let rDay = right.day {
-                
-                if lYear != rYear {
-                    return lYear > rYear
-                }
-                if lMonth != rMonth {
-                    return lMonth > rMonth
-                }
-                return lDay > rDay
-                
+            if lYear != rYear {
+                return lYear > rYear
             }
-            return false
+            if lMonth != rMonth {
+                return lMonth > rMonth
+            }
+            return lDay > rDay
+            
         }
+        return false
+    }
 }
