@@ -30,7 +30,7 @@ final class DefaultCalendarManager: CalendarManager {
         var days = [Date]()
         
         let calendar = Calendar.current
-        let components = calendar.dateComponents([.year, .month], from: Date())
+        let components = calendar.dateComponents([.year, .month], from: date)
         guard let firstOfMonth = calendar.date(from: components),
               let range = calendar.range(of: .day, in: .month, for: firstOfMonth)
         else { return [] }
