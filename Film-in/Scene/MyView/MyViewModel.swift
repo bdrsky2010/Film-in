@@ -38,6 +38,7 @@ extension MyViewModel {
         var isRequestDelete = false
         var deleteMovieId = 0
         var currentMonth = Date()
+        var currentMonthYearString = ""
         var selectDate = Date()
         var selectMonthDays = [Day]()
     }
@@ -46,6 +47,8 @@ extension MyViewModel {
         input.generateDays
             .sink { [weak self] _ in
                 guard let self else { return }
+                output.currentMonthYearString = myViewService.currentMonthYearString(for: output.currentMonth)
+                
                 let days = myViewService.generateDays(for: output.currentMonth)
                 output.selectMonthDays = days
             }
@@ -63,6 +66,8 @@ extension MyViewModel {
                 guard let self else { return }
                 let date = myViewService.changeMonth(by: value, for: output.currentMonth)
                 output.currentMonth = date
+                
+                output.currentMonthYearString = myViewService.currentMonthYearString(for: date)
                 
                 let days = myViewService.generateDays(for: output.currentMonth)
                 output.selectMonthDays = days
