@@ -11,6 +11,7 @@ import RealmSwift
 protocol MyViewService: AnyObject {
     func requestDeleteMovie(movieId: Int)
     func generateDays() -> [Day]
+    func changeMonth(by value: Int, for currentDate: Date) -> Date
 }
 
 final class DefaultMyViewService: BaseObject {
@@ -61,6 +62,10 @@ extension DefaultMyViewService: MyViewService {
         }
         
         return result
+    }
+    
+    func changeMonth(by value: Int, for currentDate: Date) -> Date {
+        return calendarManager.changeMonth(by: value, for: currentDate)
     }
     
     private func binarySearchMovie(_ list: List<MovieTable>, _ target: Date) -> Bool {
