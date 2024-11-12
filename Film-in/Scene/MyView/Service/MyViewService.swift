@@ -10,7 +10,7 @@ import RealmSwift
 
 protocol MyViewService: AnyObject {
     func requestDeleteMovie(movieId: Int)
-    func generateDays() -> [Day]
+    func generateDays(for date: Date) -> [Day]
     func changeMonth(by value: Int, for currentDate: Date) -> Date
 }
 
@@ -47,10 +47,10 @@ extension DefaultMyViewService: MyViewService {
         }
     }
     
-    func generateDays() -> [Day] {
+    func generateDays(for date: Date) -> [Day] {
         guard let user = databaseRepository.user else { return [] }
         
-        let days = calendarManager.generateDays(for: Date())
+        let days = calendarManager.generateDays(for: date)
         
         let result = days.map {
             let calendar = Calendar.current
