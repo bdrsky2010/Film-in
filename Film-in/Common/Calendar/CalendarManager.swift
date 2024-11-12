@@ -19,7 +19,7 @@ struct Day {
 
 protocol CalendarManager {
     func generateDays(for date: Date) -> [Date]
-    func changeMonth(by value: Int, for currentDate: Date) -> Date?
+    func changeMonth(by value: Int, for currentDate: Date) -> Date
     func selectDay(_ date: Date) -> Date?
 }
 
@@ -60,9 +60,9 @@ final class DefaultCalendarManager: CalendarManager {
         return days
     }
     
-    func changeMonth(by value: Int, for currentDate: Date) -> Date? {
+    func changeMonth(by value: Int, for currentDate: Date) -> Date {
         guard let newDate = Calendar.current.date(byAdding: .month, value: value, to: currentDate) else {
-            return nil
+            return currentDate
         }
         return newDate
     }
