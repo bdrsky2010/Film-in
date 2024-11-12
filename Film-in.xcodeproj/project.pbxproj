@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		7B23FD3B2CDA4B4200200FFA /* CalendarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B23FD3A2CDA4B4200200FFA /* CalendarView.swift */; };
+		7B23FD3E2CDA4D2D00200FFA /* CalendarManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B23FD3D2CDA4D2D00200FFA /* CalendarManager.swift */; };
 		7B5A94202CAEF0A600F7E6A7 /* SettingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B5A941F2CAEF0A600F7E6A7 /* SettingView.swift */; };
 		7B984B4C2C9C27A400881C5C /* Film_inApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B984B4B2C9C27A400881C5C /* Film_inApp.swift */; };
 		7B984B502C9C27A500881C5C /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 7B984B4F2C9C27A500881C5C /* Assets.xcassets */; };
@@ -160,6 +162,8 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		7B23FD3A2CDA4B4200200FFA /* CalendarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarView.swift; sourceTree = "<group>"; };
+		7B23FD3D2CDA4D2D00200FFA /* CalendarManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarManager.swift; sourceTree = "<group>"; };
 		7B5A941F2CAEF0A600F7E6A7 /* SettingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingView.swift; sourceTree = "<group>"; };
 		7B984B482C9C27A400881C5C /* Film-in.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Film-in.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		7B984B4B2C9C27A400881C5C /* Film_inApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Film_inApp.swift; sourceTree = "<group>"; };
@@ -309,6 +313,14 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		7B23FD3C2CDA4D1300200FFA /* Calendar */ = {
+			isa = PBXGroup;
+			children = (
+				7B23FD3D2CDA4D2D00200FFA /* CalendarManager.swift */,
+			);
+			path = Calendar;
+			sourceTree = "<group>";
+		};
 		7B5A941E2CAEF06800F7E6A7 /* Setting */ = {
 			isa = PBXGroup;
 			children = (
@@ -407,6 +419,7 @@
 				7B984C5C2CA44BBD00881C5C /* Protocol */,
 				7B984C432CA2DA3100881C5C /* Base */,
 				7B9F7BFA2CABB79300C76F16 /* Notification */,
+				7B23FD3C2CDA4D1300200FFA /* Calendar */,
 				7B984C582CA4383000881C5C /* Database */,
 				7B984BA12C9D756500881C5C /* Network */,
 				7B984BA82C9DACF900881C5C /* Data */,
@@ -438,6 +451,7 @@
 				7B9F7C0F2CAD423E00C76F16 /* Entity */,
 				7B9F7C0E2CAD423900C76F16 /* Service */,
 				7B9F7C0C2CAC1D4E00C76F16 /* MyView.swift */,
+				7B23FD3A2CDA4B4200200FFA /* CalendarView.swift */,
 				7B9F7C102CAD425600C76F16 /* MyViewModel.swift */,
 			);
 			path = MyView;
@@ -1158,6 +1172,7 @@
 				7B984C952CA68ABB00881C5C /* MovieCreditQuery.swift in Sources */,
 				7B984C6B2CA4D6F000881C5C /* HomeViewModel.swift in Sources */,
 				7B984C672CA4D6D800881C5C /* HomeService.swift in Sources */,
+				7B23FD3E2CDA4D2D00200FFA /* CalendarManager.swift in Sources */,
 				7B9F7BF62CAAA34F00C76F16 /* PersonMovie.swift in Sources */,
 				7B984C452CA2DA3700881C5C /* BaseObject.swift in Sources */,
 				7B984C932CA68A8B00881C5C /* MovieDetailQuery.swift in Sources */,
@@ -1167,6 +1182,7 @@
 				7B984BCD2C9F127600881C5C /* NowPlayingResponseDTO+Mapping.swift in Sources */,
 				7B984C502CA2F93000881C5C /* View+.swift in Sources */,
 				7B984C242CA1A14B00881C5C /* MovieDetailResponseDTO+Mapping.swift in Sources */,
+				7B23FD3B2CDA4B4200200FFA /* CalendarView.swift in Sources */,
 				7B984CAE2CA6E0BF00881C5C /* MovieDetailViewModel.swift in Sources */,
 				7B984CB12CA938B500881C5C /* PosterImageView.swift in Sources */,
 				7B984BC72C9F09F000881C5C /* TrendingRequestDTO+Mapping.swift in Sources */,
