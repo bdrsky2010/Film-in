@@ -80,19 +80,14 @@ extension DefaultMyViewService: MyViewService {
 }
 
 private extension Date {
-    private var leftYearMonthDay: DateComponents {
-        let calendar = Calendar.current
-        return calendar.dateComponents([.year, .month, .day], from: self)
-    }
-    
-    private var rightYearMonthDay: DateComponents {
+    private var yearMonthDay: DateComponents {
         let calendar = Calendar.current
         return calendar.dateComponents([.year, .month, .day], from: self)
     }
     
     static func < (lhs: Date, rhs: Date) -> Bool {
-        let left = lhs.leftYearMonthDay
-        let right = rhs.rightYearMonthDay
+        let left = lhs.yearMonthDay
+        let right = rhs.yearMonthDay
         
         if let lYear = left.year,
            let lMonth = left.month,
@@ -113,8 +108,8 @@ private extension Date {
     }
     
     static func == (lhs: Date, rhs: Date) -> Bool {
-        let left = lhs.leftYearMonthDay
-        let right = rhs.rightYearMonthDay
+        let left = lhs.yearMonthDay
+        let right = rhs.yearMonthDay
         
         return left.year == right.year &&
         left.month == right.month &&
@@ -122,8 +117,8 @@ private extension Date {
     }
     
     static func > (lhs: Date, rhs: Date) -> Bool {
-        let left = lhs.leftYearMonthDay
-        let right = rhs.rightYearMonthDay
+        let left = lhs.yearMonthDay
+        let right = rhs.yearMonthDay
         
         if let lYear = left.year,
            let lMonth = left.month,
