@@ -15,6 +15,12 @@ struct CalendarView: View {
     var body: some View {
         VStack {
             HStack {
+                Text(currentMonthYear)
+                    .font(.headline)
+                Spacer()
+            }
+            
+            HStack {
                 ForEach(weekDays, id: \.self) { day in
                     Text(day)
                         .font(.headline)
@@ -36,6 +42,23 @@ struct CalendarView: View {
                 }
             }
         }
+    }
+    
+    var currentMonthYear: String {
+        let formatter = Date.dateFormatter
+        
+        if let preferredLanguage = Locale.preferredLanguages.first {
+            if preferredLanguage.hasPrefix("ko") {
+                formatter.dateFormat = "yyyy년 MMM"
+            } else if preferredLanguage.hasPrefix("ja") {
+                formatter.dateFormat = "yyyy年 MMM"
+            } else {
+                formatter.dateFormat = "MMM yyyy"
+            }
+        } else {
+            formatter.dateFormat = "MMM yyyy"
+        }
+        return formatter.string(from: viewModel.output.currentMonth)
     }
 }
 
