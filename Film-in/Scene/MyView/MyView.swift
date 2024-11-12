@@ -12,6 +12,7 @@ import PopupView
 struct MyView: View {
     @ObservedResults(UserTable.self) var user
     @StateObject private var viewModel: MyViewModel
+    @State private var posterSize: CGSize
     
     init(
         viewModel: MyViewModel,
