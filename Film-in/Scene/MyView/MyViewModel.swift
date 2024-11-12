@@ -27,7 +27,9 @@ final class MyViewModel: BaseObject, ViewModelType {
 
 extension MyViewModel {
     struct Input {
-        var viewOnTask = PassthroughSubject<Void, Never>()
+        var generateDays = PassthroughSubject<Void, Never>()
+        var selectDay = PassthroughSubject<Date, Never>()
+        var changeMonth = PassthroughSubject<Int, Never>()
         var deleteGesture = PassthroughSubject<Int, Never>()
         var realDeleteMovie = PassthroughSubject<Int, Never>()
     }
@@ -35,14 +37,35 @@ extension MyViewModel {
     struct Output {
         var isRequestDelete = false
         var deleteMovieId = 0
+        var currentMonth = Date()
+        var selectDate = Date()
+        var selectMonthDays = [Day]()
     }
     
     func transform() {
-        input.viewOnTask
+        input.generateDays
             .sink { [weak self] _ in
                 guard let self else { return }
-                let days = myViewService.generateDays()
-                print(days)
+                let days = myViewService.generateDays(for: output.currentMonth)
+                output.selectMonthDays = days
+            }
+            .store(in: &cancellable)
+        
+        input.selectDay
+            .sink { [weak self] value in
+                guard let self else { return }
+                output.selectDate = value
+            }
+            .store(in: &cancellable)
+        
+        input.changeMonth
+            .sink { [weak self] value in
+                guard let self else { return }
+                let date = myViewService.changeMonth(by: value, for: output.currentMonth)
+                output.currentMonth = date
+                
+                let days = myViewService.generateDays(for: output.currentMonth)
+                output.selectMonthDays = days
             }
             .store(in: &cancellable)
         
@@ -66,6 +89,8 @@ extension MyViewModel {
 extension MyViewModel {
     enum Action {
         case viewOnTask
+        case selectDay(day: Date)
+        case changeMonth(value: Int)
         case deleteGesture(movieId: Int)
         case realDelete(movieId: Int)
     }
@@ -73,7 +98,11 @@ extension MyViewModel {
     func action(_ action: Action) {
         switch action {
         case .viewOnTask:
-            input.viewOnTask.send(())
+            input.generateDays.send(())
+        case .selectDay(let day):
+            input.selectDay.send(day)
+        case .changeMonth(let value):
+            input.changeMonth.send(value)
         case .deleteGesture(let movieId):
             input.deleteGesture.send(movieId)
         case .realDelete(let movieId):
