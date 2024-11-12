@@ -47,9 +47,9 @@ extension MyViewModel {
         input.generateDays
             .sink { [weak self] _ in
                 guard let self else { return }
-                output.currentMonthYearString = myViewService.currentMonthYearString(for: output.currentMonth)
+                output.currentMonthYearString = myViewService.currentMonthYearString(for: output.currentMonth) // 설정된 날짜의 년, 월 문자열로 생성
                 
-                let days = myViewService.generateDays(for: output.currentMonth)
+                let days = myViewService.generateDays(for: output.currentMonth) // 설정된 달에 대한 날짜 생성
                 output.selectMonthDays = days
             }
             .store(in: &cancellable)
