@@ -34,7 +34,8 @@ struct MainTabView: View {
                 viewModel: MyViewModel(
                     myViewService: DefaultMyViewService(
                         databaseRepository: RealmRepository.shared,
-                        localNotificationManager: DefaultLocalNotificationManager.shared
+                        localNotificationManager: DefaultLocalNotificationManager.shared,
+                        calendarManager: DefaultCalendarManager()
                     )
                 )
             )
