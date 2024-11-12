@@ -102,13 +102,13 @@ extension DefaultMyViewService: MyViewService {
     }
 }
 
-private extension Date {
-    private var yearMonthDay: DateComponents {
+extension Date {
+    fileprivate var yearMonthDay: DateComponents {
         let calendar = Calendar.current
         return calendar.dateComponents([.year, .month, .day], from: self)
     }
     
-    static func < (lhs: Date, rhs: Date) -> Bool {
+    fileprivate static func < (lhs: Date, rhs: Date) -> Bool {
         let left = lhs.yearMonthDay
         let right = rhs.yearMonthDay
         
@@ -130,7 +130,7 @@ private extension Date {
         return false
     }
     
-    static func == (lhs: Date, rhs: Date) -> Bool {
+    fileprivate static func == (lhs: Date, rhs: Date) -> Bool {
         let left = lhs.yearMonthDay
         let right = rhs.yearMonthDay
         
@@ -139,7 +139,7 @@ private extension Date {
         left.day == right.day
     }
     
-    static func > (lhs: Date, rhs: Date) -> Bool {
+    fileprivate static func > (lhs: Date, rhs: Date) -> Bool {
         let left = lhs.yearMonthDay
         let right = rhs.yearMonthDay
         
