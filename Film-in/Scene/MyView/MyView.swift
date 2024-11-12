@@ -33,7 +33,7 @@ struct MyView: View {
                             .foregroundStyle(.appText)
                             .frame(maxWidth: proxy.size.width, alignment: .leading)
                         
-                        let wantMovies = user.first?.wantMovies.filter({ Calendar.current.isDate(selection, inSameDayAs: $0.date) }) ?? []
+                        let wantMovies = user.first?.wantMovies.filter({ Calendar.current.isDate(viewModel.output.selectDate, inSameDayAs: $0.date) }) ?? []
                         ForEach(wantMovies, id: \.id) { movie in
                             ZStack {
                                 let url = URL(string: ImageURL.tmdb(image: movie.backdrop).urlString)
@@ -96,7 +96,7 @@ struct MyView: View {
                             .foregroundStyle(.appText)
                             .frame(maxWidth: proxy.size.width, alignment: .leading)
                         
-                        let watchedMovies = user.first?.watchedMovies.filter({ Calendar.current.isDate(selection, inSameDayAs: $0.date) }) ?? []
+                        let watchedMovies = user.first?.watchedMovies.filter({ Calendar.current.isDate(viewModel.output.selectDate, inSameDayAs: $0.date) }) ?? []
                         ForEach(watchedMovies, id: \.id) { movie in
                             ZStack {
                                 let url = URL(string: ImageURL.tmdb(image: movie.backdrop).urlString)
