@@ -406,24 +406,6 @@ struct TransitionMovieDetailView: View {
                     .position(.top)
                     .dragToDismiss(true)
             }
-            //        .sheet(isPresented: .constant(true)) {
-            //            MovieInfoView(
-            //                viewModel: MovieInfoViewModel(
-            //                    movieInfoService: DefaultMovieInfoService(
-            //                        tmdbRepository: DefaultTMDBRepository.shared,
-            //                        databaseRepository: RealmRepository.shared
-            //                    ),
-            //                    networkMonitor: NetworkMonitor.shared,
-            //                    movieId: movie._id
-            //                ),
-            //                posterSize: size
-            //            )
-            //            .presentationDetents([.height(160), .large])
-            //            .presentationBackgroundInteraction(.enabled(upThrough: .height(160)))
-            //            .presentationCornerRadius(0)
-            //            .presentationDragIndicator(.visible)
-            //            .interactiveDismissDisabled()
-            //        }
         }
     }
 }
