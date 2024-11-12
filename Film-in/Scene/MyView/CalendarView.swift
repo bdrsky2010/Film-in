@@ -18,6 +18,23 @@ struct CalendarView: View {
                 Text(viewModel.output.currentMonthYearString)
                     .font(.headline)
                 Spacer()
+                
+                HStack(spacing: 20) {
+                    Button {
+                        viewModel.action(.changeMonth(value: -1))
+                    } label: {
+                        Image(systemName: "chevron.left")
+                    }
+                    
+                    Button {
+                        viewModel.action(.changeMonth(value: 1))
+                    } label: {
+                        Image(systemName: "chevron.right")
+                    }
+                }
+                .font(.title3)
+                .bold()
+                .foregroundStyle(.app)
             }
             
             HStack {
