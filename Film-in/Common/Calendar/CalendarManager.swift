@@ -7,12 +7,20 @@
 
 import Foundation
 
-struct Day {
-    let date: Date
-    var isData: Bool
+struct Day: Hashable, Identifiable {
+    let id = UUID()
+    let _date: Date
+    let isData: Bool
     
-    init(date: Date, isData: Bool = false) {
-        self.date = date
+    var date: Date {
+        if let date = Calendar.current.date(byAdding: .day, value: -1, to: _date) {
+            return date
+        }
+        return _date
+    }
+    
+    init(date: Date, isData: Bool) {
+        self._date = date
         self.isData = isData
     }
 }
