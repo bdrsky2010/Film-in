@@ -25,6 +25,8 @@ struct MyView: View {
     var body: some View {
         NavigationStack {
             VStack {
+                CalendarView(viewModel: viewModel)
+                    .padding(.horizontal)
                 
                 GeometryReader { proxy in
                     List {
