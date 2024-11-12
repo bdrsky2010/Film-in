@@ -15,7 +15,7 @@ struct CalendarView: View {
     var body: some View {
         VStack {
             HStack {
-                Text(currentMonthYear)
+                Text(viewModel.output.currentMonthYearString)
                     .font(.headline)
                 Spacer()
             }
