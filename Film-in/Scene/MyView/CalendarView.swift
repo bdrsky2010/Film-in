@@ -37,6 +37,7 @@ struct CalendarView: View {
                 withAnimation(.easeInOut(duration: 0.3)) {
                     isPickerPresented.toggle()
                 }
+                viewModel.action(.disappearPicker)
             }
             
             Spacer()
