@@ -88,6 +88,19 @@ struct CalendarView: View {
             }
         }
     }
+    
+    private var localizedMonths: [String] {
+
+        let dateFormatter = Date.dateFormatter
+        dateFormatter.locale = Locale.current
+        dateFormatter.dateFormat = "MMM"
+        
+        return (1...12).map { month in
+            let dateComponents = DateComponents(calendar: Calendar.current, month: month)
+            let date = Calendar.current.date(from: dateComponents) ?? Date()
+            return dateFormatter.string(from: date) // 언어별 월 형식 반환
+        }
+    }
 }
 
 struct DayView: View {
