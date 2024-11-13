@@ -37,8 +37,8 @@ extension MyViewModel {
     struct Output {
         var isRequestDelete = false
         var deleteMovieId = 0
-        var currentMonth = Date()
-        var currentMonthYearString = ""
+        var currentYearMonth = Date()
+        var currentYearMonthString = ""
         var selectDate = Date()
         var selectMonthDays = [Day]()
     }
@@ -47,9 +47,9 @@ extension MyViewModel {
         input.generateDays
             .sink { [weak self] _ in
                 guard let self else { return }
-                output.currentMonthYearString = myViewService.currentMonthYearString(for: output.currentMonth) // 설정된 날짜의 년, 월 문자열로 생성
+                output.currentYearMonthString = myViewService.currentMonthYearString(for: output.currentYearMonth) // 설정된 날짜의 년, 월 문자열로 생성
                 
-                let days = myViewService.generateDays(for: output.currentMonth) // 설정된 달에 대한 날짜 생성
+                let days = myViewService.generateDays(for: output.currentYearMonth) // 설정된 달에 대한 날짜 생성
                 output.selectMonthDays = days
             }
             .store(in: &cancellable)
@@ -64,12 +64,15 @@ extension MyViewModel {
         input.changeMonth
             .sink { [weak self] value in
                 guard let self else { return }
-                let date = myViewService.changeMonth(by: value, for: output.currentMonth)
-                output.currentMonth = date
+                let date = myViewService.changeMonth(by: value, for: output.currentYearMonth)
+                output.currentYearMonth = date
                 
-                output.currentMonthYearString = myViewService.currentMonthYearString(for: date)
+                output.currentYearMonthString = myViewService.currentMonthYearString(for: date)
                 
-                let days = myViewService.generateDays(for: output.currentMonth)
+                let days = myViewService.generateDays(for: output.currentYearMonth)
+                output.selectMonthDays = days
+            }
+            .store(in: &cancellable)
                 output.selectMonthDays = days
             }
             .store(in: &cancellable)
@@ -111,6 +114,7 @@ extension MyViewModel {
             input.selectDay.send(day)
         case .changeMonth(let value):
             input.changeMonth.send(value)
+            input.disappearPicker.send(())
         case .deleteGesture(let movieId):
             input.deleteGesture.send(movieId)
         case .realDelete(let movieId):
