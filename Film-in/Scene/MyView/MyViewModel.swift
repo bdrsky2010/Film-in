@@ -118,8 +118,3 @@ extension MyViewModel {
         }
     }
 }
-
-extension DateSetupViewModel {
-    
-}
-
