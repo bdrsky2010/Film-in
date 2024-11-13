@@ -15,7 +15,10 @@ struct CalendarView: View {
     var body: some View {
         VStack {
             calendarHeader()
-            calendarSection()
+            ZStack {
+                calendarSection()
+                if isPickerPresented { calendarPicker() }
+            }
         }
     }
     
