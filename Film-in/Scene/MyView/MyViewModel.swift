@@ -30,6 +30,7 @@ extension MyViewModel {
         var generateDays = PassthroughSubject<Void, Never>()
         var selectDay = PassthroughSubject<Date, Never>()
         var changeMonth = PassthroughSubject<Int, Never>()
+        var changeYearMonth = PassthroughSubject<(year: Int, month: Int), Never>()
         var deleteGesture = PassthroughSubject<Int, Never>()
         var realDeleteMovie = PassthroughSubject<Int, Never>()
     }
@@ -73,6 +74,16 @@ extension MyViewModel {
                 output.selectMonthDays = days
             }
             .store(in: &cancellable)
+        
+        input.changeYearMonth
+            .sink { [weak self] value in
+                guard let self else { return }
+                let date = myViewService.changeYearMonth(by: value, for: output.currentYearMonth)
+                output.currentYearMonth = date
+                
+                output.currentYearMonthString = myViewService.currentMonthYearString(for: date)
+            }
+            .store(in: &cancellable)
                 output.selectMonthDays = days
             }
             .store(in: &cancellable)
@@ -102,6 +113,7 @@ extension MyViewModel {
         case viewOnTask
         case selectDay(day: Date)
         case changeMonth(value: Int)
+        case changeYearMonth(year: Int, month: Int)
         case deleteGesture(movieId: Int)
         case realDelete(movieId: Int)
     }
@@ -114,6 +126,8 @@ extension MyViewModel {
             input.selectDay.send(day)
         case .changeMonth(let value):
             input.changeMonth.send(value)
+        case .changeYearMonth(let year, let month):
+            input.changeYearMonth.send((year, month))
             input.disappearPicker.send(())
         case .deleteGesture(let movieId):
             input.deleteGesture.send(movieId)
