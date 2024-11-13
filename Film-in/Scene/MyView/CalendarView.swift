@@ -90,6 +90,13 @@ struct CalendarView: View {
     }
     
     
+    private var isEnglish: Bool {
+        if let preferredLanguage = Locale.preferredLanguages.first {
+            return preferredLanguage.hasPrefix("en")
+        }
+        return true
+    }
+    
     private var localizedYears: [Int: String] {
         var yearSuffix = ""
         
