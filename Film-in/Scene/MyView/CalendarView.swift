@@ -89,6 +89,25 @@ struct CalendarView: View {
         }
     }
     
+    
+    private var localizedYears: [Int: String] {
+        var yearSuffix = ""
+        
+        if let preferredLanguage = Locale.preferredLanguages.first {
+            if preferredLanguage.hasPrefix("ko") {
+                yearSuffix = "년"
+            } else if preferredLanguage.hasPrefix("ja") {
+                yearSuffix = "年"
+            } else {
+                yearSuffix = ""
+            }
+        } else {
+            yearSuffix = ""
+        }
+        
+        return Dictionary(uniqueKeysWithValues: (pastYear...futureYear).map { ($0, "\($0)" + yearSuffix) })
+    }
+    
     private var localizedMonths: [String] {
 
         let dateFormatter = Date.dateFormatter
