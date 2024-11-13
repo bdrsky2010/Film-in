@@ -14,11 +14,34 @@ struct CalendarView: View {
     
     var body: some View {
         VStack {
-            HStack {
+            calendarHeader()
+            calendarSection()
+        }
+    }
+    
+    @ViewBuilder
+    private func calendarHeader() -> some View {
+        HStack {
+            HStack(spacing: 4) {
                 Text(viewModel.output.currentMonthYearString)
                     .font(.headline)
-                Spacer()
                 
+                Image(systemName: "chevron.right")
+                    .font(.subheadline)
+                    .bold()
+                    .foregroundStyle(.app)
+                    .rotationEffect(.degrees(isPickerPresented ? 90 : 0))
+            }
+            .foregroundStyle(isPickerPresented ? .app : .primary)
+            .onTapGesture {
+                withAnimation(.easeInOut(duration: 0.3)) {
+                    isPickerPresented.toggle()
+                }
+            }
+            
+            Spacer()
+            
+            if !isPickerPresented {
                 HStack(spacing: 20) {
                     Button {
                         viewModel.action(.changeMonth(value: -1))
@@ -36,7 +59,12 @@ struct CalendarView: View {
                 .bold()
                 .foregroundStyle(.app)
             }
-            
+        }
+    }
+    
+    @ViewBuilder
+    private func calendarSection() -> some View {
+        VStack {
             HStack {
                 ForEach(weekDays, id: \.self) { day in
                     Text(day)
@@ -92,7 +120,7 @@ struct DayView: View {
                         .frame(width: 5, height: 5)
                 }
             }
-            .foregroundStyle(isSelect ? .appLightGray : .appText)
+            .foregroundStyle(isSelect ? .white : .appText)
             
         } else {
             Text("")
