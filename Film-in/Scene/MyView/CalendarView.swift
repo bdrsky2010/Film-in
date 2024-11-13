@@ -9,8 +9,15 @@ import SwiftUI
 
 struct CalendarView: View {
     @ObservedObject var viewModel: MyViewModel
+    
+    @State private var isPickerPresented = false
+    @State private var selectYear = 1
+    @State private var selectMonth = 1
+    
     private let columns = Array(repeating: GridItem(.flexible()), count: 7)
     private let weekDays = Calendar.current.shortWeekdaySymbols
+    private let pastYear = Calendar.current.component(.year, from: Date()) - 100
+    private let futureYear = Calendar.current.component(.year, from: Date()) + 100
     
     var body: some View {
         VStack {
