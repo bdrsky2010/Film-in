@@ -23,7 +23,7 @@ struct CalendarView: View {
     private func calendarHeader() -> some View {
         HStack {
             HStack(spacing: 4) {
-                Text(viewModel.output.currentMonthYearString)
+                Text(viewModel.output.currentYearMonthString)
                     .font(.headline)
                 
                 Image(systemName: "chevron.right")
@@ -78,7 +78,7 @@ struct CalendarView: View {
                 ForEach(viewModel.output.selectMonthDays, id: \.id) { value in
                     DayView(
                         select: viewModel.output.selectDate,
-                        currentMonth: viewModel.output.currentMonth,
+                        currentMonth: viewModel.output.currentYearMonth,
                         value: value
                     )
                     .onTapGesture {
