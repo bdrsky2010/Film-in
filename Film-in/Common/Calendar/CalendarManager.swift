@@ -28,6 +28,7 @@ struct Day: Hashable, Identifiable {
 protocol CalendarManager {
     func generateDays(for date: Date) -> [Date]
     func changeMonth(by value: Int, for currentDate: Date) -> Date
+    func changeYearMonth(by value: (year: Int, month: Int), for currentDate: Date) -> Date
     func selectDay(_ date: Date) -> Date?
 }
 
@@ -73,6 +74,15 @@ final class DefaultCalendarManager: CalendarManager {
             return currentDate
         }
         return newDate
+    }
+    
+    func changeYearMonth(by value: (year: Int, month: Int), for currentDate: Date) -> Date {
+        var dateComponents = DateComponents()
+        dateComponents.year = value.year
+        dateComponents.month = value.month
+        dateComponents.day = 1
+        
+        return Calendar.current.date(from: dateComponents) ?? currentDate
     }
     
     func selectDay(_ date: Date) -> Date? {
