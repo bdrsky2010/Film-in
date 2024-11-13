@@ -12,6 +12,7 @@ protocol MyViewService: AnyObject {
     func requestDeleteMovie(movieId: Int)
     func generateDays(for date: Date) -> [Day]
     func changeMonth(by value: Int, for currentDate: Date) -> Date
+    func changeYearMonth(by value: (year: Int, month: Int), for currentDate: Date) -> Date
     func currentMonthYearString(for currentDate: Date) -> String
 }
 
@@ -67,6 +68,10 @@ extension DefaultMyViewService: MyViewService {
     
     func changeMonth(by value: Int, for currentDate: Date) -> Date {
         return calendarManager.changeMonth(by: value, for: currentDate)
+    }
+    
+    func changeYearMonth(by value: (year: Int, month: Int), for currentDate: Date) -> Date {
+        return calendarManager.changeYearMonth(by: value, for: currentDate)
     }
     
     private func binarySearchMovie(_ list: List<MovieTable>, _ target: Date) -> Bool {
