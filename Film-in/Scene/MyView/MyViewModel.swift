@@ -31,6 +31,7 @@ extension MyViewModel {
         var selectDay = PassthroughSubject<Date, Never>()
         var changeMonth = PassthroughSubject<Int, Never>()
         var changeYearMonth = PassthroughSubject<(year: Int, month: Int), Never>()
+        var disappearPicker = PassthroughSubject<Void, Never>()
         var deleteGesture = PassthroughSubject<Int, Never>()
         var realDeleteMovie = PassthroughSubject<Int, Never>()
     }
@@ -84,6 +85,11 @@ extension MyViewModel {
                 output.currentYearMonthString = myViewService.currentMonthYearString(for: date)
             }
             .store(in: &cancellable)
+        
+        input.disappearPicker
+            .sink { [weak self] _ in
+                guard let self else { return }
+                let days = myViewService.generateDays(for: output.currentYearMonth)
                 output.selectMonthDays = days
             }
             .store(in: &cancellable)
@@ -101,7 +107,7 @@ extension MyViewModel {
                 guard let self else { return }
                 myViewService.requestDeleteMovie(movieId: movieId) // 저장된 영화 삭제
                 
-                let days = myViewService.generateDays(for: output.currentMonth)
+                let days = myViewService.generateDays(for: output.currentYearMonth)
                 output.selectMonthDays = days // 날짜 데이터 reload
             }
             .store(in: &cancellable)
@@ -114,6 +120,7 @@ extension MyViewModel {
         case selectDay(day: Date)
         case changeMonth(value: Int)
         case changeYearMonth(year: Int, month: Int)
+        case disappearPicker
         case deleteGesture(movieId: Int)
         case realDelete(movieId: Int)
     }
@@ -128,6 +135,7 @@ extension MyViewModel {
             input.changeMonth.send(value)
         case .changeYearMonth(let year, let month):
             input.changeYearMonth.send((year, month))
+        case .disappearPicker:
             input.disappearPicker.send(())
         case .deleteGesture(let movieId):
             input.deleteGesture.send(movieId)
