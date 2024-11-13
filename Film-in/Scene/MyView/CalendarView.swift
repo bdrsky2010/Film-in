@@ -89,6 +89,60 @@ struct CalendarView: View {
         }
     }
     
+    @ViewBuilder
+    private func calendarPicker() -> some View {
+        HStack {
+            if isEnglish {
+                Picker("", selection: $selectMonth) {
+                    ForEach(1...12, id: \.self) { month in
+                        Text(localizedMonths[month - 1]).tag(month)
+                    }
+                }
+                .pickerStyle(.wheel)
+                
+                Picker("", selection: $selectYear) {
+                    ForEach(pastYear...futureYear, id: \.self) { year in
+                        Text(localizedYears[year] ?? "").tag(year)
+                    }
+                }
+                .pickerStyle(.wheel)
+                
+            } else {
+                Picker("", selection: $selectYear) {
+                    ForEach(pastYear...futureYear, id: \.self) { year in
+                        Text(localizedYears[year] ?? "").tag(year)
+                    }
+                }
+                .pickerStyle(.wheel)
+                
+                Picker("", selection: $selectMonth) {
+                    ForEach(1...12, id: \.self) { month in
+                        Text(localizedMonths[month - 1]).tag(month)
+                    }
+                }
+                .pickerStyle(.wheel)
+            }
+        }
+        .frame(maxHeight: .infinity)
+        .background(.background)
+        .valueChanged(value: selectYear) { _ in
+            viewModel.action(.changeYearMonth(year: selectYear, month: selectMonth))
+        }
+        .valueChanged(value: selectMonth) { _ in
+            viewModel.action(.changeYearMonth(year: selectYear, month: selectMonth))
+        }
+        .task {
+            let currentDate = viewModel.output.currentYearMonth
+            let currentYearMonth = Calendar.current.dateComponents([.year, .month], from: currentDate)
+            
+            if let year = currentYearMonth.year,
+               let month = currentYearMonth.month {
+               
+                selectYear = year
+                selectMonth = month
+            }
+        }
+    }
     
     private var isEnglish: Bool {
         if let preferredLanguage = Locale.preferredLanguages.first {
