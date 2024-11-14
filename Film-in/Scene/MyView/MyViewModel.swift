@@ -156,6 +156,8 @@ extension MyViewModel {
                 guard let self else { return }
                 let days = myViewService.generateDays(for: output.currentYearMonth)
                 output.selectMonthDays = days
+                output.localizedYears = [:]
+                output.localizedMonths = [:]
             }
             .store(in: &cancellable)
         
