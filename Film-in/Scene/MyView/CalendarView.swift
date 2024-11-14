@@ -34,7 +34,7 @@ struct CalendarView: View {
         HStack {
             HStack(spacing: 4) {
                 Text(viewModel.output.currentYearMonthString)
-                    .font(.headline)
+                    .font(.ibmPlexMonoSemiBold(size: 17))
                 
                 Image(systemName: "chevron.right")
                     .font(.subheadline)
@@ -79,7 +79,7 @@ struct CalendarView: View {
             HStack {
                 ForEach(weekDays, id: \.self) { day in
                     Text(day)
-                        .font(.headline)
+                        .font(.ibmPlexMonoMedium(size: 17))
                         .frame(maxWidth: .infinity)
                         .padding(.vertical, 8)
                 }
@@ -217,7 +217,7 @@ struct DayView: View {
                 }
                 
                 Text("\(date.day ?? 0)")
-                    .font(.headline)
+                    .font(.ibmPlexMonoMedium(size: 17))
                     .padding(.vertical, 8)
                 if value.isData {
                     Circle()
