@@ -13,8 +13,8 @@ final class MyViewModel: BaseObject, ViewModelType {
     
     @Published var output = Output()
     
-    var input = Input()
-    var cancellable = Set<AnyCancellable>()
+    private(set) var input = Input()
+    private(set) var cancellable = Set<AnyCancellable>()
     
     init(
         myViewService: MyViewService
