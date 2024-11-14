@@ -43,6 +43,8 @@ extension MyViewModel {
         var currentYearMonthString = ""
         var selectDate = Date()
         var selectMonthDays = [Day]()
+        
+        var isPickerPresent = false
     }
     
     func transform() {
@@ -73,6 +75,13 @@ extension MyViewModel {
                 
                 let days = myViewService.generateDays(for: output.currentYearMonth)
                 output.selectMonthDays = days
+            }
+            .store(in: &cancellable)
+        
+        input.isPickerPresentToggle
+            .sink { [weak self] _ in
+                guard let self else { return }
+                output.isPickerPresent.toggle()
             }
             .store(in: &cancellable)
         
@@ -119,6 +128,8 @@ extension MyViewModel {
         case viewOnTask
         case selectDay(day: Date)
         case changeMonth(value: Int)
+        
+        case pickerButtonTap
         case changeYearMonth(year: Int, month: Int)
         case disappearPicker
         case deleteGesture(movieId: Int)
@@ -133,10 +144,14 @@ extension MyViewModel {
             input.selectDay.send(day)
         case .changeMonth(let value):
             input.changeMonth.send(value)
+            
+        case .pickerButtonTap:
+            input.isPickerPresentToggle.send(())
         case .changeYearMonth(let year, let month):
             input.changeYearMonth.send((year, month))
         case .disappearPicker:
             input.disappearPicker.send(())
+            
         case .deleteGesture(let movieId):
             input.deleteGesture.send(movieId)
         case .realDelete(let movieId):
