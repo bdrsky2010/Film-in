@@ -10,10 +10,6 @@ import SwiftUI
 struct CalendarView: View {
     @ObservedObject var viewModel: MyViewModel
     
-    @State private var isPickerPresented = false
-    @State private var selectYear = 1
-    @State private var selectMonth = 1
-    
     private let columns = Array(repeating: GridItem(.flexible()), count: 7)
     private let weekDays = Calendar.current.shortWeekdaySymbols
     private let pastYear = Calendar.current.component(.year, from: Date()) - 100
@@ -24,7 +20,9 @@ struct CalendarView: View {
             calendarHeader()
             ZStack {
                 calendarSection()
-                if isPickerPresented { calendarPicker() }
+                if viewModel.output.isPickerPresent {
+                    calendarPicker()
+                }
             }
         }
     }
@@ -40,28 +38,35 @@ struct CalendarView: View {
                     .font(.subheadline)
                     .bold()
                     .foregroundStyle(.app)
-                    .rotationEffect(.degrees(isPickerPresented ? 90 : 0))
+                    .rotationEffect(.degrees(viewModel.output.isPickerPresent ? 90 : 0))
             }
-            .foregroundStyle(isPickerPresented ? .app : .primary)
+            .foregroundStyle(viewModel.output.isPickerPresent ? .app : .primary)
             .onTapGesture {
                 withAnimation(.easeInOut(duration: 0.3)) {
-                    isPickerPresented.toggle()
+                    viewModel.action(.pickerButtonTap)
                 }
-                viewModel.action(.disappearPicker)
+                
+                if !viewModel.output.isPickerPresent {
+                    viewModel.action(.disappearPicker)
+                }
             }
             
             Spacer()
             
-            if !isPickerPresented {
+            if !viewModel.output.isPickerPresent {
                 HStack(spacing: 20) {
                     Button {
-                        viewModel.action(.changeMonth(value: -1))
+                        withAnimation(.easeInOut(duration: 0.3)) {
+                            viewModel.action(.changeMonth(value: -1))
+                        }
                     } label: {
                         Image(systemName: "chevron.left")
                     }
                     
                     Button {
-                        viewModel.action(.changeMonth(value: 1))
+                        withAnimation(.easeInOut(duration: 0.3)) {
+                            viewModel.action(.changeMonth(value: 1))
+                        }
                     } label: {
                         Image(systemName: "chevron.right")
                     }
@@ -103,32 +108,32 @@ struct CalendarView: View {
     @ViewBuilder
     private func calendarPicker() -> some View {
         HStack {
-            if isEnglish {
-                Picker("", selection: $selectMonth) {
+            if viewModel.output.isEnglish {
+                Picker("", selection: $viewModel.output.selectMonth) {
                     ForEach(1...12, id: \.self) { month in
-                        Text(localizedMonths[month - 1]).tag(month)
+                        Text(viewModel.output.localizedMonths[month] ?? "").tag(month)
                     }
                 }
                 .pickerStyle(.wheel)
                 
-                Picker("", selection: $selectYear) {
+                Picker("", selection: $viewModel.output.selectYear) {
                     ForEach(pastYear...futureYear, id: \.self) { year in
-                        Text(localizedYears[year] ?? "").tag(year)
+                        Text(viewModel.output.localizedYears[year] ?? "").tag(year)
                     }
                 }
                 .pickerStyle(.wheel)
                 
             } else {
-                Picker("", selection: $selectYear) {
+                Picker("", selection: $viewModel.output.selectYear) {
                     ForEach(pastYear...futureYear, id: \.self) { year in
-                        Text(localizedYears[year] ?? "").tag(year)
+                        Text(viewModel.output.localizedYears[year] ?? "").tag(year)
                     }
                 }
                 .pickerStyle(.wheel)
                 
-                Picker("", selection: $selectMonth) {
+                Picker("", selection: $viewModel.output.selectMonth) {
                     ForEach(1...12, id: \.self) { month in
-                        Text(localizedMonths[month - 1]).tag(month)
+                        Text(viewModel.output.localizedMonths[month] ?? "").tag(month)
                     }
                 }
                 .pickerStyle(.wheel)
@@ -136,60 +141,18 @@ struct CalendarView: View {
         }
         .frame(maxHeight: .infinity)
         .background(.background)
-        .valueChanged(value: selectYear) { _ in
+        .valueChanged(value: viewModel.output.selectYear) { _ in
+            let selectYear = viewModel.output.selectYear
+            let selectMonth = viewModel.output.selectMonth
             viewModel.action(.changeYearMonth(year: selectYear, month: selectMonth))
         }
-        .valueChanged(value: selectMonth) { _ in
+        .valueChanged(value: viewModel.output.selectMonth) { _ in
+            let selectYear = viewModel.output.selectYear
+            let selectMonth = viewModel.output.selectMonth
             viewModel.action(.changeYearMonth(year: selectYear, month: selectMonth))
         }
         .task {
-            let currentDate = viewModel.output.currentYearMonth
-            let currentYearMonth = Calendar.current.dateComponents([.year, .month], from: currentDate)
-            
-            if let year = currentYearMonth.year,
-               let month = currentYearMonth.month {
-               
-                selectYear = year
-                selectMonth = month
-            }
-        }
-    }
-    
-    private var isEnglish: Bool {
-        if let preferredLanguage = Locale.preferredLanguages.first {
-            return preferredLanguage.hasPrefix("en")
-        }
-        return true
-    }
-    
-    private var localizedYears: [Int: String] {
-        var yearSuffix = ""
-        
-        if let preferredLanguage = Locale.preferredLanguages.first {
-            if preferredLanguage.hasPrefix("ko") {
-                yearSuffix = "년"
-            } else if preferredLanguage.hasPrefix("ja") {
-                yearSuffix = "年"
-            } else {
-                yearSuffix = ""
-            }
-        } else {
-            yearSuffix = ""
-        }
-        
-        return Dictionary(uniqueKeysWithValues: (pastYear...futureYear).map { ($0, "\($0)" + yearSuffix) })
-    }
-    
-    private var localizedMonths: [String] {
-
-        let dateFormatter = Date.dateFormatter
-        dateFormatter.locale = Locale.current
-        dateFormatter.dateFormat = "MMM"
-        
-        return (1...12).map { month in
-            let dateComponents = DateComponents(calendar: Calendar.current, month: month)
-            let date = Calendar.current.date(from: dateComponents) ?? Date()
-            return dateFormatter.string(from: date) // 언어별 월 형식 반환
+            viewModel.action(.pickerOnTask(past: pastYear, future: futureYear))
         }
     }
 }
