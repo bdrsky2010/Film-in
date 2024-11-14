@@ -13,9 +13,9 @@ protocol ViewModelType: ObservableObject where Self: BaseObject {
     associatedtype Output
     associatedtype Action
     
-    var input: Input { get set }
-    var output: Output { get set }
-    var cancellable: Set<AnyCancellable> { get set }
+    var input: Input { get }
+    var output: Output { get }
+    var cancellable: Set<AnyCancellable> { get }
     
     func transform()
     func action(_ action: Action)
