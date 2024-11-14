@@ -30,21 +30,32 @@ extension MyViewModel {
         var generateDays = PassthroughSubject<Void, Never>()
         var selectDay = PassthroughSubject<Date, Never>()
         var changeMonth = PassthroughSubject<Int, Never>()
+        
+        var isPickerPresentToggle = PassthroughSubject<Void, Never>()
+        var isEnglishJudge = PassthroughSubject<Void, Never>()
+        var setupLocalizedYears = PassthroughSubject<(past: Int, future: Int), Never>()
+        var setupLocalizedMonths = PassthroughSubject<Void, Never>()
+        var setupSelectYearMonth = PassthroughSubject<Void, Never>()
         var changeYearMonth = PassthroughSubject<(year: Int, month: Int), Never>()
         var disappearPicker = PassthroughSubject<Void, Never>()
+        
         var deleteGesture = PassthroughSubject<Int, Never>()
         var realDeleteMovie = PassthroughSubject<Int, Never>()
     }
     
     struct Output {
-        var isRequestDelete = false
-        var deleteMovieId = 0
         var currentYearMonth = Date()
         var currentYearMonthString = ""
         var selectDate = Date()
         var selectMonthDays = [Day]()
         
         var isPickerPresent = false
+        var isEnglish = false
+        var localizedYears: [Int: String] = [:]
+        var localizedMonths: [Int: String] = [:]
+        var selectYear = 1
+        var selectMonth = 1
+        
     }
     
     func transform() {
@@ -82,6 +93,49 @@ extension MyViewModel {
             .sink { [weak self] _ in
                 guard let self else { return }
                 output.isPickerPresent.toggle()
+            }
+            .store(in: &cancellable)
+        
+        input.isEnglishJudge
+            .sink { [weak self] _ in
+                guard let self else { return }
+                output.isEnglish = myViewService.judgedIsEnglish()
+            }
+            .store(in: &cancellable)
+        
+        input.setupLocalizedYears
+            .sink { [weak self] (past, future) in
+                guard let self else { return }
+                myViewService.generateLocalizedYears(from: past, to: future)
+                    .receive(on: DispatchQueue.main)
+                    .sink { [weak self] localizedYears in
+                        guard let self else { return }
+                        output.localizedYears = localizedYears
+                    }
+                    .store(in: &cancellable)
+            }
+            .store(in: &cancellable)
+        
+        input.setupLocalizedMonths
+            .sink { [weak self] _ in
+                guard let self else { return }
+                let localizedMonths = myViewService.generateLocalizedMonths()
+                output.localizedMonths = localizedMonths
+            }
+            .store(in: &cancellable)
+        
+        input.setupSelectYearMonth
+            .sink { [weak self] _ in
+                guard let self else { return }
+                let currentDate = output.currentYearMonth
+                let currentYearMonth = Calendar.current.dateComponents([.year, .month], from: currentDate)
+                
+                if let year = currentYearMonth.year,
+                   let month = currentYearMonth.month {
+                    
+                    output.selectYear = year
+                    output.selectMonth = month
+                }
             }
             .store(in: &cancellable)
         
@@ -130,8 +184,10 @@ extension MyViewModel {
         case changeMonth(value: Int)
         
         case pickerButtonTap
+        case pickerOnTask(past: Int, future: Int)
         case changeYearMonth(year: Int, month: Int)
         case disappearPicker
+        
         case deleteGesture(movieId: Int)
         case realDelete(movieId: Int)
     }
@@ -147,6 +203,11 @@ extension MyViewModel {
             
         case .pickerButtonTap:
             input.isPickerPresentToggle.send(())
+        case .pickerOnTask(let past, let future):
+            input.isEnglishJudge.send(())
+            input.setupLocalizedYears.send((past, future))
+            input.setupLocalizedMonths.send(())
+            input.setupSelectYearMonth.send(())
         case .changeYearMonth(let year, let month):
             input.changeYearMonth.send((year, month))
         case .disappearPicker:
