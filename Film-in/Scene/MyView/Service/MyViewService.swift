@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import Combine
 import RealmSwift
 
 protocol MyViewService: AnyObject {
@@ -14,6 +15,9 @@ protocol MyViewService: AnyObject {
     func changeMonth(by value: Int, for currentDate: Date) -> Date
     func changeYearMonth(by value: (year: Int, month: Int), for currentDate: Date) -> Date
     func currentMonthYearString(for currentDate: Date) -> String
+    func generateLocalizedYears(from pastYear: Int, to futureYear: Int) -> Future<[Int: String], Never>
+    func generateLocalizedMonths() -> [Int: String]
+    func judgedIsEnglish() -> Bool
 }
 
 final class DefaultMyViewService: BaseObject {
@@ -104,6 +108,25 @@ extension DefaultMyViewService: MyViewService {
             formatter.dateFormat = "MMM yyyy"
         }
         return formatter.string(from: currentDate)
+    }
+    
+    func generateLocalizedYears(from pastYear: Int, to futureYear: Int) -> Future<[Int : String], Never> {
+        return Future { promise in
+            Task { [weak self] in
+                guard let self else { return }
+                let localizedYears = await calendarManager.generateLocalizedYears(from: pastYear, to: futureYear)
+                promise(.success(localizedYears))
+            }
+        }
+    }
+    
+    func generateLocalizedMonths() -> [Int: String] {
+        return calendarManager.generateLocalizedMonths()
+    }
+    
+    func judgedIsEnglish() -> Bool {
+        guard let preferredLanguage = Locale.preferredLanguages.first else { return true }
+        return preferredLanguage.hasPrefix("en")
     }
 }
 
