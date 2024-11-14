@@ -30,6 +30,7 @@ protocol CalendarManager {
     func changeMonth(by value: Int, for currentDate: Date) -> Date
     func changeYearMonth(by value: (year: Int, month: Int), for currentDate: Date) -> Date
     func selectDay(_ date: Date) -> Date?
+    func generateLocalizedYears(from pastYear: Int, to futureYear: Int) async -> [Int: String]
 }
 
 final class DefaultCalendarManager: CalendarManager {
@@ -90,5 +91,23 @@ final class DefaultCalendarManager: CalendarManager {
             return date
         }
         return nil
+    }
+    
+    func generateLocalizedYears(from pastYear: Int, to futureYear: Int) async -> [Int : String] {
+        var yearSuffix = ""
+        
+        if let preferredLanguage = Locale.preferredLanguages.first {
+            if preferredLanguage.hasPrefix("ko") {
+                yearSuffix = "년"
+            } else if preferredLanguage.hasPrefix("ja") {
+                yearSuffix = "年"
+            } else {
+                yearSuffix = ""
+            }
+        } else {
+            yearSuffix = ""
+        }
+        
+        return Dictionary(uniqueKeysWithValues: (pastYear...futureYear).map { ($0, "\($0)" + yearSuffix) })
     }
 }
