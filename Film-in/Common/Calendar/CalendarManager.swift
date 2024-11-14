@@ -31,6 +31,7 @@ protocol CalendarManager {
     func changeYearMonth(by value: (year: Int, month: Int), for currentDate: Date) -> Date
     func selectDay(_ date: Date) -> Date?
     func generateLocalizedYears(from pastYear: Int, to futureYear: Int) async -> [Int: String]
+    func generateLocalizedMonths() -> [Int: String]
 }
 
 final class DefaultCalendarManager: CalendarManager {
@@ -109,5 +110,17 @@ final class DefaultCalendarManager: CalendarManager {
         }
         
         return Dictionary(uniqueKeysWithValues: (pastYear...futureYear).map { ($0, "\($0)" + yearSuffix) })
+    }
+    
+    func generateLocalizedMonths() -> [Int: String] {
+        let dateFormatter = Date.dateFormatter
+        dateFormatter.locale = Locale.current
+        dateFormatter.dateFormat = "MMM"
+        
+        return Dictionary(uniqueKeysWithValues: (1...12).map { month in
+            let dateComponents = DateComponents(calendar: Calendar.current, month: month)
+            let date = Calendar.current.date(from: dateComponents) ?? Date()
+            return (month, dateFormatter.string(from: date)) // 언어별 월 형식 반환
+        })
     }
 }
