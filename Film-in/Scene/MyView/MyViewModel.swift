@@ -56,6 +56,8 @@ extension MyViewModel {
         var selectYear = 1
         var selectMonth = 1
         
+        var isRequestDelete = false
+        var deleteMovieId = 0
     }
     
     func transform() {
