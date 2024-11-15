@@ -15,13 +15,14 @@ protocol DatabaseRepository: AnyObject {
     func deleteMovie(movieId: Int)
     func printFilePath()
     
+    var realm: Realm { get }
     var user: UserTable? { get }
 }
 
 final class RealmRepository: DatabaseRepository {
     static let shared = RealmRepository()
     
-    private let realm = try! Realm()
+    var realm: Realm { try! Realm() }
     
     var user: UserTable? { realm.objects(UserTable.self).first }
     
