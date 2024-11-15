@@ -173,9 +173,13 @@ extension MyViewModel {
             .sink { [weak self] movieId in
                 guard let self else { return }
                 myViewService.requestDeleteMovie(movieId: movieId) // 저장된 영화 삭제
-                
-                let days = myViewService.generateDays(for: output.currentYearMonth)
-                output.selectMonthDays = days // 날짜 데이터 reload
+                    .receive(on: DispatchQueue.main)
+                    .sink { [weak self]_ in
+                        guard let self else { return }
+                        let days = myViewService.generateDays(for: output.currentYearMonth)
+                        output.selectMonthDays = days // 날짜 데이터 reload
+                    }
+                    .store(in: &cancellable)
             }
             .store(in: &cancellable)
     }
