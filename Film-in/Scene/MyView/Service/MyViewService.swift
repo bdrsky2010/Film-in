@@ -10,7 +10,7 @@ import Combine
 import RealmSwift
 
 protocol MyViewService: AnyObject {
-    func requestDeleteMovie(movieId: Int)
+    func requestDeleteMovie(movieId: Int) -> Future<Void, Never>
     func generateDays(for date: Date) -> [Day]
     func changeMonth(by value: Int, for currentDate: Date) -> Date
     func changeYearMonth(by value: (year: Int, month: Int), for currentDate: Date) -> Date
@@ -37,11 +37,15 @@ final class DefaultMyViewService: BaseObject {
 }
 
 extension DefaultMyViewService: MyViewService {
-    func requestDeleteMovie(movieId: Int) {
+    func requestDeleteMovie(movieId: Int) -> Future<Void, Never> {
         databaseRepository.deleteMovie(movieId: movieId)
         
-        Task {
-            await removePendingNotification(movieId: movieId)
+        return Future { promise in
+            Task { [weak self] in
+                guard let self else { return }
+                await removePendingNotification(movieId: movieId)
+                promise(.success(()))
+            }
         }
     }
     
@@ -59,11 +63,10 @@ extension DefaultMyViewService: MyViewService {
         let days = calendarManager.generateDays(for: date)
         
         let result = days.map {
-            let calendar = Calendar.current
-            guard let date = calendar.date(byAdding: .day, value: -1, to: $0) else {
+            guard let date = Calendar.current.date(byAdding: .day, value: -1, to: $0) else {
                 return Day(date: $0, isData: false)
             }
-            let isData = binarySearchMovie(user.wantMovies, date) || binarySearchMovie(user.watchedMovies, date)
+            let isData = binarySearchMovie(in: user.wantMovies, target: date) || binarySearchMovie(in: user.watchedMovies, target: date)
             return Day(date: $0, isData: isData)
         }
         
@@ -78,7 +81,7 @@ extension DefaultMyViewService: MyViewService {
         return calendarManager.changeYearMonth(by: value, for: currentDate)
     }
     
-    private func binarySearchMovie(_ list: List<MovieTable>, _ target: Date) -> Bool {
+    private func binarySearchMovie(in list: List<MovieTable>, target: Date) -> Bool {
         var left = 0
         var right = list.count - 1
         var mid: Int
@@ -146,12 +149,7 @@ extension Date {
     }
     
     fileprivate static func == (lhs: Date, rhs: Date) -> Bool {
-        let left = lhs.yearMonthDay
-        let right = rhs.yearMonthDay
-        
-        return left.year == right.year &&
-        left.month == right.month &&
-        left.day == right.day
+        return Calendar.current.isDate(lhs, inSameDayAs: rhs)
     }
     
     fileprivate static func > (lhs: Date, rhs: Date) -> Bool {
