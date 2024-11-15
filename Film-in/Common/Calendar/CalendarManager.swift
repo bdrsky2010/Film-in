@@ -25,18 +25,17 @@ struct Day: Hashable, Identifiable {
     }
 }
 
-protocol CalendarManager {
+protocol CalendarManager: AnyObject {
     func generateDays(for date: Date) -> [Date]
     func changeMonth(by value: Int, for currentDate: Date) -> Date
     func changeYearMonth(by value: (year: Int, month: Int), for currentDate: Date) -> Date
     func selectDay(_ date: Date) -> Date?
     func generateLocalizedYears(from pastYear: Int, to futureYear: Int) async -> [Int: String]
     func generateLocalizedMonths() -> [Int: String]
+    func currentMonthYearString(for currentDate: Date) -> String
 }
 
 final class DefaultCalendarManager: CalendarManager {
-    private var currentDate = Date()
-    
     func generateDays(for date: Date) -> [Date] {
         var days = [Date]()
         
@@ -122,5 +121,22 @@ final class DefaultCalendarManager: CalendarManager {
             let date = Calendar.current.date(from: dateComponents) ?? Date()
             return (month, dateFormatter.string(from: date)) // 언어별 월 형식 반환
         })
+    }
+    
+    func currentMonthYearString(for currentDate: Date) -> String {
+        let formatter = Date.dateFormatter
+        
+        if let preferredLanguage = Locale.preferredLanguages.first {
+            if preferredLanguage.hasPrefix("ko") {
+                formatter.dateFormat = "yyyy년 MMM"
+            } else if preferredLanguage.hasPrefix("ja") {
+                formatter.dateFormat = "yyyy年 MMM"
+            } else {
+                formatter.dateFormat = "MMM yyyy"
+            }
+        } else {
+            formatter.dateFormat = "MMM yyyy"
+        }
+        return formatter.string(from: currentDate)
     }
 }
