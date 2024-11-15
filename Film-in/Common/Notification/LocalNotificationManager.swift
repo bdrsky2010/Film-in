@@ -63,7 +63,6 @@ extension DefaultLocalNotificationManager: LocalNotificationManager {
     
         // 알림 예약
         try await center.add(request)
-        print(await center.pendingNotificationRequests())
     }
     
     func removeNotification(movieId: Int) async {
@@ -75,7 +74,6 @@ extension DefaultLocalNotificationManager: LocalNotificationManager {
             $0.identifier
         }
         center.removePendingNotificationRequests(withIdentifiers: identifiers)
-        print(await center.pendingNotificationRequests())
     }
     
     func moveToSettings() {
