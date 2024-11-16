@@ -12,21 +12,21 @@ import PopupView
 struct MyView: View {
     @ObservedResults(UserTable.self) var user
     @StateObject private var viewModel: MyViewModel
-    @State private var selection = Date()
-    @State private var posterSize: CGSize = .zero
+    @State private var posterSize: CGSize
     
-    init(viewModel: MyViewModel, selection: Date = Date(), posterSize: CGSize = .zero) {
+    init(
+        viewModel: MyViewModel,
+        posterSize: CGSize = .zero
+    ) {
         self._viewModel = StateObject(wrappedValue: viewModel)
-        self._selection = State(wrappedValue: selection)
         self._posterSize = State(wrappedValue: posterSize)
     }
     
     var body: some View {
         NavigationStack {
             VStack {
-                DatePicker("", selection: $selection, displayedComponents: [.date])
-                    .datePickerStyle(.graphical)
-                    .tint(.app)
+                CalendarView(viewModel: viewModel)
+                    .padding(.horizontal)
                 
                 GeometryReader { proxy in
                     List {
@@ -35,7 +35,7 @@ struct MyView: View {
                             .foregroundStyle(.appText)
                             .frame(maxWidth: proxy.size.width, alignment: .leading)
                         
-                        let wantMovies = user.first?.wantMovies.filter({ Calendar.current.isDate(selection, inSameDayAs: $0.date) }) ?? []
+                        let wantMovies = user.first?.wantMovies.filter({ Calendar.current.isDate(viewModel.output.selectDate, inSameDayAs: $0.date) }) ?? []
                         ForEach(wantMovies, id: \.id) { movie in
                             ZStack {
                                 let url = URL(string: ImageURL.tmdb(image: movie.backdrop).urlString)
@@ -98,7 +98,7 @@ struct MyView: View {
                             .foregroundStyle(.appText)
                             .frame(maxWidth: proxy.size.width, alignment: .leading)
                         
-                        let watchedMovies = user.first?.watchedMovies.filter({ Calendar.current.isDate(selection, inSameDayAs: $0.date) }) ?? []
+                        let watchedMovies = user.first?.watchedMovies.filter({ Calendar.current.isDate(viewModel.output.selectDate, inSameDayAs: $0.date) }) ?? []
                         ForEach(watchedMovies, id: \.id) { movie in
                             ZStack {
                                 let url = URL(string: ImageURL.tmdb(image: movie.backdrop).urlString)
@@ -125,21 +125,23 @@ struct MyView: View {
                                 }
                                 
                                 NavigationLink {
-                                    MovieDetailView(
-                                        movie: .init(
-                                            _id: movie.id,
-                                            title: movie.title,
-                                            poster: movie.poster,
-                                            backdrop: movie.backdrop
-                                        ),
-                                        size: posterSize,
-                                        viewModel: MovieDetailViewModel(
-                                            movieDetailService: DefaultMovieDetailService(
-                                                tmdbRepository: DefaultTMDBRepository.shared,
-                                                databaseRepository: RealmRepository.shared
+                                    LazyView(
+                                        MovieDetailView(
+                                            movie: .init(
+                                                _id: movie.id,
+                                                title: movie.title,
+                                                poster: movie.poster,
+                                                backdrop: movie.backdrop
                                             ),
-                                            networkMonitor: NetworkMonitor.shared,
-                                            movieId: movie.id
+                                            size: posterSize,
+                                            viewModel: MovieDetailViewModel(
+                                                movieDetailService: DefaultMovieDetailService(
+                                                    tmdbRepository: DefaultTMDBRepository.shared,
+                                                    databaseRepository: RealmRepository.shared
+                                                ),
+                                                networkMonitor: NetworkMonitor.shared,
+                                                movieId: movie.id
+                                            )
                                         )
                                     )
                                 } label: {
@@ -156,6 +158,8 @@ struct MyView: View {
                     }
                     .task {
                         posterSize = CGSize(width: proxy.size.width * 0.7, height: proxy.size.width * 0.7 * 1.5)
+                        
+                        viewModel.action(.viewOnTask)
                     }
                     .listStyle(.plain)
                 }
@@ -213,7 +217,8 @@ struct MyView: View {
         viewModel: MyViewModel(
             myViewService: DefaultMyViewService(
                 databaseRepository: RealmRepository.shared,
-                localNotificationManager: DefaultLocalNotificationManager.shared
+                localNotificationManager: DefaultLocalNotificationManager.shared,
+                calendarManager: DefaultCalendarManager()
             )
         )
     )

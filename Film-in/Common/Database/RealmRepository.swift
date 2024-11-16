@@ -15,13 +15,14 @@ protocol DatabaseRepository: AnyObject {
     func deleteMovie(movieId: Int)
     func printFilePath()
     
+    var realm: Realm { get }
     var user: UserTable? { get }
 }
 
 final class RealmRepository: DatabaseRepository {
     static let shared = RealmRepository()
     
-    private let realm = try! Realm()
+    var realm: Realm { try! Realm() }
     
     var user: UserTable? { realm.objects(UserTable.self).first }
     
@@ -65,8 +66,10 @@ final class RealmRepository: DatabaseRepository {
                 
                 if data.type == .watched {
                     user.watchedMovies.append(newMovie)
+                    user.watchedMovies.sort(by: { $0.date < $1.date }) // 내림차순 정렬
                 } else {
                     user.wantMovies.append(newMovie)
+                    user.wantMovies.sort(by: { $0.date < $1.date }) // 내림차순 정렬
                 }
             }
         } catch {
