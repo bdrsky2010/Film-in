@@ -47,7 +47,3 @@ struct MainTabView: View {
         .tint(.app)
     }
 }
-
-#Preview {
-    MainTabView()
-}
