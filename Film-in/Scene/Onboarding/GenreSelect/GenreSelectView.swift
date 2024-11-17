@@ -19,37 +19,8 @@ struct GenreSelectView: View {
     
     var body: some View {
         ScrollView {
-            if viewModel.output.networkConnect {
-                LazyVGrid(columns: columns) {
-                    ForEach(viewModel.output.genres, id: \.id) { genre in
-                        Circle()
-                            .fill(viewModel.output.selectedGenres.contains(genre) ? Color(.app) : Color(.app).opacity(0.3))
-                            .frame(width: 100, height: 100)
-                            .overlay(
-                                Text(genre.name)
-                                    .foregroundStyle(viewModel.output.selectedGenres.contains(genre) ? .white : Color(uiColor: .app))
-                                    .multilineTextAlignment(.center)
-                                    .padding(8)
-                            )
-                            .onTapGesture {
-                                withAnimation {
-                                    viewModel.action(.addGenre(genre))
-                                }
-                            }
-                            .valueChanged(value: viewModel.output.selectedGenres) { _ in
-                                viewModel.action(.changedGenres)
-                            }
-                    }
-                }
-                
-                Rectangle()
-                    .fill(.clear)
-                    .frame(height: 200)
-            } else {
-                NotConnectView(viewModel: viewModel)
-                    .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .center)
-            }
             titleSection()
+            contentSection()
         }
         .sheet(isPresented: .constant(true)) {
             SelectedGenreSheetView(viewModel: viewModel)
@@ -91,6 +62,40 @@ struct GenreSelectView: View {
             .foregroundStyle(.appText)
             .frame(maxWidth: .infinity, alignment: .leading)
             .padding(.horizontal, 20)
+    }
+    
+    @ViewBuilder
+    private func contentSection() -> some View {
+        if viewModel.output.networkConnect {
+            LazyVGrid(columns: columns) {
+                ForEach(viewModel.output.genres, id: \.id) { genre in
+                    Circle()
+                        .fill(viewModel.output.selectedGenres.contains(genre) ? Color(.app) : Color(.app).opacity(0.3))
+                        .frame(width: 100, height: 100)
+                        .overlay(
+                            Text(genre.name)
+                                .foregroundStyle(viewModel.output.selectedGenres.contains(genre) ? .white : Color(uiColor: .app))
+                                .multilineTextAlignment(.center)
+                                .padding(8)
+                        )
+                        .onTapGesture {
+                            withAnimation {
+                                viewModel.action(.addGenre(genre))
+                            }
+                        }
+                        .valueChanged(value: viewModel.output.selectedGenres) { _ in
+                            viewModel.action(.changedGenres)
+                        }
+                }
+            }
+            
+            Rectangle()
+                .fill(.clear)
+                .frame(height: 200)
+        } else {
+            NotConnectView(viewModel: viewModel)
+                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .center)
+        }
     }
 }
 
