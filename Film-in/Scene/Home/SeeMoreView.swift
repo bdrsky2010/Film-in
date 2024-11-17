@@ -56,7 +56,3 @@ struct SeeMoreView: View {
         .toolbar(.hidden, for: .tabBar)
     }
 }
-
-#Preview {
-    SeeMoreView(usedTo: .nowPlaying)
-}
