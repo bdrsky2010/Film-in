@@ -29,12 +29,7 @@ struct HomeView: View {
             } else {
                 GeometryReader { proxy in
                     VStack {
-                        Text("Film-in")
-                            .font(.ibmPlexMonoSemiBold(size: 50))
-                            .foregroundStyle(.app)
-                            .frame(maxWidth: .infinity, alignment: .leading)
-                            .padding(.horizontal)
-                            .frame(height: 50)
+                        appTitleSection()
                         
                         ScrollView {
                             SnapCarousel(spacing: 28, trailingSpace: 120, index: $index, items: viewModel.output.trendingMovies.movies) { movie in
@@ -168,6 +163,16 @@ struct HomeView: View {
                 }
             }
         }
+    }
+    
+    @ViewBuilder
+    private func appTitleSection() -> some View {
+        Text("Film-in")
+            .font(.ibmPlexMonoSemiBold(size: 50))
+            .foregroundStyle(.app)
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .padding(.horizontal)
+            .frame(height: 50)
     }
 }
 
