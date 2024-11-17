@@ -9,8 +9,6 @@ import SwiftUI
 import PopupView
 
 struct GenreSelectView: View {
-    @AppStorage("onboarding") private var isOnboarding = false
-    
     @StateObject private var viewModel: GenreSelectViewModel
     
     private let columns = [GridItem(.flexible()), GridItem(.flexible()), GridItem(.flexible())]
@@ -58,44 +56,7 @@ struct GenreSelectView: View {
             }
         }
         .sheet(isPresented: .constant(true)) {
-            VStack {
-                ScrollView {
-                    LazyVStack(alignment: .center, spacing: 15) {
-                        ForEach(viewModel.output.selectedGenreRows, id: \.self) { row in
-                            HStack(spacing: 12) {
-                                ForEach(row, id: \.id) { genre in
-                                    SelectedGenreView(genre: genre)
-                                        .onTapGesture {
-                                            withAnimation {
-                                                viewModel.action(.removeGenre(genre))
-                                            }
-                                        }
-                                }
-                            }
-                        }
-                    }
-                }
-                .frame(width: GenreHandler.windowWidth)
-
-                Button {
-                    viewModel.action(.createUser)
-                    isOnboarding = true
-                } label: {
-                    Text("done")
-                        .font(.ibmPlexMonoSemiBold(size: 20))
-                        .frame(maxWidth: .infinity)
-                        .padding(.horizontal, 20)
-                        .padding(.vertical, 8)
-                        .background(Color(uiColor: .app).opacity(0.3))
-                        .foregroundStyle(.app)
-                }
-            }
-            .padding()
-            .presentationDetents([.height(200)])
-            .presentationBackgroundInteraction(.enabled(upThrough: .height(200)))
-            .presentationCornerRadius(0)
-            .presentationDragIndicator(.visible)
-            .interactiveDismissDisabled()
+            SelectedGenreSheetView(viewModel: viewModel)
         }
         .frame(maxWidth: .infinity)
         .task {
