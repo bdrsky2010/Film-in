@@ -218,7 +218,3 @@ fileprivate struct NotConnectView: View {
         }
     }
 }
-
-#Preview {
-    MainTabView()
-}
