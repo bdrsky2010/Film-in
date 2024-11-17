@@ -32,21 +32,6 @@ struct HomeView: View {
                         appTitleSection()
                         
                         ScrollView {
-                            SnapCarousel(spacing: 28, trailingSpace: 120, index: $index, items: viewModel.output.trendingMovies.movies) { movie in
-                                
-                                let url = URL(string: ImageURL.tmdb(image: movie.poster).urlString)
-                                PosterImage(url: url, size: posterSize, title: movie.title)
-                                    .matchedGeometryEffect(id: movie.id, in: namespace)
-                                    .onTapGesture {
-                                        self.movie = movie
-                                        withAnimation(.easeInOut) {
-                                            showDetailView = true
-                                        }
-                                    }
-                            }
-                            .frame(height: posterSize.height)
-                            .padding(.bottom, 20)
-                            
                             ListHeader(title: "nowPlaying", usedTo: .nowPlaying)
                             
                             ScrollView(.horizontal, showsIndicators: false) {
@@ -106,6 +91,7 @@ struct HomeView: View {
                                     }
                                 }
                             }
+                            trendingSection()
                         }
                     }
                     .task {
@@ -173,6 +159,24 @@ struct HomeView: View {
             .frame(maxWidth: .infinity, alignment: .leading)
             .padding(.horizontal)
             .frame(height: 50)
+    }
+    
+    @ViewBuilder
+    private func trendingSection() -> some View {
+        SnapCarousel(spacing: 28, trailingSpace: 120, index: $index, items: viewModel.output.trendingMovies.movies) { movie in
+            
+            let url = URL(string: ImageURL.tmdb(image: movie.poster).urlString)
+            PosterImage(url: url, size: posterSize, title: movie.title)
+                .matchedGeometryEffect(id: movie.id, in: namespace)
+                .onTapGesture {
+                    self.movie = movie
+                    withAnimation(.easeInOut) {
+                        showDetailView = true
+                    }
+                }
+        }
+        .frame(height: posterSize.height)
+        .padding(.bottom, 20)
     }
 }
 
