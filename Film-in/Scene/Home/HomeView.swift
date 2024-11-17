@@ -32,25 +32,6 @@ struct HomeView: View {
                         appTitleSection()
                         
                         ScrollView {
-                            ListHeader(title: "upcoming", usedTo: .upcoming)
-                            
-                            ScrollView(.horizontal, showsIndicators: false) {
-                                LazyHStack {
-                                    ForEach(viewModel.output.upcomingMovies.movies, id: \.id) { movie in
-                                        let url = URL(string: ImageURL.tmdb(image: movie.poster).urlString)
-                                        PosterImage(url: url, size: CGSize(width: posterSize.width * 0.5, height: posterSize.height * 0.5), title: movie.title)
-                                            .padding(.bottom, 4)
-                                            .padding(.horizontal, 8)
-                                            .matchedGeometryEffect(id: movie.id, in: namespace)
-                                            .onTapGesture {
-                                                self.movie = movie
-                                                withAnimation(.easeInOut) {
-                                                    showDetailView = true
-                                                }
-                                            }
-                                    }
-                                }
-                            }
                             
                             ListHeader(title: "recommend", usedTo: .recommend)
                             
@@ -73,6 +54,7 @@ struct HomeView: View {
                             }
                             trendingSection()
                             nowPlayingSection()
+                            upcomingSection()
                         }
                     }
                     .task {
@@ -167,6 +149,29 @@ struct HomeView: View {
         ScrollView(.horizontal, showsIndicators: false) {
             LazyHStack {
                 ForEach(viewModel.output.nowPlayingMovies.movies, id: \.id) { movie in
+                    let url = URL(string: ImageURL.tmdb(image: movie.poster).urlString)
+                    PosterImage(url: url, size: CGSize(width: posterSize.width * 0.5, height: posterSize.height * 0.5), title: movie.title)
+                        .padding(.bottom, 4)
+                        .padding(.horizontal, 8)
+                        .matchedGeometryEffect(id: movie.id, in: namespace)
+                        .onTapGesture {
+                            self.movie = movie
+                            withAnimation(.easeInOut) {
+                                showDetailView = true
+                            }
+                        }
+                }
+            }
+        }
+    }
+    
+    @ViewBuilder
+    private func upcomingSection() -> some View {
+        ListHeader(title: "upcoming", usedTo: .upcoming)
+        
+        ScrollView(.horizontal, showsIndicators: false) {
+            LazyHStack {
+                ForEach(viewModel.output.upcomingMovies.movies, id: \.id) { movie in
                     let url = URL(string: ImageURL.tmdb(image: movie.poster).urlString)
                     PosterImage(url: url, size: CGSize(width: posterSize.width * 0.5, height: posterSize.height * 0.5), title: movie.title)
                         .padding(.bottom, 4)
