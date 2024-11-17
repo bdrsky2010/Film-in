@@ -129,6 +129,8 @@ struct GenreSelectView: View {
 }
 
 fileprivate struct SelectedGenreView: View {
+
+fileprivate struct GenreView: View {
     let genre: MovieGenre
     
     var body: some View {
