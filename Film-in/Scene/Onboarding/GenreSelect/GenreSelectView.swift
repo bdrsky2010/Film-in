@@ -128,6 +128,56 @@ struct GenreSelectView: View {
     }
 }
 
+fileprivate struct SelectedGenreSheetView: View {
+    @ObservedObject private var viewModel: GenreSelectViewModel
+    
+    @AppStorage("onboarding") private var isOnboarding = false
+    
+    init(viewModel: GenreSelectViewModel) {
+        self._viewModel = ObservedObject(wrappedValue: viewModel)
+    }
+    
+    var body: some View {
+        VStack {
+            ScrollView {
+                LazyVStack(alignment: .center, spacing: 15) {
+                    ForEach(viewModel.output.selectedGenreRows, id: \.self) { row in
+                        HStack(spacing: 12) {
+                            ForEach(row, id: \.id) { genre in
+                                GenreView(genre: genre)
+                                    .onTapGesture {
+                                        withAnimation {
+                                            viewModel.action(.removeGenre(genre))
+                                        }
+                                    }
+                            }
+                        }
+                    }
+                }
+            }
+            .frame(width: GenreHandler.windowWidth)
+
+            Button {
+                viewModel.action(.createUser)
+                isOnboarding = true
+            } label: {
+                Text("done")
+                    .font(.ibmPlexMonoSemiBold(size: 20))
+                    .frame(maxWidth: .infinity)
+                    .padding(.horizontal, 20)
+                    .padding(.vertical, 8)
+                    .background(Color(uiColor: .app).opacity(0.3))
+                    .foregroundStyle(.app)
+            }
+        }
+        .padding()
+        .presentationDetents([.height(200)])
+        .presentationBackgroundInteraction(.enabled(upThrough: .height(200)))
+        .presentationCornerRadius(0)
+        .presentationDragIndicator(.visible)
+        .interactiveDismissDisabled()
+    }
+}
 
 fileprivate struct GenreView: View {
     let genre: MovieGenre
