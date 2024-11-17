@@ -19,11 +19,6 @@ struct GenreSelectView: View {
     
     var body: some View {
         ScrollView {
-            Text("genreSelectTitle")
-                .font(.ibmPlexMonoSemiBold(size: 30))
-                .foregroundStyle(.appText)
-                .frame(maxWidth: .infinity, alignment: .leading)
-                .padding(.horizontal, 20)
             if viewModel.output.networkConnect {
                 LazyVGrid(columns: columns) {
                     ForEach(viewModel.output.genres, id: \.id) { genre in
@@ -54,6 +49,7 @@ struct GenreSelectView: View {
                 NotConnectView(viewModel: viewModel)
                     .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .center)
             }
+            titleSection()
         }
         .sheet(isPresented: .constant(true)) {
             SelectedGenreSheetView(viewModel: viewModel)
@@ -86,6 +82,15 @@ struct GenreSelectView: View {
                 .position(.top)
                 .dragToDismiss(true)
         }
+    }
+    
+    @ViewBuilder
+    private func titleSection() -> some View {
+        Text("genreSelectTitle")
+            .font(.ibmPlexMonoSemiBold(size: 30))
+            .foregroundStyle(.appText)
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .padding(.horizontal, 20)
     }
 }
 
