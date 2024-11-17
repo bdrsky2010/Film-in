@@ -46,21 +46,7 @@ struct HomeView: View {
                 .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
                 .overlay {
                     if let movie, showDetailView {
-                        TransitionMovieDetailView(
-                            viewModel: MovieDetailViewModel(
-                                movieDetailService: DefaultMovieDetailService(
-                                    tmdbRepository: DefaultTMDBRepository.shared,
-                                    databaseRepository: RealmRepository.shared
-                                ),
-                                networkMonitor: NetworkMonitor.shared,
-                                movieId: movie._id
-                            ),
-                            offset: $offset,
-                            showDetailView: $showDetailView,
-                            namespace: namespace,
-                            movie: movie,
-                            size: posterSize
-                        )
+                        detailView(by: movie)
                     }
                 }
                 .task {
@@ -190,6 +176,25 @@ struct HomeView: View {
                 }
             }
         }
+    }
+    
+    @ViewBuilder
+    private func detailView(by movie: HomeMovie.Movie) -> some View {
+        TransitionMovieDetailView(
+            viewModel: MovieDetailViewModel(
+                movieDetailService: DefaultMovieDetailService(
+                    tmdbRepository: DefaultTMDBRepository.shared,
+                    databaseRepository: RealmRepository.shared
+                ),
+                networkMonitor: NetworkMonitor.shared,
+                movieId: movie._id
+            ),
+            offset: $offset,
+            showDetailView: $showDetailView,
+            namespace: namespace,
+            movie: movie,
+            size: posterSize
+        )
     }
 }
 
