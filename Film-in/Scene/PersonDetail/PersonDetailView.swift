@@ -162,14 +162,14 @@ fileprivate struct NotConnectView: View {
     }
 }
 
-#Preview {
-    PersonDetailView(
-        viewModel: PersonDetailViewModel(
-            personDetailService: DefaultPersonDetailService(
-                tmdbRepository: DefaultTMDBRepository.shared,
-                databaseRepository: RealmRepository.shared
-            ),
-            networkMonitor: NetworkMonitor.shared,
-            personId: 74568)
-    )
-}
+//#Preview {
+//    PersonDetailView(
+//        viewModel: PersonDetailViewModel(
+//            personDetailService: DefaultPersonDetailService(
+//                tmdbRepository: DefaultTMDBRepository.shared,
+//                databaseRepository: RealmRepository.shared
+//            ),
+//            networkMonitor: NetworkMonitor.shared,
+//            personId: 74568)
+//    )
+//}
