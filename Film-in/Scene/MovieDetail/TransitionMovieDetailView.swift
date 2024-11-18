@@ -21,7 +21,7 @@ struct TransitionMovieDetailView: View {
     @Binding var offset: CGFloat
     @Binding var showDetailView: Bool
     
-    var namespace: Namespace.ID
+    private var namespace: Namespace.ID
     
     private let movie: HomeMovie.Movie
     private let size: CGSize
