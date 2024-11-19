@@ -6,7 +6,6 @@
 //
 
 import SwiftUI
-import PopupView
 
 struct SeeMoreView: View {
     private let usedTo: UsedTo
@@ -30,28 +29,8 @@ struct SeeMoreView: View {
             isShowAlert: $isShowAlert,
             isRefresh: $isRefresh
         )
-        .popup(isPresented: $isShowAlert) {
-            VStack {
-                Text("apiRequestError")
-                    .font(.ibmPlexMonoSemiBold(size: 20))
-                Button {
-                    isRefresh = true
-                } label: {
-                    Text("refresh")
-                        .font(.ibmPlexMonoMedium(size: 20))
-                        .underline()
-                        .foregroundStyle(.white)
-                }
-                .padding(.bottom, 4)
-            }
-            .frame(maxWidth: .infinity)
-            .background(.red)
-        } customize: {
-            $0
-                .type(.floater(verticalPadding: 0, horizontalPadding: 0, useSafeAreaInset: true))
-                .animation(.bouncy)
-                .position(.top)
-                .dragToDismiss(true)
+        .apiRequestErrorAlert(isPresented: $isShowAlert) {
+            isRefresh = true
         }
         .toolbar(.hidden, for: .tabBar)
     }
