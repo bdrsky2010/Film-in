@@ -12,7 +12,6 @@ final class HomeViewModel: BaseObject, ViewModelType {
     private let homeService: HomeService
     private let networkMonitor: NetworkMonitor
     
-    private var isRecommended = false
     
     @Published var output = Output()
     
@@ -152,7 +151,7 @@ extension HomeViewModel {
     ) {
         let query = HomeMovieQuery(
             language: "longLanguageCode".localized,
-            page: isRecommended ? Int.random(in: 1...recommendTotalPage) : 1,
+            page: isRecommend ? Int.random(in: 1...recommendTotalPage) : 1,
             region: "regionCode".localized
         )
         let publisher = homeService.fetchDiscover(query: query)
@@ -168,7 +167,7 @@ extension HomeViewModel {
                         if let totalPage = recommend.totalPage {
                             isRecommended = true
                             fetchRecommend(
-                                isRecommend: isRecommended,
+                                isRecommend: true,
                                 recommendTotalPage: totalPage <= 500 ? totalPage : 500
                             )
                         } else {
