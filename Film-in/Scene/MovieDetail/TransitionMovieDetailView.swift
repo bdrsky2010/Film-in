@@ -72,10 +72,6 @@ struct TransitionMovieDetailView: View {
                     withAnimation(.easeInOut) {
                         showDetailView = false
                     }
-                    
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.05) {
-                        showDetailView = false
-                    }
                 }
             }
             .sheet(isPresented: $isDateSetup){
