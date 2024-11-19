@@ -93,7 +93,7 @@ extension HomeViewModel {
         fetchNowPlaying()
         fetchUpcoming()
         fetchRecommend(
-            isRecommend: isRecommended,
+            isRecommend: false,
             recommendTotalPage: 1
         )
     }
@@ -181,7 +181,6 @@ extension HomeViewModel {
                         dataLoad(for: #function)
                     } else {
                         if let totalPage = recommend.totalPage {
-                            isRecommended = true
                             fetchRecommend(
                                 isRecommend: true,
                                 recommendTotalPage: totalPage <= 500 ? totalPage : 500
