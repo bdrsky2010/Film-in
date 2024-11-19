@@ -40,23 +40,20 @@ struct HomeView: View {
                     .task {
                         posterSize = CGSize(width: proxy.size.width * 0.7, height: proxy.size.width * 0.7 * 1.5)
                     }
-                    
-                }
-                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
-                .overlay {
-                    if let movie, showDetailView {
-                        detailView(by: movie)
-                    }
-                }
-                .task {
-                    withAnimation {
-                        viewModel.action(.viewOnTask)
-                    }
-                }
-                .apiRequestErrorAlert(isPresented: $viewModel.output.isShowAlert) {
-                    viewModel.action(.refresh)
                 }
             }
+        }
+        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
+        .task {
+            viewModel.action(.viewOnTask)
+        }
+        .overlay {
+            if let movie, showDetailView {
+                detailView(by: movie)
+            }
+        }
+        .apiRequestErrorAlert(isPresented: $viewModel.output.isShowAlert) {
+            viewModel.action(.refresh)
         }
     }
     
