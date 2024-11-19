@@ -117,17 +117,17 @@ fileprivate struct NotConnectView: View {
     }
 }
 
-#Preview {
-    MovieListView(
-        viewModel: MovieListViewModel(
-            movieListService: DefaultMovieListService(
-                tmdbRepository: DefaultTMDBRepository.shared,
-                databaseRepository: RealmRepository.shared
-            ),
-            networkMonitor: NetworkMonitor.shared,
-            usedTo: .nowPlaying
-        ),
-        isShowAlert: .constant(false),
-        isRefresh: .constant(false)
-    )
-}
+//#Preview {
+//    MovieListView(
+//        viewModel: MovieListViewModel(
+//            movieListService: DefaultMovieListService(
+//                tmdbRepository: DefaultTMDBRepository.shared,
+//                databaseRepository: RealmRepository.shared
+//            ),
+//            networkMonitor: NetworkMonitor.shared,
+//            usedTo: .nowPlaying
+//        ),
+//        isShowAlert: .constant(false),
+//        isRefresh: .constant(false)
+//    )
+//}
