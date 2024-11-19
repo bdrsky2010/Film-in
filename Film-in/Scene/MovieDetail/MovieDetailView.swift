@@ -7,7 +7,6 @@
 
 import SwiftUI
 import Kingfisher
-import PopupView
 import YouTubePlayerKit
 
 struct MovieDetailView: View {
