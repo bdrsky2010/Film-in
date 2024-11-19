@@ -36,6 +36,9 @@ struct HomeView: View {
                             upcomingSection()
                             recommendSection()
                         }
+                        .refreshable {
+                            viewModel.action(.refresh)
+                        }
                     }
                     .task {
                         posterSize = CGSize(width: proxy.size.width * 0.7, height: proxy.size.width * 0.7 * 1.5)
