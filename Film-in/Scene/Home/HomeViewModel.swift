@@ -97,7 +97,7 @@ extension HomeViewModel {
                 case .success(let trending):
                     output.trendingMovies = trending
                 case .failure(_):
-                    if !output.isShowAlert { output.isShowAlert = true }
+                    errorHandling()
                 }
             }
             .store(in: &cancellable)
@@ -118,7 +118,7 @@ extension HomeViewModel {
                 case .success(let nowPlaying):
                     output.nowPlayingMovies = nowPlaying
                 case .failure(_):
-                    if !output.isShowAlert { output.isShowAlert = true }
+                    errorHandling()
                 }
             }
             .store(in: &cancellable)
@@ -139,7 +139,7 @@ extension HomeViewModel {
                 case .success(let upcoming):
                     output.upcomingMovies = upcoming
                 case .failure(_):
-                    if !output.isShowAlert { output.isShowAlert = true }
+                    errorHandling()
                 }
             }
             .store(in: &cancellable)
@@ -175,9 +175,17 @@ extension HomeViewModel {
                         }
                     }
                 case .failure(_):
-                    if !output.isShowAlert { output.isShowAlert = true }
+                    errorHandling()
                 }
             }
             .store(in: &cancellable)
+    }
+}
+
+extension HomeViewModel {
+    private func errorHandling() {
+        if !output.isShowAlert {
+            output.isShowAlert = true
+        }
     }
 }
