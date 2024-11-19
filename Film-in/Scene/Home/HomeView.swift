@@ -6,7 +6,6 @@
 //
 
 import SwiftUI
-import PopupView
 
 struct HomeView: View {
     @StateObject private var viewModel: HomeViewModel
@@ -54,28 +53,8 @@ struct HomeView: View {
                         viewModel.action(.viewOnTask)
                     }
                 }
-                .popup(isPresented: $viewModel.output.isShowAlert) {
-                    VStack {
-                        Text("apiRequestError")
-                            .font(.ibmPlexMonoSemiBold(size: 20))
-                        Button {
-                            viewModel.action(.refresh)
-                        } label: {
-                            Text("refresh")
-                                .font(.ibmPlexMonoMedium(size: 20))
-                                .underline()
-                                .foregroundStyle(.white)
-                        }
-                        .padding(.bottom, 4)
-                    }
-                    .frame(maxWidth: .infinity)
-                    .background(.red)
-                } customize: {
-                    $0
-                        .type(.floater(verticalPadding: 0, horizontalPadding: 0, useSafeAreaInset: true))
-                        .animation(.bouncy)
-                        .position(.top)
-                        .dragToDismiss(true)
+                .apiRequestErrorAlert(isPresented: $viewModel.output.isShowAlert) {
+                    viewModel.action(.refresh)
                 }
             }
         }
