@@ -12,6 +12,8 @@ final class HomeViewModel: BaseObject, ViewModelType {
     private let homeService: HomeService
     private let networkMonitor: NetworkMonitor
     
+    private var isRecommended = false
+    
     @Published var output = Output()
     
     var input = Input()
@@ -80,7 +82,7 @@ extension HomeViewModel {
         fetchNowPlaying()
         fetchUpcoming()
         fetchRecommend(
-            isRecommended: false,
+            isRecommend: isRecommended,
             recommendTotalPage: 1
         )
     }
@@ -145,7 +147,7 @@ extension HomeViewModel {
     }
     
     private func fetchRecommend(
-        isRecommended: Bool,
+        isRecommend: Bool,
         recommendTotalPage: Int
     ) {
         let query = HomeMovieQuery(
@@ -160,12 +162,13 @@ extension HomeViewModel {
                 guard let self else { return }
                 switch result {
                 case .success(let recommend):
-                    if isRecommended {
+                    if isRecommend {
                         output.recommendMovies = recommend
                     } else {
                         if let totalPage = recommend.totalPage {
+                            isRecommended = true
                             fetchRecommend(
-                                isRecommended: true,
+                                isRecommend: isRecommended,
                                 recommendTotalPage: totalPage <= 500 ? totalPage : 500
                             )
                         } else {
