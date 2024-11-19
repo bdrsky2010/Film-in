@@ -12,6 +12,7 @@ final class HomeViewModel: BaseObject, ViewModelType {
     private let homeService: HomeService
     private let networkMonitor: NetworkMonitor
     
+    private var loadData: [String : Bool] = [:]
     
     @Published var output = Output()
     
@@ -77,6 +78,8 @@ extension HomeViewModel {
         }
         output.networkConnect = true
         
+        guard loadData.count == 0 else { return }
+        
         fetchTrending()
         fetchNowPlaying()
         fetchUpcoming()
@@ -96,6 +99,7 @@ extension HomeViewModel {
                 switch result {
                 case .success(let trending):
                     output.trendingMovies = trending
+                    dataLoad(for: #function)
                 case .failure(_):
                     errorHandling()
                 }
@@ -117,6 +121,7 @@ extension HomeViewModel {
                 switch result {
                 case .success(let nowPlaying):
                     output.nowPlayingMovies = nowPlaying
+                    dataLoad(for: #function)
                 case .failure(_):
                     errorHandling()
                 }
@@ -138,6 +143,7 @@ extension HomeViewModel {
                 switch result {
                 case .success(let upcoming):
                     output.upcomingMovies = upcoming
+                    dataLoad(for: #function)
                 case .failure(_):
                     errorHandling()
                 }
@@ -163,6 +169,7 @@ extension HomeViewModel {
                 case .success(let recommend):
                     if isRecommend {
                         output.recommendMovies = recommend
+                        dataLoad(for: #function)
                     } else {
                         if let totalPage = recommend.totalPage {
                             isRecommended = true
@@ -172,6 +179,7 @@ extension HomeViewModel {
                             )
                         } else {
                             output.recommendMovies = recommend
+                            dataLoad(for: #function)
                         }
                     }
                 case .failure(_):
@@ -187,5 +195,9 @@ extension HomeViewModel {
         if !output.isShowAlert {
             output.isShowAlert = true
         }
+    }
+    
+    private func dataLoad(for key: String) {
+        loadData[key] = true
     }
 }
