@@ -33,6 +33,7 @@ final class HomeViewModel: BaseObject, ViewModelType {
 extension HomeViewModel {
     struct Input {
         let viewOnTask = PassthroughSubject<Void, Never>()
+        let refresh = PassthroughSubject<Void, Never>()
     }
     
     struct Output {
@@ -51,6 +52,14 @@ extension HomeViewModel {
                 fetchMovies()
             }
             .store(in: &cancellable)
+        
+        input.refresh
+            .sink { [weak self] in
+                guard let self else { return }
+                loadData = [:]
+                fetchMovies()
+            }
+            .store(in: &cancellable)
     }
 }
 
@@ -65,7 +74,7 @@ extension HomeViewModel {
         case .viewOnTask:
             input.viewOnTask.send(())
         case .refresh:
-            input.viewOnTask.send(())
+            input.refresh.send(())
         }
     }
 }
