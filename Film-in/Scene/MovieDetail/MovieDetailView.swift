@@ -370,22 +370,22 @@ fileprivate struct InfoHeader: View {
     }
 }
 
-#Preview {
-    MovieDetailView(
-        movie: .init(
-            _id: 1022789,
-            title: "인사이드 아웃 2",
-            poster: "/x2BHx02jMbvpKjMvbf8XxJkYwHJ.jpg",
-            backdrop: ""
-        ),
-        size: CGSize(width: 275.09999999999997, height: 412.65),
-        viewModel: MovieDetailViewModel(
-            movieDetailService: DefaultMovieDetailService(
-                tmdbRepository: DefaultTMDBRepository.shared,
-                databaseRepository: RealmRepository.shared
-            ),
-            networkMonitor: NetworkMonitor.shared,
-            movieId: 1022789
-        )
-    )
-}
+//#Preview {
+//    MovieDetailView(
+//        movie: .init(
+//            _id: 1022789,
+//            title: "인사이드 아웃 2",
+//            poster: "/x2BHx02jMbvpKjMvbf8XxJkYwHJ.jpg",
+//            backdrop: ""
+//        ),
+//        size: CGSize(width: 275.09999999999997, height: 412.65),
+//        viewModel: MovieDetailViewModel(
+//            movieDetailService: DefaultMovieDetailService(
+//                tmdbRepository: DefaultTMDBRepository.shared,
+//                databaseRepository: RealmRepository.shared
+//            ),
+//            networkMonitor: NetworkMonitor.shared,
+//            movieId: 1022789
+//        )
+//    )
+//}
