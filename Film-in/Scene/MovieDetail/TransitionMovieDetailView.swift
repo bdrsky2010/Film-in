@@ -73,21 +73,11 @@ struct TransitionMovieDetailView: View {
                     }
                 }
             }
-            .sheet(isPresented: $isDateSetup){
-                DateSetupView(
-                    viewModel: DateSetupViewModel(
-                        dateSetupService: DefaultDateSetupService(
-                            localNotificationManager: DefaultLocalNotificationManager.shared,
-                            databaseRepository: RealmRepository.shared
-                        ),
-                        movie: (movie._id, movie.title, movie.backdrop, movie.poster),
-                        type: dateSetupType
-                    ),
-                    isPresented: $isDateSetup
-                )
-            }
             .valueChanged(value: dateSetupType) { newValue in
-                
+                // dateSetupType의 변화를 확인하지 않으면 속성 값이 바뀌지 않음.
+            }
+            .sheet(isPresented: $isDateSetup){
+                dateSetupSheet()
             }
             .apiRequestErrorAlert(isPresented: $viewModel.output.isShowAlert) {
                 viewModel.action(.refresh)
@@ -433,6 +423,21 @@ struct TransitionMovieDetailView: View {
                 }
             }
         }
+    }
+    
+    @ViewBuilder
+    private func dateSetupSheet() -> some View {
+        DateSetupView(
+            viewModel: DateSetupViewModel(
+                dateSetupService: DefaultDateSetupService(
+                    localNotificationManager: DefaultLocalNotificationManager.shared,
+                    databaseRepository: RealmRepository.shared
+                ),
+                movie: (movie._id, movie.title, movie.backdrop, movie.poster),
+                type: dateSetupType
+            ),
+            isPresented: $isDateSetup
+        )
     }
 }
 
