@@ -83,8 +83,8 @@ struct MyView: View {
     private func contentSection() -> some View {
         GeometryReader { proxy in
             List {
-                wantSection()
-                watchedSection()
+                wantSection(proxy: proxy)
+                watchedSection(proxy: proxy)
             }
             .task {
                 posterSize = CGSize(width: proxy.size.width * 0.7, height: proxy.size.width * 0.7 * 1.5)
@@ -95,7 +95,7 @@ struct MyView: View {
     }
     
     @ViewBuilder
-    private func wantSection() -> some View {
+    private func wantSection(proxy: GeometryProxy) -> some View {
         Text("WANT")
             .font(.ibmPlexMonoSemiBold(size: 24))
             .foregroundStyle(.appText)
@@ -162,7 +162,7 @@ struct MyView: View {
     }
     
     @ViewBuilder
-    private func watchedSection() -> some View {
+    private func watchedSection(proxy: GeometryProxy) -> some View {
         Text("WATCHED")
             .font(.ibmPlexMonoSemiBold(size: 24))
             .foregroundStyle(.appText)
