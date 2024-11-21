@@ -25,144 +25,8 @@ struct MyView: View {
     var body: some View {
         NavigationStack {
             VStack {
-                CalendarView(viewModel: viewModel)
-                    .padding(.horizontal)
-                
-                GeometryReader { proxy in
-                    List {
-                        Text("WANT")
-                            .font(.ibmPlexMonoSemiBold(size: 24))
-                            .foregroundStyle(.appText)
-                            .frame(maxWidth: proxy.size.width, alignment: .leading)
-                        
-                        let wantMovies = user.first?.wantMovies.filter({ Calendar.current.isDate(viewModel.output.selectDate, inSameDayAs: $0.date) }) ?? []
-                        ForEach(wantMovies, id: \.id) { movie in
-                            ZStack {
-                                let url = URL(string: ImageURL.tmdb(image: movie.backdrop).urlString)
-                                PosterImage(
-                                    url: url,
-                                    size: CGSize(
-                                        width: proxy.size.width - 40,
-                                        height: (proxy.size.width - 40) * 0.56
-                                    ),
-                                    title: movie.title
-                                )
-                                .overlay(alignment: .bottom) {
-                                    Rectangle()
-                                        .foregroundStyle(.black).opacity(0.5)
-                                        .frame(height: proxy.size.width * 0.56 * 0.2)
-                                }
-                                .overlay(alignment: .bottomLeading) {
-                                    Text(movie.title)
-                                        .foregroundStyle(.app)
-                                        .font(.ibmPlexMonoRegular(size: 16))
-                                        .lineLimit(2)
-                                        .frame(height: proxy.size.width * 0.56 * 0.2)
-                                        .padding(.leading, 20)
-                                }
-                                
-                                NavigationLink {
-                                    LazyView(
-                                        MovieDetailView(
-                                            movie: .init(
-                                                _id: movie.id,
-                                                title: movie.title,
-                                                poster: movie.poster,
-                                                backdrop: movie.backdrop
-                                            ),
-                                            size: posterSize,
-                                            viewModel: MovieDetailViewModel(
-                                                movieDetailService: DefaultMovieDetailService(
-                                                    tmdbRepository: DefaultTMDBRepository.shared,
-                                                    databaseRepository: RealmRepository.shared
-                                                ),
-                                                networkMonitor: NetworkMonitor.shared,
-                                                movieId: movie.id
-                                            )
-                                        )
-                                    )
-                                } label: {
-                                    EmptyView()
-                                }
-                                .opacity(0)
-                            }
-                        }
-                        .onDelete { indexSet in
-                            guard let index = indexSet.first else { return }
-                            let wantMovieId = wantMovies[index].id
-                            viewModel.action(.deleteGesture(movieId: wantMovieId))
-                        }
-                        
-                        Text("WATCHED")
-                            .font(.ibmPlexMonoSemiBold(size: 24))
-                            .foregroundStyle(.appText)
-                            .frame(maxWidth: proxy.size.width, alignment: .leading)
-                        
-                        let watchedMovies = user.first?.watchedMovies.filter({ Calendar.current.isDate(viewModel.output.selectDate, inSameDayAs: $0.date) }) ?? []
-                        ForEach(watchedMovies, id: \.id) { movie in
-                            ZStack {
-                                let url = URL(string: ImageURL.tmdb(image: movie.backdrop).urlString)
-                                PosterImage(
-                                    url: url,
-                                    size: CGSize(
-                                        width: proxy.size.width - 40,
-                                        height: (proxy.size.width - 40) * 0.56
-                                    ),
-                                    title: movie.title
-                                )
-                                .overlay(alignment: .bottom) {
-                                    Rectangle()
-                                        .foregroundStyle(.black).opacity(0.5)
-                                        .frame(height: proxy.size.width * 0.56 * 0.2)
-                                }
-                                .overlay(alignment: .bottomLeading) {
-                                    Text(movie.title)
-                                        .foregroundStyle(.app)
-                                        .font(.ibmPlexMonoRegular(size: 16))
-                                        .lineLimit(2)
-                                        .frame(height: proxy.size.width * 0.56 * 0.2)
-                                        .padding(.leading, 20)
-                                }
-                                
-                                NavigationLink {
-                                    LazyView(
-                                        MovieDetailView(
-                                            movie: .init(
-                                                _id: movie.id,
-                                                title: movie.title,
-                                                poster: movie.poster,
-                                                backdrop: movie.backdrop
-                                            ),
-                                            size: posterSize,
-                                            viewModel: MovieDetailViewModel(
-                                                movieDetailService: DefaultMovieDetailService(
-                                                    tmdbRepository: DefaultTMDBRepository.shared,
-                                                    databaseRepository: RealmRepository.shared
-                                                ),
-                                                networkMonitor: NetworkMonitor.shared,
-                                                movieId: movie.id
-                                            )
-                                        )
-                                    )
-                                } label: {
-                                    EmptyView()
-                                }
-                                .opacity(0)
-                            }
-                        }
-                        .onDelete { indexSet in
-                            guard let index = indexSet.first else { return }
-                            let watchedMovieId = watchedMovies[index].id
-                            viewModel.action(.deleteGesture(movieId: watchedMovieId))
-                        }
-                    }
-                    .task {
-                        posterSize = CGSize(width: proxy.size.width * 0.7, height: proxy.size.width * 0.7 * 1.5)
-                        
-                        viewModel.action(.viewOnTask)
-                    }
-                    .listStyle(.plain)
-                }
+                calendarSection()
+                contentSection()
             }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
@@ -207,8 +71,160 @@ struct MyView: View {
                 .closeOnTapOutside(true)
                 .backgroundColor(.appText.opacity(0.5))
         }
+    }
+    
+    @ViewBuilder
+    private func calendarSection() -> some View {
+        CalendarView(viewModel: viewModel)
+            .padding(.horizontal)
+    }
+    
+    @ViewBuilder
+    private func contentSection() -> some View {
+        GeometryReader { proxy in
+            List {
+                wantSection()
+                watchedSection()
+            }
+            .task {
+                posterSize = CGSize(width: proxy.size.width * 0.7, height: proxy.size.width * 0.7 * 1.5)
+                viewModel.action(.viewOnTask)
+            }
+            .listStyle(.plain)
+        }
+    }
+    
+    @ViewBuilder
+    private func wantSection() -> some View {
+        Text("WANT")
+            .font(.ibmPlexMonoSemiBold(size: 24))
+            .foregroundStyle(.appText)
+            .frame(maxWidth: proxy.size.width, alignment: .leading)
         
+        let wantMovies = user.first?.wantMovies.filter({ Calendar.current.isDate(viewModel.output.selectDate, inSameDayAs: $0.date) }) ?? []
+        ForEach(wantMovies, id: \.id) { movie in
+            ZStack {
+                let url = URL(string: ImageURL.tmdb(image: movie.backdrop).urlString)
+                PosterImage(
+                    url: url,
+                    size: CGSize(
+                        width: proxy.size.width - 40,
+                        height: (proxy.size.width - 40) * 0.56
+                    ),
+                    title: movie.title
+                )
+                .overlay(alignment: .bottom) {
+                    Rectangle()
+                        .foregroundStyle(.black).opacity(0.5)
+                        .frame(height: proxy.size.width * 0.56 * 0.2)
+                }
+                .overlay(alignment: .bottomLeading) {
+                    Text(movie.title)
+                        .foregroundStyle(.app)
+                        .font(.ibmPlexMonoRegular(size: 16))
+                        .lineLimit(2)
+                        .frame(height: proxy.size.width * 0.56 * 0.2)
+                        .padding(.leading, 20)
+                }
+                
+                NavigationLink {
+                    LazyView(
+                        MovieDetailView(
+                            movie: .init(
+                                _id: movie.id,
+                                title: movie.title,
+                                poster: movie.poster,
+                                backdrop: movie.backdrop
+                            ),
+                            size: posterSize,
+                            viewModel: MovieDetailViewModel(
+                                movieDetailService: DefaultMovieDetailService(
+                                    tmdbRepository: DefaultTMDBRepository.shared,
+                                    databaseRepository: RealmRepository.shared
+                                ),
+                                networkMonitor: NetworkMonitor.shared,
+                                movieId: movie.id
+                            )
+                        )
+                    )
+                } label: {
+                    EmptyView()
+                }
+                .opacity(0)
+            }
+        }
+        .onDelete { indexSet in
+            guard let index = indexSet.first else { return }
+            let wantMovieId = wantMovies[index].id
+            viewModel.action(.deleteGesture(movieId: wantMovieId))
+        }
+
+    }
+    
+    @ViewBuilder
+    private func watchedSection() -> some View {
+        Text("WATCHED")
+            .font(.ibmPlexMonoSemiBold(size: 24))
+            .foregroundStyle(.appText)
+            .frame(maxWidth: proxy.size.width, alignment: .leading)
         
+        let watchedMovies = user.first?.watchedMovies.filter({ Calendar.current.isDate(viewModel.output.selectDate, inSameDayAs: $0.date) }) ?? []
+        ForEach(watchedMovies, id: \.id) { movie in
+            ZStack {
+                let url = URL(string: ImageURL.tmdb(image: movie.backdrop).urlString)
+                PosterImage(
+                    url: url,
+                    size: CGSize(
+                        width: proxy.size.width - 40,
+                        height: (proxy.size.width - 40) * 0.56
+                    ),
+                    title: movie.title
+                )
+                .overlay(alignment: .bottom) {
+                    Rectangle()
+                        .foregroundStyle(.black).opacity(0.5)
+                        .frame(height: proxy.size.width * 0.56 * 0.2)
+                }
+                .overlay(alignment: .bottomLeading) {
+                    Text(movie.title)
+                        .foregroundStyle(.app)
+                        .font(.ibmPlexMonoRegular(size: 16))
+                        .lineLimit(2)
+                        .frame(height: proxy.size.width * 0.56 * 0.2)
+                        .padding(.leading, 20)
+                }
+                
+                NavigationLink {
+                    LazyView(
+                        MovieDetailView(
+                            movie: .init(
+                                _id: movie.id,
+                                title: movie.title,
+                                poster: movie.poster,
+                                backdrop: movie.backdrop
+                            ),
+                            size: posterSize,
+                            viewModel: MovieDetailViewModel(
+                                movieDetailService: DefaultMovieDetailService(
+                                    tmdbRepository: DefaultTMDBRepository.shared,
+                                    databaseRepository: RealmRepository.shared
+                                ),
+                                networkMonitor: NetworkMonitor.shared,
+                                movieId: movie.id
+                            )
+                        )
+                    )
+                } label: {
+                    EmptyView()
+                }
+                .opacity(0)
+            }
+        }
+        .onDelete { indexSet in
+            guard let index = indexSet.first else { return }
+            let watchedMovieId = watchedMovies[index].id
+            viewModel.action(.deleteGesture(movieId: watchedMovieId))
+        }
     }
 }
 
