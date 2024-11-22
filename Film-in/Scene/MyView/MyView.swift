@@ -30,46 +30,16 @@ struct MyView: View {
             }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
-        .popup(isPresented: $viewModel.output.isRequestDelete) {
-            VStack {
-                Text("deleteRequestPhrase")
-                    .font(.ibmPlexMonoSemiBold(size: 20))
-                
-                Spacer()
-                
-                HStack {
-                    Button {
-                        
-                    } label: {
-                        Text("cancel")
-                            .font(.ibmPlexMonoSemiBold(size: 20))
-                            .frame(maxWidth: .infinity)
-                            .padding(.horizontal, 20)
-                            .padding(.vertical, 8)
-                            .background(Color(uiColor: .app).opacity(0.3))
-                            .foregroundStyle(.app)
-                    }
-                    
-                    Button {
-                        viewModel.action(.realDelete(movieId: viewModel.output.deleteMovieId))
-                    } label: {
-                        Text("delete")
-                            .font(.ibmPlexMonoSemiBold(size: 20))
-                            .frame(maxWidth: .infinity)
-                            .padding(.horizontal, 20)
-                            .padding(.vertical, 8)
-                            .background(Color(uiColor: .app).opacity(0.3))
-                            .foregroundStyle(.app)
-                    }
-                }
-            }
-            .frame(width: 300, height: 120, alignment: .top)
-            .padding()
-            .background(.background)
-        } customize: {
-            $0
-                .closeOnTapOutside(true)
-                .backgroundColor(.appText.opacity(0.5))
+        .popupAlert(
+            isPresented: $viewModel.output.isRequestDelete,
+            contentModel: PopupAlertModel(
+                phrase: "deleteRequestPhrase",
+                normal: "delete",
+                cancel: "cancel"
+            ),
+            height: .normal
+        ) {
+            viewModel.action(.realDelete(movieId: viewModel.output.deleteMovieId))
         }
     }
     

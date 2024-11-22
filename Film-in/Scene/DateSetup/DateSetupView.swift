@@ -81,87 +81,27 @@ struct DateSetupView: View {
                 isPresented.toggle()
             }
         }
-        .popup(isPresented: $viewModel.output.isDone) {
-            VStack {
-                Text("saveRequestPhrase")
-                    .font(.ibmPlexMonoSemiBold(size: 20))
-                
-                Spacer()
-                
-                HStack {
-                    Button {
-                        
-                    } label: {
-                        Text("cancel")
-                            .font(.ibmPlexMonoSemiBold(size: 20))
-                            .frame(maxWidth: .infinity)
-                            .padding(.horizontal, 20)
-                            .padding(.vertical, 8)
-                            .background(Color(uiColor: .app).opacity(0.3))
-                            .foregroundStyle(.app) 
-                    }
-                    
-                    Button {
-                        viewModel.action(.wantOrWatched)
-                    } label: {
-                        Text("save")
-                            .font(.ibmPlexMonoSemiBold(size: 20))
-                            .frame(maxWidth: .infinity)
-                            .padding(.horizontal, 20)
-                            .padding(.vertical, 8)
-                            .background(Color(uiColor: .app).opacity(0.3))
-                            .foregroundStyle(.app)
-                    }
-                }
-            }
-            .frame(width: 300, height: 100, alignment: .top)
-            .padding()
-            .background(.background)
-        } customize: {
-            $0
-                .closeOnTapOutside(true)
-                .backgroundColor(.appText.opacity(0.5))
+        .popupAlert(
+            isPresented: $viewModel.output.isDone,
+            contentModel: PopupAlertModel(
+                phrase: "saveRequestPhrase",
+                normal: "save",
+                cancel: "cancel"
+            ),
+            height: .normal
+        ) {
+            viewModel.action(.wantOrWatched)
         }
-        .popup(isPresented: $viewModel.output.isError) {
-            VStack {
-                Text("notificationRequestPhrase")
-                    .font(.ibmPlexMonoSemiBold(size: 20))
-                
-                Spacer()
-                
-                HStack {
-                    Button {
-                        
-                    } label: {
-                        Text("cancel")
-                            .font(.ibmPlexMonoSemiBold(size: 20))
-                            .frame(maxWidth: .infinity)
-                            .padding(.horizontal, 20)
-                            .padding(.vertical, 8)
-                            .background(Color(uiColor: .app).opacity(0.3))
-                            .foregroundStyle(.app)
-                    }
-                    
-                    Button {
-                        viewModel.action(.moveToSetting)
-                    } label: {
-                        Text("move")
-                            .font(.ibmPlexMonoSemiBold(size: 20))
-                            .frame(maxWidth: .infinity)
-                            .padding(.horizontal, 20)
-                            .padding(.vertical, 8)
-                            .background(Color(uiColor: .app).opacity(0.3))
-                            .foregroundStyle(.app)
-                    }
-                }
-            }
-            .frame(width: 300, height: 200, alignment: .top)
-            .padding()
-            .background(.background)
-        } customize: {
-            $0
-                .closeOnTapOutside(true)
-                .backgroundColor(.appText.opacity(0.5))
+        .popupAlert(
+            isPresented: $viewModel.output.isError,
+            contentModel: PopupAlertModel(
+                phrase: "notificationRequestPhrase",
+                normal: "move",
+                cancel: "cancel"
+            ),
+            height: .middle
+        ) {
+            viewModel.action(.moveToSetting)
         }
     }
 }
