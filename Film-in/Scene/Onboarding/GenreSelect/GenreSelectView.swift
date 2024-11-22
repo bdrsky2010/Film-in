@@ -111,12 +111,7 @@ fileprivate struct SelectedGenreSheetView: View {
                 isOnboarding = true
             } label: {
                 Text("done")
-                    .font(.ibmPlexMonoSemiBold(size: 20))
-                    .frame(maxWidth: .infinity)
-                    .padding(.horizontal, 20)
-                    .padding(.vertical, 8)
-                    .background(Color(uiColor: .app).opacity(0.3))
-                    .foregroundStyle(.app)
+                    .appButtonText()
             }
         }
         .padding()

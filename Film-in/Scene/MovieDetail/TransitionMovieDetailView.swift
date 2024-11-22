@@ -181,12 +181,7 @@ struct TransitionMovieDetailView: View {
                 isDateSetup.toggle()
             } label: {
                 Text("WANT")
-                    .font(.ibmPlexMonoSemiBold(size: 20))
-                    .frame(maxWidth: .infinity)
-                    .padding(.horizontal, 20)
-                    .padding(.vertical, 8)
-                    .background(Color(uiColor: .app).opacity(0.3))
-                    .foregroundStyle(.app)
+                    .appButtonText()
             }
             
             Button {
@@ -194,12 +189,7 @@ struct TransitionMovieDetailView: View {
                 isDateSetup.toggle()
             } label: {
                 Text("WATHCED")
-                    .font(.ibmPlexMonoSemiBold(size: 20))
-                    .frame(maxWidth: .infinity)
-                    .padding(.horizontal, 20)
-                    .padding(.vertical, 8)
-                    .background(Color(uiColor: .app).opacity(0.3))
-                    .foregroundStyle(.app)
+                    .appButtonText()
             }
         }
     }
