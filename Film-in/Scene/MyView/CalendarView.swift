@@ -196,15 +196,3 @@ struct DayView: View {
         }
     }
 }
-
-#Preview {
-    MyView(
-        viewModel: MyViewModel(
-            myViewService: DefaultMyViewService(
-                databaseRepository: RealmRepository.shared,
-                localNotificationManager: DefaultLocalNotificationManager.shared,
-                calendarManager: DefaultCalendarManager()
-            )
-        )
-    )
-}
