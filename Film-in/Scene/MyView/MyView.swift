@@ -37,7 +37,7 @@ struct MyView: View {
                 normal: "delete",
                 cancel: "cancel"
             ),
-            height: .normal
+            heightType: .normal
         ) {
             viewModel.action(.realDelete(movieId: viewModel.output.deleteMovieId))
         }

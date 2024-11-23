@@ -88,7 +88,7 @@ struct DateSetupView: View {
                 normal: "save",
                 cancel: "cancel"
             ),
-            height: .normal
+            heightType: .normal
         ) {
             viewModel.action(.wantOrWatched)
         }
@@ -99,7 +99,7 @@ struct DateSetupView: View {
                 normal: "move",
                 cancel: "cancel"
             ),
-            height: .middle
+            heightType: .middle
         ) {
             viewModel.action(.moveToSetting)
         }

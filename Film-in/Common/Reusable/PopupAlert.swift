@@ -45,17 +45,17 @@ enum PopupAlertHeight {
 }
 
 extension View {
-    func popupAlert<Model: PopupAlertModelType>(
+    func popupAlert(
         isPresented: Binding<Bool>,
-        contentModel: Model,
-        height: PopupAlertHeight,
+        contentModel: PopupAlertModel,
+        heightType: PopupAlertHeight,
         normalButtonTapped: (() -> Void)? = nil
     ) -> some View {
         self.modifier(
             PopupAlertViewModifier(
                 isPresented: isPresented,
                 contentModel: contentModel,
-                height: height,
+                heightType: heightType,
                 normalButtonTapped: normalButtonTapped
             )
         )
@@ -66,18 +66,18 @@ fileprivate struct PopupAlertViewModifier<Model: PopupAlertModelType>: ViewModif
     @Binding var isPresented: Bool
     
     private let contentModel: Model
-    private let height: PopupAlertHeight
+    private let heightType: PopupAlertHeight
     private var normalButtonTapped: (() -> Void)?
     
     init(
         isPresented: Binding<Bool>,
         contentModel: Model,
-        height: PopupAlertHeight,
+        heightType: PopupAlertHeight,
         normalButtonTapped: (() -> Void)? = nil
     ) {
         self._isPresented = isPresented
         self.contentModel = contentModel
-        self.height = height
+        self.heightType = heightType
         self.normalButtonTapped = normalButtonTapped
     }
     
@@ -86,7 +86,7 @@ fileprivate struct PopupAlertViewModifier<Model: PopupAlertModelType>: ViewModif
             .popup(isPresented: $isPresented) {
                 PopupAlertView(
                     contentModel: contentModel,
-                    heightType: height,
+                    height: heightType.value,
                     normalButtonTapped: normalButtonTapped
                 )
             } customize: {
@@ -104,10 +104,11 @@ struct PopupAlertView<Model: PopupAlertModelType>: View {
     
     init(
         contentModel: Model,
-        heightType: PopupAlertHeight,
+        height: CGFloat,
         normalButtonTapped: ( () -> Void)? = nil
     ) {
         self.contentModel = contentModel
+        self.height = height
         self.normalButtonTapped = normalButtonTapped
     }
     
