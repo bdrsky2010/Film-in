@@ -34,6 +34,14 @@ enum PopupAlertHeight {
     case normal
     case middle
     case custom(_ height: CGFloat)
+    
+    var value: CGFloat {
+        switch self {
+        case .normal:             return 120
+        case .middle:             return 200
+        case .custom(let height): return height
+        }
+    }
 }
 
 extension View {
@@ -101,15 +109,6 @@ struct PopupAlertView<Model: PopupAlertModelType>: View {
     ) {
         self.contentModel = contentModel
         self.normalButtonTapped = normalButtonTapped
-        
-        switch heightType {
-        case .normal:
-            self.height = 120
-        case .middle:
-            self.height = 200
-        case .custom(let height):
-            self.height = height
-        }
     }
     
     var body: some View {
