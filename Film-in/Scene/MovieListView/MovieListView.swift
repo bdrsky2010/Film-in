@@ -35,45 +35,7 @@ struct MovieListView: View {
                     NotConnectView(viewModel: viewModel)
                         .frame(maxWidth: proxy.size.width, alignment: .center)
                 } else {
-                    LazyVGrid(columns: gridItemLayout, spacing: 8) {
-                        ForEach(viewModel.output.movies.movies, id: \.id) { movie in
-                            NavigationLink {
-                                LazyView(
-                                    MovieDetailView(
-                                        movie: movie,
-                                        size: posterSize,
-                                        viewModel: MovieDetailViewModel(
-                                            movieDetailService: DefaultMovieDetailService(
-                                                tmdbRepository: DefaultTMDBRepository.shared,
-                                                databaseRepository: RealmRepository.shared
-                                            ),
-                                            networkMonitor: NetworkMonitor.shared,
-                                            movieId: movie._id
-                                        )
-                                    )
-                                )
-                            } label: {
-                                let url = URL(string: ImageURL.tmdb(image: movie.poster).urlString)
-                                PosterImage(
-                                    url: url,
-                                    size: CGSize(width: width, height: height),
-                                    title: movie.title
-                                )
-                                .padding(.bottom, 4)
-                                .padding(.horizontal, 8)
-                                .task {
-                                    if let last = viewModel.output.movies.movies.last,
-                                       last.id == movie.id {
-                                        viewModel.action(.lastElement)
-                                    }
-                                }
-                            }
-                        }
-                    }
-                    
-                    if viewModel.output.isPagination {
-                        ProgressView()
-                    }
+                    contentSection(width: width, height: height)
                 }
             }
             .task {
@@ -90,6 +52,54 @@ struct MovieListView: View {
             if isRefresh {
                 viewModel.action(.refresh)
                 isRefresh = false
+            }
+        }
+    }
+    
+    @ViewBuilder
+    private func contentSection(width: CGFloat, height: CGFloat) -> some View {
+        movieListSection(width: width, height: height)
+        
+        if viewModel.output.isPagination {
+            ProgressView()
+        }
+    }
+    
+    @ViewBuilder
+    private func movieListSection(width: CGFloat, height: CGFloat) -> some View {
+        LazyVGrid(columns: gridItemLayout, spacing: 8) {
+            ForEach(viewModel.output.movies.movies, id: \.id) { movie in
+                NavigationLink {
+                    LazyView(
+                        MovieDetailView(
+                            movie: movie,
+                            size: posterSize,
+                            viewModel: MovieDetailViewModel(
+                                movieDetailService: DefaultMovieDetailService(
+                                    tmdbRepository: DefaultTMDBRepository.shared,
+                                    databaseRepository: RealmRepository.shared
+                                ),
+                                networkMonitor: NetworkMonitor.shared,
+                                movieId: movie._id
+                            )
+                        )
+                    )
+                } label: {
+                    let url = URL(string: ImageURL.tmdb(image: movie.poster).urlString)
+                    PosterImage(
+                        url: url,
+                        size: CGSize(width: width, height: height),
+                        title: movie.title
+                    )
+                    .padding(.bottom, 4)
+                    .padding(.horizontal, 8)
+                }
+                .task {
+                    if let last = viewModel.output.movies.movies.last,
+                       last.id == movie.id {
+                        viewModel.action(.lastElement)
+                    }
+                }
             }
         }
     }
