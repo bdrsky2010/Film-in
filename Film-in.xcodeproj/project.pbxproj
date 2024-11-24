@@ -12,6 +12,7 @@
 		7B23FD542CEC9BD700200FFA /* ApiRequestErrorAlert.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B23FD532CEC9BD700200FFA /* ApiRequestErrorAlert.swift */; };
 		7B23FD562CF0AD0200200FFA /* PopupAlert.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B23FD552CF0AD0200200FFA /* PopupAlert.swift */; };
 		7B23FD582CF0B36200200FFA /* AppButtonModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B23FD572CF0B36200200FFA /* AppButtonModifier.swift */; };
+		7B23FD5B2CF3464500200FFA /* MovieDetailFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B23FD5A2CF3464500200FFA /* MovieDetailFactory.swift */; };
 		7B5A94202CAEF0A600F7E6A7 /* SettingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B5A941F2CAEF0A600F7E6A7 /* SettingView.swift */; };
 		7B984B4C2C9C27A400881C5C /* Film_inApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B984B4B2C9C27A400881C5C /* Film_inApp.swift */; };
 		7B984B502C9C27A500881C5C /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 7B984B4F2C9C27A500881C5C /* Assets.xcassets */; };
@@ -170,6 +171,7 @@
 		7B23FD532CEC9BD700200FFA /* ApiRequestErrorAlert.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ApiRequestErrorAlert.swift; sourceTree = "<group>"; };
 		7B23FD552CF0AD0200200FFA /* PopupAlert.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PopupAlert.swift; sourceTree = "<group>"; };
 		7B23FD572CF0B36200200FFA /* AppButtonModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppButtonModifier.swift; sourceTree = "<group>"; };
+		7B23FD5A2CF3464500200FFA /* MovieDetailFactory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MovieDetailFactory.swift; sourceTree = "<group>"; };
 		7B5A941F2CAEF0A600F7E6A7 /* SettingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingView.swift; sourceTree = "<group>"; };
 		7B984B482C9C27A400881C5C /* Film-in.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Film-in.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		7B984B4B2C9C27A400881C5C /* Film_inApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Film_inApp.swift; sourceTree = "<group>"; };
@@ -327,6 +329,14 @@
 			path = Calendar;
 			sourceTree = "<group>";
 		};
+		7B23FD592CF3463500200FFA /* Scene */ = {
+			isa = PBXGroup;
+			children = (
+				7B23FD5A2CF3464500200FFA /* MovieDetailFactory.swift */,
+			);
+			path = Scene;
+			sourceTree = "<group>";
+		};
 		7B5A941E2CAEF06800F7E6A7 /* Setting */ = {
 			isa = PBXGroup;
 			children = (
@@ -361,7 +371,7 @@
 			children = (
 				7B984B4B2C9C27A400881C5C /* Film_inApp.swift */,
 				7B984B842C9C6F4D00881C5C /* Common */,
-				7B984B852C9C6F6100881C5C /* Scene */,
+				7B984B852C9C6F6100881C5C /* Presentation */,
 				7B984B7B2C9C284000881C5C /* Resources */,
 				7B984B512C9C27A500881C5C /* Preview Content */,
 				7B984B792C9C280F00881C5C /* APIKEY.swift */,
@@ -433,7 +443,7 @@
 			path = Common;
 			sourceTree = "<group>";
 		};
-		7B984B852C9C6F6100881C5C /* Scene */ = {
+		7B984B852C9C6F6100881C5C /* Presentation */ = {
 			isa = PBXGroup;
 			children = (
 				7B984C3D2CA2435200881C5C /* LauchScreen */,
@@ -448,7 +458,7 @@
 				7B9F7BF72CAB971500C76F16 /* DateSetup */,
 				7B984CAF2CA934DF00881C5C /* MovieListView */,
 			);
-			path = Scene;
+			path = Presentation;
 			sourceTree = "<group>";
 		};
 		7B984B862C9C6F8300881C5C /* MyView */ = {
@@ -479,6 +489,7 @@
 			children = (
 				7B984C892CA6813C00881C5C /* Entity */,
 				7B984C882CA6813800881C5C /* Service */,
+				7B23FD592CF3463500200FFA /* Scene */,
 				7B984C8C2CA6815600881C5C /* TransitionMovieDetailView.swift */,
 				7B984CC22CA9DEAD00881C5C /* MovieDetailView.swift */,
 				7B984CAD2CA6E0BF00881C5C /* MovieDetailViewModel.swift */,
@@ -1182,6 +1193,7 @@
 				7B984C952CA68ABB00881C5C /* MovieCreditQuery.swift in Sources */,
 				7B984C6B2CA4D6F000881C5C /* HomeViewModel.swift in Sources */,
 				7B984C672CA4D6D800881C5C /* HomeService.swift in Sources */,
+				7B23FD5B2CF3464500200FFA /* MovieDetailFactory.swift in Sources */,
 				7B23FD3E2CDA4D2D00200FFA /* CalendarManager.swift in Sources */,
 				7B9F7BF62CAAA34F00C76F16 /* PersonMovie.swift in Sources */,
 				7B984C452CA2DA3700881C5C /* BaseObject.swift in Sources */,
