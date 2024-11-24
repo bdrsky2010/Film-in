@@ -161,20 +161,12 @@ struct HomeView: View {
     
     @ViewBuilder
     private func detailView(by movie: HomeMovie.Movie) -> some View {
-        TransitionMovieDetailView(
-            viewModel: MovieDetailViewModel(
-                movieDetailService: DefaultMovieDetailService(
-                    tmdbRepository: DefaultTMDBRepository.shared,
-                    databaseRepository: RealmRepository.shared
-                ),
-                networkMonitor: NetworkMonitor.shared,
-                movieId: movie._id
-            ),
+        MovieDetailFactory.makeView(
+            movie: movie,
             offset: $offset,
             showDetailView: $showDetailView,
             namespace: namespace,
-            movie: movie,
-            size: posterSize
+            posterSize: posterSize
         )
     }
 }
