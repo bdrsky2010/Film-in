@@ -25,9 +25,7 @@ struct PersonDetailView: View {
             
             ScrollView {
                 if !viewModel.output.networkConnect {
-                    UnnetworkedView {
-                        viewModel.action(.refresh)
-                    }
+                    UnnetworkedView(refreshAction: viewModel.action(.refresh))
                     .frame(width: width)
                     .padding(.top, 80)
                 } else {

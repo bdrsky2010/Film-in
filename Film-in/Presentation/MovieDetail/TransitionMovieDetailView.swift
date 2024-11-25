@@ -51,9 +51,7 @@ struct TransitionMovieDetailView: View {
         NavigationStack {
             VStack {
                 if !viewModel.output.networkConnect {
-                    UnnetworkedView {
-                        viewModel.action(.refresh)
-                    }
+                    UnnetworkedView(refreshAction: viewModel.action(.refresh))
                 } else {
                     closeButton()
                     infoSection()

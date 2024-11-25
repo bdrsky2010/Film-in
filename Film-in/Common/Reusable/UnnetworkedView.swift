@@ -8,10 +8,10 @@
 import SwiftUI
 
 struct UnnetworkedView: View {
-    private var refrshAction: (() -> Void)?
+    private let refreshAction: () -> Void
     
-    init(refrshAction: (() -> Void)? = nil) {
-        self.refrshAction = refrshAction
+    init(refreshAction: @autoclosure @escaping () -> Void) {
+        self.refreshAction = refreshAction
     }
     
     var body: some View {
@@ -21,7 +21,7 @@ struct UnnetworkedView: View {
                 .foregroundStyle(.appText)
             Button {
                 withAnimation {
-                    refrshAction?()
+                    refreshAction()
                 }
             } label: {
                 Text("refresh")

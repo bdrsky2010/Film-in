@@ -40,9 +40,7 @@ struct MovieDetailView: View {
     var body: some View {
         VStack {
             if !viewModel.output.networkConnect {
-                UnnetworkedView {
-                    viewModel.action(.refresh)
-                }
+                UnnetworkedView(refreshAction: viewModel.action(.refresh))
             } else {
                 infoSection()
             }

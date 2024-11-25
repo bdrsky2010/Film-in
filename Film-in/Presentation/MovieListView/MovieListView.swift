@@ -32,9 +32,7 @@ struct MovieListView: View {
             let height = (proxy.size.width - (8 * 2)) / 3 * 1.5
             ScrollView {
                 if !viewModel.output.networkConnect {
-                    UnnetworkedView {
-                        viewModel.action(.refresh)
-                    }
+                    UnnetworkedView(refreshAction: viewModel.action(.refresh))
                     .frame(maxWidth: proxy.size.width, alignment: .center)
                 } else {
                     contentSection(width: width, height: height)

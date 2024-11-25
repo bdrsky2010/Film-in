@@ -71,9 +71,7 @@ struct GenreSelectView: View {
                 .fill(.clear)
                 .frame(height: 200)
         } else {
-            UnnetworkedView {
-                viewModel.action(.refresh)
-            }
+            UnnetworkedView(refreshAction: viewModel.action(.refresh))
             .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .center)
         }
     }
