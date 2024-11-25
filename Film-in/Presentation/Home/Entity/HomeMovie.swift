@@ -13,24 +13,16 @@ struct HomeMovie {
         let maximum: String
     }
     
-    struct Movie: Hashable, Identifiable {
-        let id = UUID()
-        let _id: Int
-        let title: String
-        let poster: String
-        let backdrop: String
-    }
-    
     let period: Period?
     let page: Int?
     let totalPage: Int?
-    var movies: [Movie]
+    var movies: [MovieData]
     
     init(
         period: Period? = nil,
         page: Int? = nil,
         totalPage: Int? = nil,
-        movies: [Movie]
+        movies: [MovieData]
     ) {
         self.period = period
         self.page = page

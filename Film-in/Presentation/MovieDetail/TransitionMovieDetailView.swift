@@ -22,7 +22,7 @@ struct TransitionMovieDetailView: View {
     
     private var namespace: Namespace.ID
     
-    private let movie: HomeMovie.Movie
+    private let movie: MovieData
     private let size: CGSize
     
     init(
@@ -33,7 +33,7 @@ struct TransitionMovieDetailView: View {
         offset: Binding<CGFloat>,
         showDetailView: Binding<Bool>,
         namespace: Namespace.ID,
-        movie: HomeMovie.Movie,
+        movie: MovieData,
         size: CGSize
     ) {
         self._viewModel = StateObject(wrappedValue: viewModel)

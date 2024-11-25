@@ -11,7 +11,7 @@ struct MovieListView: View {
     private var gridItemLayout = [GridItem(.flexible()), GridItem(.flexible()), GridItem(.flexible())]
     @StateObject private var viewModel: MovieListViewModel
     @State private var posterSize: CGSize = .zero
-    @State private var movie: HomeMovie.Movie?
+    @State private var movie: MovieData?
     
     @Binding var isShowAlert: Bool
     @Binding var isRefresh: Bool
