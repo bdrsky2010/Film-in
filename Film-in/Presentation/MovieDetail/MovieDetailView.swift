@@ -177,18 +177,7 @@ struct MovieDetailView: View {
             LazyHStack(spacing: 12) {
                 ForEach(viewModel.output.creditInfo, id: \.id) { person in
                     NavigationLink {
-                        LazyView(
-                            PersonDetailView(
-                                viewModel: PersonDetailViewModel(
-                                    personDetailService: DefaultPersonDetailService(
-                                        tmdbRepository: DefaultTMDBRepository.shared,
-                                        databaseRepository: RealmRepository.shared
-                                    ),
-                                    networkMonitor: NetworkMonitor.shared,
-                                    personId: person._id
-                                )
-                            )
-                        )
+                        LazyView(PersonDetailFactory.makeView(personId: person._id))
                     } label: {
                         VStack {
                             let url = URL(string: ImageURL.tmdb(image: person.profilePath).urlString)
