@@ -18,14 +18,8 @@ struct SeeMoreView: View {
     }
     
     var body: some View {
-        MovieListView(
-            viewModel: MovieListViewModel(
-                movieListService: DefaultMovieListService(
-                    tmdbRepository: DefaultTMDBRepository.shared,
-                    databaseRepository: RealmRepository.shared
-                ),
-                networkMonitor: NetworkMonitor.shared,
-                usedTo: usedTo),
+        MovieListFactory.makeView(
+            to: usedTo,
             isShowAlert: $isShowAlert,
             isRefresh: $isRefresh
         )
