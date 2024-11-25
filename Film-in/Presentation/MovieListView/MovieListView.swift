@@ -32,8 +32,10 @@ struct MovieListView: View {
             let height = (proxy.size.width - (8 * 2)) / 3 * 1.5
             ScrollView {
                 if !viewModel.output.networkConnect {
-                    NotConnectView(viewModel: viewModel)
-                        .frame(maxWidth: proxy.size.width, alignment: .center)
+                    UnnetworkedView {
+                        viewModel.action(.refresh)
+                    }
+                    .frame(maxWidth: proxy.size.width, alignment: .center)
                 } else {
                     contentSection(width: width, height: height)
                 }
@@ -87,28 +89,6 @@ struct MovieListView: View {
                         viewModel.action(.lastElement)
                     }
                 }
-            }
-        }
-    }
-}
-
-fileprivate struct NotConnectView: View {
-    @ObservedObject var viewModel: MovieListViewModel
-    
-    var body: some View {
-        VStack {
-            Text("notConnectInternet")
-                .font(.ibmPlexMonoSemiBold(size: 20))
-                .foregroundStyle(.appText)
-            Button {
-                withAnimation {
-                    viewModel.action(.refresh)
-                }
-            } label: {
-                Text("refresh")
-                    .font(.ibmPlexMonoMedium(size: 20))
-                    .underline()
-                    .foregroundStyle(.app)
             }
         }
     }

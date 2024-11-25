@@ -40,7 +40,9 @@ struct MovieDetailView: View {
     var body: some View {
         VStack {
             if !viewModel.output.networkConnect {
-                NotConnectView(viewModel: viewModel)
+                UnnetworkedView {
+                    viewModel.action(.refresh)
+                }
             } else {
                 infoSection()
             }
@@ -359,28 +361,6 @@ struct MovieDetailView: View {
     @ViewBuilder
     private func dateSetupSheet() -> some View {
         DateSetupFactory.makeView(movie: movie, type: dateSetupType, isPresented: $isDateSetup)
-    }
-}
-
-fileprivate struct NotConnectView: View {
-    @ObservedObject var viewModel: MovieDetailViewModel
-    
-    var body: some View {
-        VStack {
-            Text("notConnectInternet")
-                .font(.ibmPlexMonoSemiBold(size: 20))
-                .foregroundStyle(.appText)
-            Button {
-                withAnimation {
-                    viewModel.action(.refresh)
-                }
-            } label: {
-                Text("refresh")
-                    .font(.ibmPlexMonoMedium(size: 20))
-                    .underline()
-                    .foregroundStyle(.app)
-            }
-        }
     }
 }
 

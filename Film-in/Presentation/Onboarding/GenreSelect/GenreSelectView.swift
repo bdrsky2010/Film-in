@@ -71,8 +71,10 @@ struct GenreSelectView: View {
                 .fill(.clear)
                 .frame(height: 200)
         } else {
-            NotConnectView(viewModel: viewModel)
-                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .center)
+            UnnetworkedView {
+                viewModel.action(.refresh)
+            }
+            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .center)
         }
     }
 }
@@ -134,23 +136,5 @@ fileprivate struct GenreView: View {
             .foregroundStyle(.white)
             .background(Color.init(uiColor: .app))
             .clipShape(Capsule())
-    }
-}
-
-fileprivate struct NotConnectView: View {
-    @ObservedObject var viewModel: GenreSelectViewModel
-    
-    var body: some View {
-        Text("notConnectInternet")
-            .font(.ibmPlexMonoSemiBold(size: 20))
-            .foregroundStyle(.appText)
-        Button {
-            viewModel.action(.refresh)
-        } label: {
-            Text("refresh")
-                .font(.ibmPlexMonoMedium(size: 20))
-                .underline()
-                .foregroundStyle(.app)
-        }
     }
 }

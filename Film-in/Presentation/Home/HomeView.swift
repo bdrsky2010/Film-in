@@ -24,7 +24,9 @@ struct HomeView: View {
     var body: some View {
         NavigationStack {
             if !viewModel.output.networkConnect {
-                NotConnectView(viewModel: viewModel)
+                UnnetworkedView {
+                    viewModel.action(.refresh)
+                }
             } else {
                 GeometryReader { proxy in
                     VStack {
@@ -194,27 +196,5 @@ fileprivate struct ListHeader: View {
             }
         }
         .padding(.horizontal, 20)
-    }
-}
-
-fileprivate struct NotConnectView: View {
-    @ObservedObject var viewModel: HomeViewModel
-    
-    var body: some View {
-        VStack {
-            Text("notConnectInternet")
-                .font(.ibmPlexMonoSemiBold(size: 20))
-                .foregroundStyle(.appText)
-            Button {
-                withAnimation {
-                    viewModel.action(.refresh)
-                }
-            } label: {
-                Text("refresh")
-                    .font(.ibmPlexMonoMedium(size: 20))
-                    .underline()
-                    .foregroundStyle(.app)
-            }
-        }
     }
 }

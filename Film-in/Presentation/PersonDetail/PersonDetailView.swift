@@ -25,9 +25,11 @@ struct PersonDetailView: View {
             
             ScrollView {
                 if !viewModel.output.networkConnect {
-                    NotConnectView(viewModel: viewModel)
-                        .frame(width: width)
-                        .padding(.top, 80)
+                    UnnetworkedView {
+                        viewModel.action(.refresh)
+                    }
+                    .frame(width: width)
+                    .padding(.top, 80)
                 } else {
                     infoSection(width: width, gridSize: CGSize(width: gridWidth, height: gridHeight))
                 }
@@ -120,28 +122,6 @@ fileprivate struct InfoHeader: View {
             .font(.ibmPlexMonoSemiBold(size: 24))
             .foregroundStyle(.appText)
             .frame(maxWidth: .infinity, alignment: .leading)
-    }
-}
-
-fileprivate struct NotConnectView: View {
-    @ObservedObject var viewModel: PersonDetailViewModel
-    
-    var body: some View {
-        VStack {
-            Text("notConnectInternet")
-                .font(.ibmPlexMonoSemiBold(size: 20))
-                .foregroundStyle(.appText)
-            Button {
-                withAnimation {
-                    viewModel.action(.refresh)
-                }
-            } label: {
-                Text("refresh")
-                    .font(.ibmPlexMonoMedium(size: 20))
-                    .underline()
-                    .foregroundStyle(.app)
-            }
-        }
     }
 }
 
