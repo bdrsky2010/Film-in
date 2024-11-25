@@ -406,17 +406,7 @@ struct TransitionMovieDetailView: View {
     
     @ViewBuilder
     private func dateSetupSheet() -> some View {
-        DateSetupView(
-            viewModel: DateSetupViewModel(
-                dateSetupService: DefaultDateSetupService(
-                    localNotificationManager: DefaultLocalNotificationManager.shared,
-                    databaseRepository: RealmRepository.shared
-                ),
-                movie: (movie._id, movie.title, movie.backdrop, movie.poster),
-                type: dateSetupType
-            ),
-            isPresented: $isDateSetup
-        )
+        DateSetupFactory.makeView(movie: movie, type: dateSetupType, isPresented: $isDateSetup)
     }
 }
 
