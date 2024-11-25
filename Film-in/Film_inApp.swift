@@ -35,12 +35,7 @@ struct Film_inApp: App {
             if isOnboarding {
                 MainTabView()
             } else {
-                GenreSelectView(
-                    viewModel: GenreSelectViewModel(
-                        genreSelectService: DefaultGenreSelectService(tmdbRepository: DefaultTMDBRepository.shared, databaseRepository: RealmRepository.shared),
-                        networkMonitor: NetworkMonitor.shared
-                    )
-                )
+                GenreSelectFactory.makeView()
             }
         }
     }
