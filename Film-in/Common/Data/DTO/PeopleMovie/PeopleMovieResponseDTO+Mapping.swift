@@ -18,8 +18,8 @@ extension PeopleMovieResponseDTO {
             id: self.id,
             movies: self.cast
                 .map {
-                    PersonMovie.Movie(
-                        id: $0.id,
+                    MovieData(
+                        _id: $0.id,
                         title: $0.title,
                         poster: $0.posterPath,
                         backdrop: $0.backdropPath
