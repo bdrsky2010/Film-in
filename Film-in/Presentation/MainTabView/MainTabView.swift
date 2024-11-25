@@ -10,15 +10,7 @@ import SwiftUI
 struct MainTabView: View {
     var body: some View {
         TabView {
-            HomeView(
-                viewModel: HomeViewModel(
-                    homeService: DefaultHomeService(
-                        tmdbRepository: DefaultTMDBRepository.shared,
-                        databaseRepository: RealmRepository.shared
-                    ),
-                    networkMonitor: NetworkMonitor.shared
-                )
-            )
+            HomeFactory.makeView()
                 .tabItem {
                     Image("home")
                     Text("HOME")
@@ -30,6 +22,7 @@ struct MainTabView: View {
 //                    Text("SEARCH")
 //                }
             
+            MyFactory.makeView()
                 .tabItem {
                     Image("movie")
                     Text("MY")
