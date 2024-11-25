@@ -10,7 +10,7 @@ import Combine
 
 final class DateSetupViewModel: BaseObject, ViewModelType {
     private let dateSetupService: DateSetupService
-    let movie: (movieId: Int, title: String, backdrop: String, poster: String)
+    private let movie: MovieData
     
     let type: DateSetupType
     
@@ -21,7 +21,7 @@ final class DateSetupViewModel: BaseObject, ViewModelType {
     
     init(
         dateSetupService: DateSetupService,
-        movie: (movieId: Int, title: String, backdrop: String, poster: String),
+        movie: MovieData,
         type: DateSetupType
     ) {
         self.dateSetupService = dateSetupService
@@ -116,7 +116,7 @@ extension DateSetupViewModel {
 extension DateSetupViewModel {
     private func saveMovie() {
         let query = WantWatchedMovieQuery(
-            movieId: movie.movieId,
+            movieId: movie._id,
             title: movie.title,
             backdrop: movie.backdrop,
             poster: movie.poster,
@@ -131,7 +131,7 @@ extension DateSetupViewModel {
         case .want:
             if output.isAlarm {
                 let publisher = dateSetupService.registPushAlarm(
-                    movie: (movie.movieId, movie.title),
+                    movie: (movie._id, movie.title),
                     date: output.selection
                 )
                 publisher
