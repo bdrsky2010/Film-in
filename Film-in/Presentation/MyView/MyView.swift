@@ -98,25 +98,7 @@ struct MyView: View {
                 }
                 
                 NavigationLink {
-                    LazyView(
-                        MovieDetailView(
-                            movie: .init(
-                                _id: movie.id,
-                                title: movie.title,
-                                poster: movie.poster,
-                                backdrop: movie.backdrop
-                            ),
-                            size: posterSize,
-                            viewModel: MovieDetailViewModel(
-                                movieDetailService: DefaultMovieDetailService(
-                                    tmdbRepository: DefaultTMDBRepository.shared,
-                                    databaseRepository: RealmRepository.shared
-                                ),
-                                networkMonitor: NetworkMonitor.shared,
-                                movieId: movie.id
-                            )
-                        )
-                    )
+                    LazyView(MovieDetailFactory.makeView(movie: convertToMovieData(by: movie), posterSize: posterSize))
                 } label: {
                     EmptyView()
                 }
@@ -128,7 +110,6 @@ struct MyView: View {
             let wantMovieId = wantMovies[index].id
             viewModel.action(.deleteGesture(movieId: wantMovieId))
         }
-
     }
     
     @ViewBuilder
@@ -165,25 +146,7 @@ struct MyView: View {
                 }
                 
                 NavigationLink {
-                    LazyView(
-                        MovieDetailView(
-                            movie: .init(
-                                _id: movie.id,
-                                title: movie.title,
-                                poster: movie.poster,
-                                backdrop: movie.backdrop
-                            ),
-                            size: posterSize,
-                            viewModel: MovieDetailViewModel(
-                                movieDetailService: DefaultMovieDetailService(
-                                    tmdbRepository: DefaultTMDBRepository.shared,
-                                    databaseRepository: RealmRepository.shared
-                                ),
-                                networkMonitor: NetworkMonitor.shared,
-                                movieId: movie.id
-                            )
-                        )
-                    )
+                    LazyView(MovieDetailFactory.makeView(movie: convertToMovieData(by: movie), posterSize: posterSize))
                 } label: {
                     EmptyView()
                 }
@@ -198,14 +161,13 @@ struct MyView: View {
     }
 }
 
-//#Preview {
-//    MyView(
-//        viewModel: MyViewModel(
-//            myViewService: DefaultMyViewService(
-//                databaseRepository: RealmRepository.shared,
-//                localNotificationManager: DefaultLocalNotificationManager.shared,
-//                calendarManager: DefaultCalendarManager()
-//            )
-//        )
-//    )
-//}
+extension MyView {
+    private func convertToMovieData(by movieTable: MovieTable) -> MovieData {
+        return MovieData(
+            _id: movieTable.id,
+            title: movieTable.title,
+            poster: movieTable.poster,
+            backdrop: movieTable.backdrop
+        )
+    }
+}
