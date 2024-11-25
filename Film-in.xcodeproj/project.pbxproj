@@ -900,10 +900,10 @@
 			isa = PBXGroup;
 			children = (
 				7B984CB02CA938B500881C5C /* PosterImageView.swift */,
+				7B23FD712CF43DF400200FFA /* UnnetworkedView.swift */,
 				7B23FD532CEC9BD700200FFA /* ApiRequestErrorAlert.swift */,
 				7B23FD552CF0AD0200200FFA /* PopupAlert.swift */,
 				7B23FD572CF0B36200200FFA /* AppButtonModifier.swift */,
-				7B23FD712CF43DF400200FFA /* UnnetworkedView.swift */,
 			);
 			path = Reusable;
 			sourceTree = "<group>";
