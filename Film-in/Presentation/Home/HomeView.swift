@@ -12,7 +12,7 @@ struct HomeView: View {
     @Namespace var namespace
     @State private var index = 0
     @State private var showDetailView = false
-    @State private var movie: HomeMovie.Movie?
+    @State private var movie: MovieData?
     @State private var posterSize: CGSize = .zero
     @State private var offset: CGFloat = 0
     
@@ -160,7 +160,7 @@ struct HomeView: View {
     }
     
     @ViewBuilder
-    private func detailView(by movie: HomeMovie.Movie) -> some View {
+    private func detailView(by movie: MovieData) -> some View {
         MovieDetailFactory.makeView(
             movie: movie,
             offset: $offset,

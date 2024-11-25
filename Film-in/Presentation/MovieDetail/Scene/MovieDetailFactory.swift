@@ -9,7 +9,7 @@ import SwiftUI
 
 enum MovieDetailFactory {
     static func makeView(
-        movie: HomeMovie.Movie,
+        movie: MovieData,
         posterSize: CGSize
     ) -> some View {
         MovieDetailView(
@@ -27,7 +27,7 @@ enum MovieDetailFactory {
     }
     
     static func makeView(
-        movie: HomeMovie.Movie,
+        movie: MovieData,
         offset: Binding<CGFloat>,
         showDetailView: Binding<Bool>,
         namespace: Namespace.ID,
