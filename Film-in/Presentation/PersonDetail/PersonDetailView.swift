@@ -96,20 +96,7 @@ struct PersonDetailView: View {
         LazyVGrid(columns: gridItemLayout, spacing: 8) {
             ForEach(viewModel.output.personMovie.movies, id: \.id) { movie in
                 NavigationLink {
-                    LazyView(
-                        MovieDetailView(
-                            movie: .init(_id: movie.id, title: movie.title, poster: movie.poster, backdrop: movie.backdrop),
-                            size: posterSize,
-                            viewModel: MovieDetailViewModel(
-                                movieDetailService: DefaultMovieDetailService(
-                                    tmdbRepository: DefaultTMDBRepository.shared,
-                                    databaseRepository: RealmRepository.shared
-                                ),
-                                networkMonitor: NetworkMonitor.shared,
-                                movieId: movie.id
-                            )
-                        )
-                    )
+                    LazyView(MovieDetailFactory.makeView(movie: movie, posterSize: posterSize))
                 } label: {
                     let url = URL(string: ImageURL.tmdb(image: movie.poster).urlString)
                     PosterImage(
