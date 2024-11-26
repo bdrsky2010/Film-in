@@ -16,8 +16,9 @@ struct TransitionMovieDetailView: View {
     @State private var isFullOverview: Bool
     @State private var isDateSetup: Bool
     @State private var dateSetupType: DateSetupType
+    @State private var offset: CGFloat
     
-    @Binding var offset: CGFloat
+//    @Binding var offset: CGFloat
     @Binding var showDetailView: Bool
     
     private var namespace: Namespace.ID
@@ -30,7 +31,6 @@ struct TransitionMovieDetailView: View {
         isFullOverview: Bool = false,
         isDateSetup: Bool = false,
         dateSetupType: DateSetupType = .want,
-        offset: Binding<CGFloat>,
         showDetailView: Binding<Bool>,
         namespace: Namespace.ID,
         movie: MovieData,
@@ -40,7 +40,7 @@ struct TransitionMovieDetailView: View {
         self._isFullOverview = State(wrappedValue: isFullOverview)
         self._isDateSetup = State(wrappedValue: isDateSetup)
         self._dateSetupType = State(wrappedValue: dateSetupType)
-        self._offset = offset
+        self._offset = State(wrappedValue: 0.0)
         self._showDetailView = showDetailView
         self.namespace = namespace
         self.movie = movie
