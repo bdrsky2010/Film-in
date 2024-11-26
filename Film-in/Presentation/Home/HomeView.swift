@@ -14,7 +14,6 @@ struct HomeView: View {
     @State private var showDetailView = false
     @State private var movie: MovieData?
     @State private var posterSize: CGSize = .zero
-    @State private var offset: CGFloat = 0
     
     init(viewModel: HomeViewModel) {
         self._viewModel = StateObject(wrappedValue: viewModel)
@@ -163,7 +162,6 @@ struct HomeView: View {
     private func detailView(by movie: MovieData) -> some View {
         MovieDetailFactory.makeView(
             movie: movie,
-            offset: $offset,
             showDetailView: $showDetailView,
             namespace: namespace,
             posterSize: posterSize
