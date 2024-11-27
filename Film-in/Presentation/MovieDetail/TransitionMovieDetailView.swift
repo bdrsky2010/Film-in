@@ -18,10 +18,9 @@ struct TransitionMovieDetailView: View {
     @State private var dateSetupType: DateSetupType
     @State private var offset: CGFloat
     
-//    @Binding var offset: CGFloat
     @Binding var showDetailView: Bool
     
-    private var namespace: Namespace.ID
+    private let namespace: Namespace.ID
     
     private let movie: MovieData
     private let size: CGSize
@@ -141,7 +140,7 @@ struct TransitionMovieDetailView: View {
         )
         .matchedGeometryEffect(
             id: movie.id,
-            in: namespace
+            in: namespace, properties: .frame, isSource: showDetailView
         )
     }
     
