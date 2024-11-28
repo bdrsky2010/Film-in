@@ -140,7 +140,8 @@ struct TransitionMovieDetailView: View {
         )
         .matchedGeometryEffect(
             id: movie.id,
-            in: namespace, properties: .frame, isSource: showDetailView
+            in: namespace, properties: .frame,
+            isSource: showDetailView
         )
     }
     
