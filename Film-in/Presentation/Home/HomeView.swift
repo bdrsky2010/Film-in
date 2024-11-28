@@ -14,7 +14,6 @@ struct HomeView: View {
     @State private var showDetailView = false
     @State private var movie: MovieData?
     @State private var posterSize: CGSize = .zero
-    @State private var offset: CGFloat = 0
     
     init(viewModel: HomeViewModel) {
         self._viewModel = StateObject(wrappedValue: viewModel)
@@ -78,10 +77,10 @@ struct HomeView: View {
             
             let url = URL(string: ImageURL.tmdb(image: movie.poster).urlString)
             PosterImage(url: url, size: posterSize, title: movie.title)
-                .matchedGeometryEffect(id: movie.id, in: namespace)
+                .matchedGeometryEffect(id: movie.id, in: namespace, properties: .frame, isSource: !showDetailView)
                 .onTapGesture {
-                    self.movie = movie
                     withAnimation(.easeInOut) {
+                        self.movie = movie
                         showDetailView = true
                     }
                 }
@@ -101,10 +100,10 @@ struct HomeView: View {
                     PosterImage(url: url, size: CGSize(width: posterSize.width * 0.5, height: posterSize.height * 0.5), title: movie.title)
                         .padding(.bottom, 4)
                         .padding(.horizontal, 8)
-                        .matchedGeometryEffect(id: movie.id, in: namespace)
+                        .matchedGeometryEffect(id: movie.id, in: namespace, properties: .frame, isSource: !showDetailView)
                         .onTapGesture {
-                            self.movie = movie
                             withAnimation(.easeInOut) {
+                                self.movie = movie
                                 showDetailView = true
                             }
                         }
@@ -124,10 +123,10 @@ struct HomeView: View {
                     PosterImage(url: url, size: CGSize(width: posterSize.width * 0.5, height: posterSize.height * 0.5), title: movie.title)
                         .padding(.bottom, 4)
                         .padding(.horizontal, 8)
-                        .matchedGeometryEffect(id: movie.id, in: namespace)
+                        .matchedGeometryEffect(id: movie.id, in: namespace, properties: .frame, isSource: !showDetailView)
                         .onTapGesture {
-                            self.movie = movie
                             withAnimation(.easeInOut) {
+                                self.movie = movie
                                 showDetailView = true
                             }
                         }
@@ -147,10 +146,10 @@ struct HomeView: View {
                     PosterImage(url: url, size: CGSize(width: posterSize.width * 0.5, height: posterSize.height * 0.5), title: movie.title)
                         .padding(.bottom, 4)
                         .padding(.horizontal, 8)
-                        .matchedGeometryEffect(id: movie.id, in: namespace)
+                        .matchedGeometryEffect(id: movie.id, in: namespace, properties: .frame, isSource: !showDetailView)
                         .onTapGesture {
-                            self.movie = movie
                             withAnimation(.easeInOut) {
+                                self.movie = movie
                                 showDetailView = true
                             }
                         }
@@ -163,7 +162,6 @@ struct HomeView: View {
     private func detailView(by movie: MovieData) -> some View {
         MovieDetailFactory.makeView(
             movie: movie,
-            offset: $offset,
             showDetailView: $showDetailView,
             namespace: namespace,
             posterSize: posterSize

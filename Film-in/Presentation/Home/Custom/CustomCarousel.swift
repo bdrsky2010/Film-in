@@ -8,12 +8,16 @@
 import SwiftUI
 
 struct SnapCarousel<Content: View, Item: Identifiable>: View {
-    var content: (Item) -> Content
-    var list: [Item]
+    private let content: (Item) -> Content
+    private let list: [Item]
+    private let spacing: CGFloat
+    private let trailingSpace: CGFloat
     
-    var spacing: CGFloat
-    var trailingSpace: CGFloat
-    @Binding var index: Int
+    @Binding private var index: Int
+    
+    // offset
+    @GestureState private var offset: CGFloat = 0
+    @State private var currentIndex = 0
     
     init(spacing: CGFloat = 15, trailingSpace: CGFloat = 100, index: Binding<Int>, items: [Item], @ViewBuilder content: @escaping (Item) -> Content) {
         self.list = items
@@ -22,10 +26,6 @@ struct SnapCarousel<Content: View, Item: Identifiable>: View {
         self._index = index
         self.content = content
     }
-    
-    // offset
-    @GestureState var offset: CGFloat = 0
-    @State private var currentIndex = 0
     
     var body: some View {
         GeometryReader { proxy in

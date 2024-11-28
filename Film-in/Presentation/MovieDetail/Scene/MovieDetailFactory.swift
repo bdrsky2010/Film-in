@@ -28,7 +28,6 @@ enum MovieDetailFactory {
     
     static func makeView(
         movie: MovieData,
-        offset: Binding<CGFloat>,
         showDetailView: Binding<Bool>,
         namespace: Namespace.ID,
         posterSize: CGSize
@@ -42,7 +41,6 @@ enum MovieDetailFactory {
                 networkMonitor: NetworkMonitor.shared,
                 movieId: movie._id
             ),
-            offset: offset,
             showDetailView: showDetailView,
             namespace: namespace,
             movie: movie,
