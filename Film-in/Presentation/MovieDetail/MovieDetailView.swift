@@ -93,8 +93,8 @@ struct MovieDetailView: View {
         PosterImage(
             url: url,
             size: CGSize(
-                width: size.width * 1.3,
-                height: size.height * 1.3),
+                width: size.width,
+                height: size.height),
             title: movie.title
         )
     }
