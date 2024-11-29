@@ -76,7 +76,8 @@ struct MovieListView: View {
                     PosterImage(
                         url: url,
                         size: CGSize(width: width, height: height),
-                        title: movie.title
+                        title: movie.title,
+                        isDownsampling: true
                     )
                     .padding(.bottom, 4)
                     .padding(.horizontal, 8)

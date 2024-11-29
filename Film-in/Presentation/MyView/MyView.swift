@@ -81,7 +81,8 @@ struct MyView: View {
                         width: proxy.size.width - 40,
                         height: (proxy.size.width - 40) * 0.56
                     ),
-                    title: movie.title
+                    title: movie.title,
+                    isDownsampling: true
                 )
                 .overlay(alignment: .bottom) {
                     Rectangle()
@@ -129,7 +130,8 @@ struct MyView: View {
                         width: proxy.size.width - 40,
                         height: (proxy.size.width - 40) * 0.56
                     ),
-                    title: movie.title
+                    title: movie.title,
+                    isDownsampling: true
                 )
                 .overlay(alignment: .bottom) {
                     Rectangle()
