@@ -105,7 +105,3 @@ struct DateSetupView: View {
         }
     }
 }
-
-//#Preview {
-//    DateSetupView(viewModel: DateSetupViewModel(dateSetupService: DefaultDateSetupService(localNotificationManager: DefaultLocalNotificationManager.shared, databaseRepository: RealmRepository.shared), movie: (123, "", "", ""), type: .want), isPresented: .constant(true))
-//}
