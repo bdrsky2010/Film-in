@@ -147,6 +147,8 @@ extension DateSetupViewModel {
                         }
                     }
                     .store(in: &cancellable)
+            } else {
+                output.isSuccess = true
             }
         case .watched:
             output.isSuccess = true
