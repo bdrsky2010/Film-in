@@ -76,7 +76,7 @@ struct HomeView: View {
         SnapCarousel(spacing: 28, trailingSpace: 120, index: $index, items: viewModel.output.trendingMovies.movies) { movie in
             
             let url = URL(string: ImageURL.tmdb(image: movie.poster).urlString)
-            PosterImage(url: url, size: posterSize, title: movie.title)
+            PosterImage(url: url, size: posterSize, title: movie.title, isDownsampling: true)
                 .matchedGeometryEffect(id: movie.id, in: namespace, properties: .frame, isSource: !showDetailView)
                 .onTapGesture {
                     withAnimation(.easeInOut) {
@@ -97,7 +97,7 @@ struct HomeView: View {
             LazyHStack {
                 ForEach(viewModel.output.nowPlayingMovies.movies, id: \.id) { movie in
                     let url = URL(string: ImageURL.tmdb(image: movie.poster).urlString)
-                    PosterImage(url: url, size: CGSize(width: posterSize.width * 0.5, height: posterSize.height * 0.5), title: movie.title)
+                    PosterImage(url: url, size: CGSize(width: posterSize.width * 0.5, height: posterSize.height * 0.5), title: movie.title, isDownsampling: true)
                         .padding(.bottom, 4)
                         .padding(.horizontal, 8)
                         .matchedGeometryEffect(id: movie.id, in: namespace, properties: .frame, isSource: !showDetailView)
@@ -120,7 +120,7 @@ struct HomeView: View {
             LazyHStack {
                 ForEach(viewModel.output.upcomingMovies.movies, id: \.id) { movie in
                     let url = URL(string: ImageURL.tmdb(image: movie.poster).urlString)
-                    PosterImage(url: url, size: CGSize(width: posterSize.width * 0.5, height: posterSize.height * 0.5), title: movie.title)
+                    PosterImage(url: url, size: CGSize(width: posterSize.width * 0.5, height: posterSize.height * 0.5), title: movie.title, isDownsampling: true)
                         .padding(.bottom, 4)
                         .padding(.horizontal, 8)
                         .matchedGeometryEffect(id: movie.id, in: namespace, properties: .frame, isSource: !showDetailView)
@@ -143,7 +143,7 @@ struct HomeView: View {
             LazyHStack {
                 ForEach(viewModel.output.recommendMovies.movies, id: \.id) { movie in
                     let url = URL(string: ImageURL.tmdb(image: movie.poster).urlString)
-                    PosterImage(url: url, size: CGSize(width: posterSize.width * 0.5, height: posterSize.height * 0.5), title: movie.title)
+                    PosterImage(url: url, size: CGSize(width: posterSize.width * 0.5, height: posterSize.height * 0.5), title: movie.title, isDownsampling: true)
                         .padding(.bottom, 4)
                         .padding(.horizontal, 8)
                         .matchedGeometryEffect(id: movie.id, in: namespace, properties: .frame, isSource: !showDetailView)

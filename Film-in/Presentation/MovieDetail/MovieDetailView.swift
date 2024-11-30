@@ -95,7 +95,8 @@ struct MovieDetailView: View {
             size: CGSize(
                 width: size.width,
                 height: size.height),
-            title: movie.title
+            title: movie.title,
+            isDownsampling: true
         )
     }
     
@@ -184,7 +185,8 @@ struct MovieDetailView: View {
                             PosterImage(
                                 url: url,
                                 size: CGSize(width: 90, height: 90),
-                                title: person.name.replacingOccurrences(of: " ", with: "\n")
+                                title: person.name.replacingOccurrences(of: " ", with: "\n"),
+                                isDownsampling: true
                             )
                             .clipShape(Circle())
                             .grayscale(colorScheme == .dark ? 1 : 0)
@@ -275,7 +277,8 @@ struct MovieDetailView: View {
                                 width: size.width * 0.5,
                                 height: size.height * 0.5
                             ),
-                            title: similar.title
+                            title: similar.title,
+                            isDownsampling: true
                         )
                         .padding(.horizontal, 8)
                     }
@@ -298,7 +301,8 @@ struct MovieDetailView: View {
                             width: size.height * 0.4 * backdrop.ratio,
                             height: size.height * 0.4
                         ),
-                        title: ""
+                        title: "",
+                        isDownsampling: true
                     )
                     .padding(.horizontal, 8)
                 }
@@ -320,7 +324,8 @@ struct MovieDetailView: View {
                             width: Double(poster.width) * 0.1,
                             height: Double(poster.height) * 0.1
                         ),
-                        title: ""
+                        title: "",
+                        isDownsampling: true
                     )
                     .padding(.horizontal, 8)
                 }

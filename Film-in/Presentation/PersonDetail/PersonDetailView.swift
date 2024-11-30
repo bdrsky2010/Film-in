@@ -67,7 +67,8 @@ struct PersonDetailView: View {
         PosterImage(
             url: url,
             size: CGSize(width: width, height: width * 1.5),
-            title: viewModel.output.personDetail.name
+            title: viewModel.output.personDetail.name,
+            isDownsampling: false
         )
         .grayscale(colorScheme == .dark ? 1 : 0)
     }
@@ -102,7 +103,8 @@ struct PersonDetailView: View {
                     PosterImage(
                         url: url,
                         size: size,
-                        title: movie.title
+                        title: movie.title,
+                        isDownsampling: true
                     )
                     .padding(.bottom, 4)
                     .padding(.horizontal, 8)
