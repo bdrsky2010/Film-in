@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import Combine
 
 enum SearchTab: CaseIterable, CustomStringConvertible {
     case movie, person
@@ -19,30 +20,44 @@ enum SearchTab: CaseIterable, CustomStringConvertible {
 }
 
 struct SearchView: View {
-    @Namespace var namsespace
+    @Namespace private var namsespace
+    
+    @FocusState private var isFocused: Bool
+    
     @State private var selection: SearchTab = .movie
     @State private var searchQuery = ""
     
     var body: some View {
-        VStack {
+        HStack {
             TextField("", text: $searchQuery)
+                .focused($isFocused)
                 .padding()
-                .border(.red)
+                .border(.appText, width: 3)
             
-            HStack {
-                ForEach(SearchTab.allCases, id: \.hashValue) { tab in
-                    Spacer()
+            Button {
+                isFocused.toggle()
+            } label: {
+                Text(verbatim: "취소")
+                    .tint(.app)
+                    .font(.ibmPlexMonoSemiBold(size: 20))
+            }
+        }
+        .padding(.horizontal)
+        
+        VStack {
+            HStack(spacing: 12) {
+                ForEach(SearchTab.allCases, id: \.self) { tab in
                     ZStack {
                         Text(verbatim: tab.description)
-                            .font(.title2)
+                            .font(.ibmPlexMonoSemiBold(size: 20))
                             .bold()
                             .padding(.bottom, 12)
                     }
-                    .frame(maxWidth: .infinity)
                     .overlay(alignment: .bottom) {
                         if selection == tab {
                             Capsule()
                                 .frame(height: 4)
+                                .foregroundStyle(.app)
                                 .matchedGeometryEffect(id: "tab", in: namsespace)
                         }
                     }
@@ -50,11 +65,10 @@ struct SearchView: View {
                     .onTapGesture {
                         selection = tab
                     }
-                    Spacer()
                 }
             }
-            .frame(maxWidth: .infinity)
-            .padding(.horizontal)
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .padding(.horizontal, 20)
             
             TabView(selection: $selection) {
                 LazyView(FirstView())
@@ -65,6 +79,11 @@ struct SearchView: View {
                     .tag(SearchTab.person)
             }
             .tabViewStyle(.page(indexDisplayMode: .never))
+        }
+        .overlay {
+            if isFocused {
+                Rectangle()
+            }
         }
     }
 }
