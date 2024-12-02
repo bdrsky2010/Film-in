@@ -17,6 +17,14 @@ enum SearchTab: CaseIterable, CustomStringConvertible {
         case .person: "ACTOR"
         }
     }
+    
+    @ViewBuilder
+    var view: some View {
+        switch self {
+        case .movie: FirstView()
+        case .person: SecondView()
+        }
+    }
 }
 
 struct SearchView: View {
@@ -64,6 +72,13 @@ struct SearchView: View {
                     .animation(.easeInOut, value: selection)
                     .onTapGesture {
                         selection = tab
+                    
+                    TabView(selection: $selection) {
+                        ForEach(SearchTab.allCases, id: \.self) { tab in
+                            LazyView(tab.view)
+                                .tabItem { }
+                                .tag(tab)
+                        }
                     }
                 }
             }
