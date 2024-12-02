@@ -2,191 +2,135 @@
 //  SearchView.swift
 //  Film-in
 //
-//  Created by Minjae Kim on 12/1/24.
+//  Created by Minjae Kim on 12/2/24.
 //
 
 import SwiftUI
-import Combine
-
-enum SearchTab: CaseIterable, CustomStringConvertible {
-    case movie, person
-    
-    var description: String {
-        switch self {
-        case .movie:  "MOVIE"
-        case .person: "ACTOR"
-        }
-    }
-    
-    @ViewBuilder
-    var view: some View {
-        switch self {
-        case .movie: FirstView()
-        case .person: SecondView()
-        }
-    }
-}
 
 struct SearchView: View {
-    @Namespace private var namsespace
+    @State private var cellSize: CGSize = .zero
+    @State private var posterSize: CGSize = .zero
     
-    @FocusState private var isCoverFocused: Bool
-    @FocusState private var isSearchFocused: Bool
+    @Binding private var searchQuery: String
+    @Binding private var isShowSearch: Bool
     
-    @State private var selection: SearchTab = .movie
-    @State private var isShowSearch = false
-    @State private var searchQuery = ""
+    private var isCoverFocused: FocusState<Bool>.Binding
+    private var isSearchFocused: FocusState<Bool>.Binding
+    
+    private let namespace: Namespace.ID
+    
+    init(
+        searchQuery: Binding<String>,
+        isShowSearch: Binding<Bool>,
+        isCoverFocused: FocusState<Bool>.Binding,
+        isSearchFocused: FocusState<Bool>.Binding,
+        namespace: Namespace.ID
+    ) {
+        self._searchQuery = searchQuery
+        self._isShowSearch = isShowSearch
+        self.isCoverFocused = isCoverFocused
+        self.isSearchFocused = isSearchFocused
+        self.namespace = namespace
+    }
     
     var body: some View {
-        ZStack {
-            VStack {
+        VStack {
+            HStack {
                 HStack {
-                    HStack {
-                        TextField("searchPlaceholder", text: $searchQuery)
-                            .focused($isCoverFocused)
-                            .padding()
-                            .font(.ibmPlexMonoSemiBold(size: 16))
-                        
-                        if !searchQuery.isEmpty {
-                            Button {
-                                searchQuery = ""
-                            } label: {
-                                Image(systemName: "xmark.app.fill")
-                                    .resizable()
-                                    .frame(width: 30, height: 30)
-                                    .foregroundStyle(.app)
-                                    .padding(.trailing)
-                            }
+                    TextField("searchPlaceholder", text: $searchQuery)
+                        .focused(isSearchFocused)
+                        .padding()
+                        .font(.ibmPlexMonoSemiBold(size: 16))
+                    
+                    if !searchQuery.isEmpty {
+                        Button {
+                            searchQuery = ""
+                        } label: {
+                            Image(systemName: "xmark.app.fill")
+                                .resizable()
+                                .frame(width: 30, height: 30)
+                                .foregroundStyle(.app)
+                                .padding(.trailing)
                         }
                     }
-                    .overlay {
-                        Rectangle()
-                            .stroke(lineWidth: 3)
-                            .matchedGeometryEffect(id: "TextField", in: namsespace)
-                            .animation(.easeInOut, value: isShowSearch)
-                    }
                 }
-                .padding(.horizontal)
+                .overlay {
+                    Rectangle()
+                        .stroke(lineWidth: 3)
+                        .matchedGeometryEffect(id: "TextField", in: namespace)
+                        .animation(.easeInOut, value: isShowSearch)
+                }
                 
-                VStack {
-                    HStack(spacing: 12) {
+                Button {
+                    withAnimation {
+                        isShowSearch.toggle()
+                    }
+                } label: {
+                    Text("cancel")
+                        .tint(.app)
+                        .font(.ibmPlexMonoSemiBold(size: 20))
+                        .padding(.leading, 8)
+                }
+                .matchedGeometryEffect(id: "Cancel", in: namespace)
+            }
+            .padding(.horizontal)
+            
+//            Spacer()
+            
+            GeometryReader { proxy in
+                List {
+                    if searchQuery.isEmpty {
                         ForEach(SearchTab.allCases, id: \.self) { tab in
-                            ZStack {
+                            Section {
+                                ScrollView(.horizontal, showsIndicators: false) {
+                                    HStack {
+                                        switch tab {
+                                        case .movie:
+                                            ForEach(0..<10) { _ in
+                                                Rectangle()
+                                                    .frame(width: cellSize.width, height: cellSize.height)
+                                                    .foregroundStyle(Color.init(red: Double.random(in: 0...1), green: Double.random(in: 0...1), blue: Double.random(in: 0...1)))
+                                            }
+                                        case .person:
+                                            ForEach(0..<10) { _ in
+                                                VStack {
+                                                    Capsule()
+                                                        .frame(width: 90, height: 90)
+                                                    Text(verbatim: "이름\n이름")
+                                                        .font(.ibmPlexMonoRegular(size: 14))
+                                                        .foregroundStyle(.appText)
+                                                        .frame(width: 90)
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            } header: {
                                 Text(verbatim: tab.description)
                                     .font(.ibmPlexMonoSemiBold(size: 20))
+                                    .foregroundStyle(.appText)
                                     .bold()
-                                    .padding(.bottom, 12)
-                            }
-                            .overlay(alignment: .bottom) {
-                                if selection == tab {
-                                    Capsule()
-                                        .frame(height: 4)
-                                        .foregroundStyle(.app)
-                                        .matchedGeometryEffect(id: "tab", in: namsespace)
-                                }
-                            }
-                            .animation(.easeInOut, value: selection)
-                            .onTapGesture {
-                                selection = tab
+                                    .matchedGeometryEffect(id: "\(tab.description)", in: namespace, isSource: isShowSearch)
                             }
                         }
                     }
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                    .padding(.horizontal, 20)
+                }
+                .listStyle(.plain)
+                .scrollDismissesKeyboard(.interactively)
+                .task {
+                    if cellSize == .zero {
+                        cellSize = CGSize(
+                            width: (proxy.size.width - (8 * 2)) / 3,
+                            height: (proxy.size.width - (8 * 2)) / 3 * 1.5
+                        )
+                    }
                     
-                    TabView(selection: $selection) {
-                        ForEach(SearchTab.allCases, id: \.self) { tab in
-                            LazyView(tab.view)
-                                .tabItem { }
-                                .tag(tab)
-                        }
+                    if posterSize == .zero {
+                        posterSize = CGSize(width: proxy.size.width * 0.7, height: proxy.size.width * 0.7 * 1.5)
                     }
-                    .tabViewStyle(.page(indexDisplayMode: .never))
-                    .animation(.easeInOut, value: selection)
-                    .ignoresSafeArea()
-                }
-            }
-            if isShowSearch {
-                VStack {
-                    HStack {
-                        HStack {
-                            TextField("searchPlaceholder", text: $searchQuery)
-                                .focused($isSearchFocused)
-                                .padding()
-                                .font(.ibmPlexMonoSemiBold(size: 16))
-                            
-                            if !searchQuery.isEmpty {
-                                Button {
-                                    searchQuery = ""
-                                } label: {
-                                    Image(systemName: "xmark.app.fill")
-                                        .resizable()
-                                        .frame(width: 30, height: 30)
-                                        .foregroundStyle(.app)
-                                        .padding(.trailing)
-                                }
-                            }
-                        }
-                        .overlay {
-                            Rectangle()
-                                .stroke(lineWidth: 3)
-                                .matchedGeometryEffect(id: "TextField", in: namsespace)
-                                .animation(.easeInOut, value: isShowSearch)
-                        }
-                        
-                        Button {
-                            isShowSearch.toggle()
-                        } label: {
-                            Text("cancel")
-                                .tint(.app)
-                                .font(.ibmPlexMonoSemiBold(size: 20))
-                                .padding(.leading, 8)
-                        }
-                        .matchedGeometryEffect(id: "Cancel", in: namsespace)
-                    }
-                    .padding(.horizontal)
-                    Spacer()
-                }
-                .background(.background)
-            }
-        }
-        .valueChanged(value: isCoverFocused) { _ in
-            if isCoverFocused {
-                withAnimation {
-                    isShowSearch.toggle()
-                    isSearchFocused = true
                 }
             }
         }
+        .background(.background)
     }
-}
- 
-struct FirstView: View {
-    init() {
-        print(String(describing: self))
-    }
-    
-    var body: some View {
-        Text("Tab Content 1")
-            .task {
-                print(String(describing: self) + "task")
-            }
-    }
-}
-
-struct SecondView: View {
-    init() {
-        print(String(describing: self))
-    }
-    
-    var body: some View {
-        Text("Tab Content 2")
-            .task {
-                print(String(describing: self) + "task")
-            }
-    }
-}
-
-#Preview {
-    SearchView()
 }
