@@ -8,10 +8,13 @@
 import SwiftUI
 
 struct PersonDetailView: View {
-    private var gridItemLayout = [GridItem(.flexible()), GridItem(.flexible()), GridItem(.flexible())]
     @Environment(\.colorScheme) var colorScheme
+    
     @StateObject private var viewModel: PersonDetailViewModel
+    
     @State private var posterSize: CGSize = .zero
+    
+    private let gridItemLayout = [GridItem(.flexible()), GridItem(.flexible()), GridItem(.flexible())]
     
     init(viewModel: PersonDetailViewModel) {
         self._viewModel = StateObject(wrappedValue: viewModel)
@@ -94,7 +97,7 @@ struct PersonDetailView: View {
     private func filmographySection(size: CGSize) -> some View {
         InfoHeader(titleKey: "filmography")
             .padding(.vertical)
-        LazyVGrid(columns: gridItemLayout, spacing: 8) {
+        LazyVGrid(columns: gridItemLayout) {
             ForEach(viewModel.output.personMovie.movies, id: \.id) { movie in
                 NavigationLink {
                     LazyView(MovieDetailFactory.makeView(movie: movie, posterSize: posterSize))
@@ -106,8 +109,6 @@ struct PersonDetailView: View {
                         title: movie.title,
                         isDownsampling: true
                     )
-                    .padding(.bottom, 4)
-                    .padding(.horizontal, 8)
                 }
             }
         }
