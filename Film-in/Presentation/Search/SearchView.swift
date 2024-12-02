@@ -61,17 +61,20 @@ struct SearchView: View {
                             .bold()
                             .padding(.bottom, 12)
                     }
-                    .overlay(alignment: .bottom) {
-                        if selection == tab {
-                            Capsule()
-                                .frame(height: 4)
-                                .foregroundStyle(.app)
-                                .matchedGeometryEffect(id: "tab", in: namsespace)
+                            .overlay(alignment: .bottom) {
+                                if selection == tab {
+                                    Capsule()
+                                        .frame(height: 4)
+                                        .foregroundStyle(.app)
+                                        .matchedGeometryEffect(id: "tab", in: namsespace)
+                                }
+                            }
+                            .animation(.easeInOut, value: selection)
+                            .onTapGesture {
+                                selection = tab
+                            }
                         }
                     }
-                    .animation(.easeInOut, value: selection)
-                    .onTapGesture {
-                        selection = tab
                     
                     TabView(selection: $selection) {
                         ForEach(SearchTab.allCases, id: \.self) { tab in
@@ -80,20 +83,12 @@ struct SearchView: View {
                                 .tag(tab)
                         }
                     }
+                    .tabViewStyle(.page(indexDisplayMode: .never))
+                    .animation(.easeInOut, value: selection)
+                    .ignoresSafeArea()
                 }
             }
-            .frame(maxWidth: .infinity, alignment: .leading)
-            .padding(.horizontal, 20)
-            
-            TabView(selection: $selection) {
-                LazyView(FirstView())
-                    .tabItem { }
-                    .tag(SearchTab.movie)
-                LazyView(SecondView())
-                    .tabItem { }
-                    .tag(SearchTab.person)
             }
-            .tabViewStyle(.page(indexDisplayMode: .never))
         }
         .overlay {
             if isFocused {
