@@ -650,6 +650,29 @@
         }
       }
     },
+    "searchPlaceholder" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Movie, Actor..."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "映画、俳優···"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "영화, 배우..."
+          }
+        }
+      }
+    },
     "shortLanguageCode" : {
       "extractionState" : "manual",
       "localizations" : {
