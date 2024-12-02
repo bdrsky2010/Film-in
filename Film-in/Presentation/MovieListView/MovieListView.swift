@@ -8,13 +8,15 @@
 import SwiftUI
 
 struct MovieListView: View {
-    private var gridItemLayout = [GridItem(.flexible()), GridItem(.flexible()), GridItem(.flexible())]
     @StateObject private var viewModel: MovieListViewModel
+    
     @State private var posterSize: CGSize = .zero
     @State private var movie: MovieData?
     
     @Binding var isShowAlert: Bool
     @Binding var isRefresh: Bool
+    
+    private let gridItemLayout = [GridItem(.flexible()), GridItem(.flexible()), GridItem(.flexible())]
     
     init(
         viewModel: MovieListViewModel,
@@ -67,7 +69,7 @@ struct MovieListView: View {
     
     @ViewBuilder
     private func movieListSection(width: CGFloat, height: CGFloat) -> some View {
-        LazyVGrid(columns: gridItemLayout, spacing: 8) {
+        LazyVGrid(columns: gridItemLayout) {
             ForEach(viewModel.output.movies.movies, id: \.id) { movie in
                 NavigationLink {
                     LazyView(MovieDetailFactory.makeView(movie: movie, posterSize: posterSize))
@@ -79,8 +81,6 @@ struct MovieListView: View {
                         title: movie.title,
                         isDownsampling: true
                     )
-                    .padding(.bottom, 4)
-                    .padding(.horizontal, 8)
                 }
                 .task {
                     if let last = viewModel.output.movies.movies.last,
