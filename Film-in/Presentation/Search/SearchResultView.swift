@@ -99,42 +99,47 @@ struct SearchResultView: View {
             .padding(.horizontal)
 
             if isSearched {
-                VStack {
-                    HStack(spacing: 12) {
-                        ForEach(SearchTab.allCases, id: \.self) { tab in
-                            Text(verbatim: tab.description)
-                                .font(.ibmPlexMonoSemiBold(size: 20))
-                                .bold()
-                                .foregroundStyle(.appText)
-                                .padding(.bottom, 4)
-                                .matchedGeometryEffect(id: "\(tab.description)", in: namespace)
-                            .overlay(alignment: .bottom) {
-                                if selection == tab {
-                                    Capsule()
-                                        .frame(height: 4)
-                                        .foregroundStyle(.app)
-                                        .matchedGeometryEffect(id: "tab", in: namespace)
-                                }
-                            }
-                            .animation(.easeInOut, value: selection)
-                            .onTapGesture {
-                                selection = tab
+                if isSearching {
+                    ProgressView()
+                        .frame(maxWidth: .infinity, maxHeight: .infinity)
+                } else {
+                    VStack {
+                        HStack(spacing: 12) {
+                            ForEach(SearchTab.allCases, id: \.self) { tab in
+                                Text(verbatim: tab.description)
+                                    .font(.ibmPlexMonoSemiBold(size: 20))
+                                    .bold()
+                                    .foregroundStyle(.appText)
+                                    .padding(.bottom, 4)
+                                    .matchedGeometryEffect(id: "\(tab.description)", in: namespace)
+                                    .overlay(alignment: .bottom) {
+                                        if selection == tab {
+                                            Capsule()
+                                                .frame(height: 4)
+                                                .foregroundStyle(.app)
+                                                .matchedGeometryEffect(id: "tab", in: namespace)
+                                        }
+                                    }
+                                    .animation(.easeInOut, value: selection)
+                                    .onTapGesture {
+                                        selection = tab
+                                    }
                             }
                         }
-                    }
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                    .padding(.horizontal, 20)
-                    
-                    TabView(selection: $selection) {
-                        ForEach(SearchTab.allCases, id: \.self) { tab in
-                            LazyView(tab.view)
-                                .tabItem { }
-                                .tag(tab)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .padding(.horizontal, 20)
+                        
+                        TabView(selection: $selection) {
+                            ForEach(SearchTab.allCases, id: \.self) { tab in
+                                LazyView(tab.view)
+                                    .tabItem { }
+                                    .tag(tab)
+                            }
                         }
+                        .tabViewStyle(.page(indexDisplayMode: .never))
+                        .animation(.easeInOut, value: selection)
+                        .ignoresSafeArea(edges: .bottom)
                     }
-                    .tabViewStyle(.page(indexDisplayMode: .never))
-                    .animation(.easeInOut, value: selection)
-                    .ignoresSafeArea(edges: .bottom)
                 }
             } else {
                 List {
