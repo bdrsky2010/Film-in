@@ -150,6 +150,24 @@ struct SearchResultView: View {
                                 .bold()
                                 .foregroundStyle(.appText)
                                 .padding(.bottom, 4)
+                            HStack(alignment: .lastTextBaseline) {
+                                Text(verbatim: "최근 검색어")
+                                    .font(.ibmPlexMonoSemiBold(size: 20))
+                                    .bold()
+                                    .foregroundStyle(.appText)
+                                    .padding(.bottom, 4)
+                                
+                                Button {
+                                    // TODO: UserDefaults or AppStorage Data 삭제
+                                } label: {
+                                    Text(verbatim: "전체삭제")
+                                        .font(.ibmPlexMonoSemiBold(size: 14))
+                                        .bold()
+                                        .foregroundStyle(.app)
+                                        .underline()
+                                        .padding(.bottom, 4)
+                                }
+                            }
                         }
                     } else {
                         Section {
