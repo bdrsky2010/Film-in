@@ -108,9 +108,10 @@ struct SearchView: View {
                             } header: {
                                 Text(verbatim: tab.description)
                                     .font(.ibmPlexMonoSemiBold(size: 20))
-                                    .foregroundStyle(.appText)
                                     .bold()
-                                    .matchedGeometryEffect(id: "\(tab.description)", in: namespace, isSource: isShowSearch)
+                                    .foregroundStyle(.appText)
+                                    .padding(.bottom, 4)
+                                    .matchedGeometryEffect(id: "\(tab.description)", in: namespace)
                             }
                         }
                     }
