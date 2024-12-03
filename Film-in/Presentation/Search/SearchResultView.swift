@@ -81,7 +81,6 @@ struct SearchResultView: View {
                         .font(.ibmPlexMonoSemiBold(size: 16))
                         .onSubmit {
                             isSearchFocused.wrappedValue = false
-                            isSearched = true
                             if isFirstSearch { isFirstSearch = false }
                             
                             withAnimation {
@@ -108,9 +107,6 @@ struct SearchResultView: View {
                         .matchedGeometryEffect(id: "TextField", in: namespace)
                 }
                 
-                Button {
-                    withAnimation {
-                        isShowSearch = false
                 if !isSearched {
                     Button {
                         withAnimation {
