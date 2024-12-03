@@ -29,6 +29,8 @@ enum SearchTab: CaseIterable, CustomStringConvertible {
 
 struct SearchResultView: View {
     @State private var selection: SearchTab = .movie
+    @State private var isFirstSearch = true
+    @State private var isSearching = false
     @State private var isSearched = false
     @State private var previousQuery = ""
     
