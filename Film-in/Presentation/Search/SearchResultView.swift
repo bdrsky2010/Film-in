@@ -135,6 +135,40 @@ struct SearchResultView: View {
                     .animation(.easeInOut, value: selection)
                     .ignoresSafeArea(edges: .bottom)
                 }
+            } else {
+                List {
+                    if searchQuery.isEmpty {
+                        Section {
+                            ForEach(0..<20) { i in
+                                HStack {
+                                    NavigationLink("\(i) 번째 이야기", destination: EmptyView())
+                                }
+                            }
+                        } header: {
+                            Text(verbatim: "최근 검색어")
+                                .font(.ibmPlexMonoSemiBold(size: 20))
+                                .bold()
+                                .foregroundStyle(.appText)
+                                .padding(.bottom, 4)
+                        }
+                    } else {
+                        Section {
+                            ForEach(0..<20) { i in
+                                HStack {
+                                    NavigationLink("\(i) 번째 이야기", destination: EmptyView())
+                                }
+                            }
+                        } header: {
+                            Text(verbatim: "연관 검색어")
+                                .font(.ibmPlexMonoSemiBold(size: 20))
+                                .bold()
+                                .foregroundStyle(.appText)
+                                .padding(.bottom, 4)
+                        }
+                    }
+                }
+                .listStyle(.plain)
+                .scrollDismissesKeyboard(.interactively)
             }
         }
         .background(.background)
