@@ -172,14 +172,17 @@ struct SearchResultView: View {
             }
         }
         .background(.background)
+        .valueChanged(value: isSearchFocused.wrappedValue) { _ in
+            if isSearchFocused.wrappedValue {
+                isSearched = false
             }
         }
-        .valueChanged(value: isCoverFocused) { _ in
-            if isCoverFocused {
-                withAnimation {
-                    isShowSearch.toggle()
-                    isSearchFocused = true
-                }
+        .valueChanged(value: searchQuery) { _ in
+            // TODO: RequestAPI(Debounce) -> Search/Multi
+        }
+        .valueChanged(value: isSearched) { _ in
+            if isSearched {
+                // TODO: RequestAPI(Throttle) -> Search/Movie & Actor
             }
         }
     }
