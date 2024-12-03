@@ -60,6 +60,7 @@ struct SearchResultView: View {
                 HStack {
                     TextField("searchPlaceholder", text: $searchQuery)
                         .focused(isSearchFocused)
+                        .autocorrectionDisabled()
                         .padding()
                         .font(.ibmPlexMonoSemiBold(size: 16))
                         .onSubmit {
