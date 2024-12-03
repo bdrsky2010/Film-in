@@ -146,11 +146,6 @@ struct SearchResultView: View {
                                 }
                             }
                         } header: {
-                            Text(verbatim: "최근 검색어")
-                                .font(.ibmPlexMonoSemiBold(size: 20))
-                                .bold()
-                                .foregroundStyle(.appText)
-                                .padding(.bottom, 4)
                             HStack(alignment: .lastTextBaseline) {
                                 Text(verbatim: "최근 검색어")
                                     .font(.ibmPlexMonoSemiBold(size: 20))
@@ -201,8 +196,6 @@ struct SearchResultView: View {
         .valueChanged(value: searchQuery) { _ in
             // TODO: RequestAPI(Debounce) -> Search/Multi
         }
-        .valueChanged(value: isSearched) { _ in
-            if isSearched {
         .valueChanged(value: isSearching) { _ in
             if isSearching, previousQuery != searchQuery {
                 // TODO: RequestAPI(Throttle) -> Search/Movie & Actor
