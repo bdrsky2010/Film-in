@@ -28,58 +28,85 @@ enum SearchTab: CaseIterable, CustomStringConvertible {
 }
 
 struct SearchResultView: View {
-    @Namespace private var namespace
-    
-    @FocusState private var isCoverFocused: Bool
-    @FocusState private var isSearchFocused: Bool
-    
     @State private var selection: SearchTab = .movie
-    @State private var isShowSearch = false
-    @State private var searchQuery = ""
+    @State private var isSearched = false
+    
+    @Binding private var searchQuery: String
+    @Binding private var isShowSearch: Bool
+    
+    private var isCoverFocused: FocusState<Bool>.Binding
+    private var isSearchFocused: FocusState<Bool>.Binding
+    
+    private let namespace: Namespace.ID
+    
+    init(
+        searchQuery: Binding<String>,
+        isShowSearch: Binding<Bool>,
+        isCoverFocused: FocusState<Bool>.Binding,
+        isSearchFocused: FocusState<Bool>.Binding,
+        namespace: Namespace.ID
+    ) {
+        self._searchQuery = searchQuery
+        self._isShowSearch = isShowSearch
+        self.isCoverFocused = isCoverFocused
+        self.isSearchFocused = isSearchFocused
+        self.namespace = namespace
+    }
     
     var body: some View {
-        let _ = Self._printChanges()
-        ZStack {
-            VStack {
+        VStack {
+            HStack {
                 HStack {
-                    HStack {
-                        TextField("searchPlaceholder", text: $searchQuery)
-                            .focused($isCoverFocused)
-                            .padding()
-                            .font(.ibmPlexMonoSemiBold(size: 16))
-                        
-                        if !searchQuery.isEmpty {
-                            Button {
-                                searchQuery = ""
-                            } label: {
-                                Image(systemName: "xmark.app.fill")
-                                    .resizable()
-                                    .frame(width: 30, height: 30)
-                                    .foregroundStyle(.app)
-                                    .padding(.trailing)
-                            }
+                    TextField("searchPlaceholder", text: $searchQuery)
+                        .focused(isSearchFocused)
+                        .padding()
+                        .font(.ibmPlexMonoSemiBold(size: 16))
+                        .onSubmit {
+                            isSearchFocused.wrappedValue = false
+                            isSearched = true
+                        }
+                    
+                    if !searchQuery.isEmpty {
+                        Button {
+                            searchQuery = ""
+                        } label: {
+                            Image(systemName: "xmark.app.fill")
+                                .resizable()
+                                .frame(width: 30, height: 30)
+                                .foregroundStyle(.app)
+                                .padding(.trailing)
                         }
                     }
-                    .overlay {
-                        Rectangle()
-                            .stroke(lineWidth: 3)
-                            .matchedGeometryEffect(id: "TextField", in: namespace)
-                            .animation(.easeInOut, value: isShowSearch)
-                    }
                 }
-                .padding(.horizontal)
+                .overlay {
+                    Rectangle()
+                        .stroke(lineWidth: 3)
+                        .matchedGeometryEffect(id: "TextField", in: namespace)
+                }
                 
+                Button {
+                    withAnimation {
+                        isShowSearch = false
+                    }
+                } label: {
+                    Text("cancel")
+                        .tint(.app)
+                        .font(.ibmPlexMonoSemiBold(size: 20))
+                        .padding(.leading, 8)
+                }
+            }
+            .padding(.horizontal)
+
+            if isSearched {
                 VStack {
                     HStack(spacing: 12) {
                         ForEach(SearchTab.allCases, id: \.self) { tab in
-                            ZStack {
-                                Text(verbatim: tab.description)
-                                    .font(.ibmPlexMonoSemiBold(size: 20))
-                                    .bold()
-                                    .foregroundStyle(.appText)
-                                    .padding(.bottom, 12)
-                                    .matchedGeometryEffect(id: "\(tab.description)", in: namespace, isSource: !isShowSearch)
-                            }
+                            Text(verbatim: tab.description)
+                                .font(.ibmPlexMonoSemiBold(size: 20))
+                                .bold()
+                                .foregroundStyle(.appText)
+                                .padding(.bottom, 4)
+                                .matchedGeometryEffect(id: "\(tab.description)", in: namespace)
                             .overlay(alignment: .bottom) {
                                 if selection == tab {
                                     Capsule()
@@ -106,18 +133,11 @@ struct SearchResultView: View {
                     }
                     .tabViewStyle(.page(indexDisplayMode: .never))
                     .animation(.easeInOut, value: selection)
-                    .ignoresSafeArea()
+                    .ignoresSafeArea(edges: .bottom)
                 }
             }
-            
-            if isShowSearch {
-                SearchView(
-                    searchQuery: $searchQuery,
-                    isShowSearch: $isShowSearch,
-                    isCoverFocused: $isCoverFocused,
-                    isSearchFocused: $isSearchFocused,
-                    namespace: namespace
-                )
+        }
+        .background(.background)
             }
         }
         .valueChanged(value: isCoverFocused) { _ in
@@ -199,8 +219,4 @@ struct SecondView: View {
         }
         .background(.background)
     }
-}
-
-#Preview {
-    SearchResultView()
 }

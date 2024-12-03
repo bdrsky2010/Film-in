@@ -11,75 +11,46 @@ struct SearchView: View {
     @State private var cellSize: CGSize = .zero
     @State private var posterSize: CGSize = .zero
     
-    @Binding private var searchQuery: String
-    @Binding private var isShowSearch: Bool
+    @Namespace private var namespace
     
-    private var isCoverFocused: FocusState<Bool>.Binding
-    private var isSearchFocused: FocusState<Bool>.Binding
+    @FocusState private var isCoverFocused: Bool
+    @FocusState private var isSearchFocused: Bool
     
-    private let namespace: Namespace.ID
-    
-    init(
-        searchQuery: Binding<String>,
-        isShowSearch: Binding<Bool>,
-        isCoverFocused: FocusState<Bool>.Binding,
-        isSearchFocused: FocusState<Bool>.Binding,
-        namespace: Namespace.ID
-    ) {
-        self._searchQuery = searchQuery
-        self._isShowSearch = isShowSearch
-        self.isCoverFocused = isCoverFocused
-        self.isSearchFocused = isSearchFocused
-        self.namespace = namespace
-    }
-    
+    @State private var isShowSearch = false
+    @State private var searchQuery = ""
+        
     var body: some View {
-        VStack {
-            HStack {
+        ZStack {
+            VStack {
                 HStack {
-                    TextField("searchPlaceholder", text: $searchQuery)
-                        .focused(isSearchFocused)
-                        .padding()
-                        .font(.ibmPlexMonoSemiBold(size: 16))
-                    
-                    if !searchQuery.isEmpty {
-                        Button {
-                            searchQuery = ""
-                        } label: {
-                            Image(systemName: "xmark.app.fill")
-                                .resizable()
-                                .frame(width: 30, height: 30)
-                                .foregroundStyle(.app)
-                                .padding(.trailing)
+                    HStack {
+                        TextField("searchPlaceholder", text: $searchQuery)
+                            .focused($isCoverFocused)
+                            .padding()
+                            .font(.ibmPlexMonoSemiBold(size: 16))
+                        
+                        if !searchQuery.isEmpty {
+                            Button {
+                                searchQuery = ""
+                            } label: {
+                                Image(systemName: "xmark.app.fill")
+                                    .resizable()
+                                    .frame(width: 30, height: 30)
+                                    .foregroundStyle(.app)
+                                    .padding(.trailing)
+                            }
                         }
                     }
-                }
-                .overlay {
-                    Rectangle()
-                        .stroke(lineWidth: 3)
-                        .matchedGeometryEffect(id: "TextField", in: namespace)
-                        .animation(.easeInOut, value: isShowSearch)
-                }
-                
-                Button {
-                    withAnimation {
-                        isShowSearch.toggle()
+                    .overlay {
+                        Rectangle()
+                            .stroke(lineWidth: 3)
+                            .matchedGeometryEffect(id: "TextField", in: namespace)
                     }
-                } label: {
-                    Text("cancel")
-                        .tint(.app)
-                        .font(.ibmPlexMonoSemiBold(size: 20))
-                        .padding(.leading, 8)
                 }
-                .matchedGeometryEffect(id: "Cancel", in: namespace)
-            }
-            .padding(.horizontal)
-            
-//            Spacer()
-            
-            GeometryReader { proxy in
-                List {
-                    if searchQuery.isEmpty {
+                .padding(.horizontal)
+                
+                GeometryReader { proxy in
+                    List {
                         ForEach(SearchTab.allCases, id: \.self) { tab in
                             Section {
                                 ScrollView(.horizontal, showsIndicators: false) {
@@ -115,23 +86,44 @@ struct SearchView: View {
                             }
                         }
                     }
-                }
-                .listStyle(.plain)
-                .scrollDismissesKeyboard(.interactively)
-                .task {
-                    if cellSize == .zero {
-                        cellSize = CGSize(
-                            width: (proxy.size.width - (8 * 2)) / 3,
-                            height: (proxy.size.width - (8 * 2)) / 3 * 1.5
-                        )
-                    }
-                    
-                    if posterSize == .zero {
-                        posterSize = CGSize(width: proxy.size.width * 0.7, height: proxy.size.width * 0.7 * 1.5)
+                    .listStyle(.plain)
+                    .task {
+                        if cellSize == .zero {
+                            cellSize = CGSize(
+                                width: (proxy.size.width - (8 * 2)) / 3 * 0.8,
+                                height: (proxy.size.width - (8 * 2)) / 3 * 1.5 * 0.8
+                            )
+                        }
+                        
+                        if posterSize == .zero {
+                            posterSize = CGSize(width: proxy.size.width * 0.7, height: proxy.size.width * 0.7 * 1.5)
+                        }
                     }
                 }
             }
+            if isShowSearch {
+                SearchResultView(
+                    searchQuery: $searchQuery,
+                    isShowSearch: $isShowSearch,
+                    isCoverFocused: $isCoverFocused,
+                    isSearchFocused: $isSearchFocused,
+                    namespace: namespace
+                )
+            }
         }
         .background(.background)
+        .ignoresSafeArea(edges: .bottom)
+        .valueChanged(value: isCoverFocused) { _ in
+            if isCoverFocused {
+                withAnimation {
+                    isShowSearch.toggle()
+                    isSearchFocused = true
+                }
+            }
+        }
     }
+}
+
+#Preview {
+    SearchView()
 }
