@@ -82,6 +82,12 @@ struct SearchResultView: View {
                         .onSubmit {
                             isSearchFocused.wrappedValue = false
                             isSearched = true
+                            if isFirstSearch { isFirstSearch = false }
+                            
+                            withAnimation {
+                                isSearching = true
+                                isSearched = true
+                            }
                         }
                     
                     if !searchQuery.isEmpty {
