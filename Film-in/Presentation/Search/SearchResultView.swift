@@ -193,7 +193,9 @@ struct SearchResultView: View {
         .background(.background)
         .valueChanged(value: isSearchFocused.wrappedValue) { _ in
             if isSearchFocused.wrappedValue {
-                isSearched = false
+                withAnimation {
+                    isSearched = false
+                }
             }
         }
         .valueChanged(value: searchQuery) { _ in
