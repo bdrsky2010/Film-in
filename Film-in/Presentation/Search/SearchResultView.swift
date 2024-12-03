@@ -30,6 +30,7 @@ enum SearchTab: CaseIterable, CustomStringConvertible {
 struct SearchResultView: View {
     @State private var selection: SearchTab = .movie
     @State private var isSearched = false
+    @State private var previousQuery = ""
     
     @Binding private var searchQuery: String
     @Binding private var isShowSearch: Bool
@@ -200,7 +201,16 @@ struct SearchResultView: View {
         }
         .valueChanged(value: isSearched) { _ in
             if isSearched {
+        .valueChanged(value: isSearching) { _ in
+            if isSearching, previousQuery != searchQuery {
                 // TODO: RequestAPI(Throttle) -> Search/Movie & Actor
+                Task {
+                    try await Task.sleep(nanoseconds: 1_500_000_000)
+                    isSearching = false
+                    previousQuery = searchQuery
+                }
+            } else {
+                isSearching = false
             }
         }
     }
