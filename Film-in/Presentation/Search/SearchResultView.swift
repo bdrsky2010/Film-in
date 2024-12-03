@@ -57,6 +57,20 @@ struct SearchResultView: View {
     var body: some View {
         VStack {
             HStack {
+                if isSearched {
+                    Button {
+                        withAnimation {
+                            searchQuery = ""
+                            isShowSearch = false
+                        }
+                    } label: {
+                        Image(systemName: "chevron.backward")
+                            .tint(.app)
+                            .font(.title.bold())
+                            .padding(.trailing, 8)
+                    }
+                }
+                
                 HStack {
                     TextField("searchPlaceholder", text: $searchQuery)
                         .focused(isSearchFocused)
