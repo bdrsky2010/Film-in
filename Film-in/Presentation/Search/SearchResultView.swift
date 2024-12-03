@@ -103,12 +103,23 @@ struct SearchResultView: View {
                 Button {
                     withAnimation {
                         isShowSearch = false
+                if !isSearched {
+                    Button {
+                        withAnimation {
+                            if isFirstSearch {
+                                searchQuery = ""
+                                isShowSearch = false
+                            } else {
+                                isSearched = true
+                                isSearchFocused.wrappedValue = false
+                            }
+                        }
+                    } label: {
+                        Text("cancel")
+                            .tint(.app)
+                            .font(.ibmPlexMonoSemiBold(size: 20))
+                            .padding(.leading, 8)
                     }
-                } label: {
-                    Text("cancel")
-                        .tint(.app)
-                        .font(.ibmPlexMonoSemiBold(size: 20))
-                        .padding(.leading, 8)
                 }
             }
             .padding(.horizontal)
