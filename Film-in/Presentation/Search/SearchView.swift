@@ -21,8 +21,6 @@ struct SearchView: View {
     
     @State private var isShowSearch = false
     @State private var searchQuery = ""
-    
-    private let rows = [GridItem(.flexible())]
         
     var body: some View {
         ZStack {
@@ -70,7 +68,7 @@ struct SearchView: View {
                                 .padding(.horizontal, 20)
                                 
                                 ScrollView(.horizontal, showsIndicators: false) {
-                                    LazyHGrid(rows: rows, spacing: 0) {
+                                    LazyHStack(spacing: 0) {
                                         switch tab {
                                         case .movie:
                                             ForEach(0..<10) { _ in
