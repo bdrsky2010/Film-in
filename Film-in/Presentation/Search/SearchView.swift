@@ -114,10 +114,6 @@ struct SearchView: View {
                 )
             }
         }
-        .background(.background)
-        .ignoresSafeArea(edges: .bottom)
-        .valueChanged(value: isCoverFocused) { _ in
-            if isCoverFocused {
         .valueChanged(value: focusedField) { _ in
             if focusedField == .cover {
                 withAnimation {
