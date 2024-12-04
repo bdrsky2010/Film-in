@@ -21,6 +21,8 @@ struct SearchView: View {
     
     @State private var isShowSearch = false
     @State private var searchQuery = ""
+    
+    private let rows = [GridItem(.flexible())]
         
     var body: some View {
         ZStack {
@@ -53,17 +55,29 @@ struct SearchView: View {
                 .padding(.horizontal)
                 
                 GeometryReader { proxy in
-                    List {
+                    ScrollView(.vertical) {
                         ForEach(SearchTab.allCases, id: \.self) { tab in
-                            Section {
+                            VStack {
+                                HStack {
+                                    Text(verbatim: tab.description)
+                                        .font(.ibmPlexMonoSemiBold(size: 20))
+                                        .bold()
+                                        .foregroundStyle(.appText)
+                                        .padding(.bottom, 4)
+                                        .matchedGeometryEffect(id: "\(tab.description)", in: namespace)
+                                }
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                                .padding(.horizontal, 20)
+                                
                                 ScrollView(.horizontal, showsIndicators: false) {
-                                    HStack {
+                                    LazyHGrid(rows: rows, spacing: 0) {
                                         switch tab {
                                         case .movie:
                                             ForEach(0..<10) { _ in
                                                 Rectangle()
                                                     .frame(width: cellSize.width, height: cellSize.height)
                                                     .foregroundStyle(Color.init(red: Double.random(in: 0...1), green: Double.random(in: 0...1), blue: Double.random(in: 0...1)))
+                                                    .padding(.horizontal, 4)
                                             }
                                         case .person:
                                             ForEach(0..<10) { _ in
@@ -75,21 +89,17 @@ struct SearchView: View {
                                                         .foregroundStyle(.appText)
                                                         .frame(width: 90)
                                                 }
+                                                .padding(.horizontal, 4)
                                             }
                                         }
                                     }
+                                    .padding(.horizontal)
                                 }
-                            } header: {
-                                Text(verbatim: tab.description)
-                                    .font(.ibmPlexMonoSemiBold(size: 20))
-                                    .bold()
-                                    .foregroundStyle(.appText)
-                                    .padding(.bottom, 4)
-                                    .matchedGeometryEffect(id: "\(tab.description)", in: namespace)
                             }
+                            .padding(.bottom)
                         }
+                        .background(.background)
                     }
-                    .listStyle(.plain)
                     .task {
                         if cellSize == .zero {
                             cellSize = CGSize(
