@@ -74,6 +74,7 @@ struct SearchResultView: View {
                     TextField("searchPlaceholder", text: $searchQuery)
                         .focused(focusedField, equals: .search)
                         .autocorrectionDisabled()
+                        .submitLabel(.search)
                         .padding()
                         .font(.ibmPlexMonoSemiBold(size: 16))
                         .onSubmit {
