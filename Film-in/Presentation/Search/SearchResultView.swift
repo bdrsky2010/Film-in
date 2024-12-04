@@ -112,6 +112,7 @@ struct SearchResultView: View {
                                 isShowSearch = false
                             } else {
                                 isSearched = true
+                                focusedField.wrappedValue = nil
                             }
                         }
                     } label: {
