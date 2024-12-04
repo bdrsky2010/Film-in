@@ -7,14 +7,17 @@
 
 import SwiftUI
 
+enum FocusField {
+    case cover, search
+}
+
 struct SearchView: View {
     @State private var cellSize: CGSize = .zero
     @State private var posterSize: CGSize = .zero
     
     @Namespace private var namespace
     
-    @FocusState private var isCoverFocused: Bool
-    @FocusState private var isSearchFocused: Bool
+    @FocusState private var focusedField: FocusField?
     
     @State private var isShowSearch = false
     @State private var searchQuery = ""
@@ -25,7 +28,7 @@ struct SearchView: View {
                 HStack {
                     HStack {
                         TextField("searchPlaceholder", text: $searchQuery)
-                            .focused($isCoverFocused)
+                            .focused($focusedField, equals: .cover)
                             .padding()
                             .font(.ibmPlexMonoSemiBold(size: 16))
                         
@@ -101,12 +104,12 @@ struct SearchView: View {
                     }
                 }
             }
+            
             if isShowSearch {
                 SearchResultView(
                     searchQuery: $searchQuery,
                     isShowSearch: $isShowSearch,
-                    isCoverFocused: $isCoverFocused,
-                    isSearchFocused: $isSearchFocused,
+                    focusedField: $focusedField,
                     namespace: namespace
                 )
             }
@@ -115,9 +118,11 @@ struct SearchView: View {
         .ignoresSafeArea(edges: .bottom)
         .valueChanged(value: isCoverFocused) { _ in
             if isCoverFocused {
+        .valueChanged(value: focusedField) { _ in
+            if focusedField == .cover {
                 withAnimation {
-                    isShowSearch.toggle()
-                    isSearchFocused = true
+                    isShowSearch = true
+                    focusedField = .search
                 }
             }
         }

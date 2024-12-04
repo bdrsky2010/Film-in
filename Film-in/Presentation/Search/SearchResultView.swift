@@ -37,22 +37,19 @@ struct SearchResultView: View {
     @Binding private var searchQuery: String
     @Binding private var isShowSearch: Bool
     
-    private var isCoverFocused: FocusState<Bool>.Binding
-    private var isSearchFocused: FocusState<Bool>.Binding
+    private var focusedField: FocusState<FocusField?>.Binding
     
     private let namespace: Namespace.ID
     
     init(
         searchQuery: Binding<String>,
         isShowSearch: Binding<Bool>,
-        isCoverFocused: FocusState<Bool>.Binding,
-        isSearchFocused: FocusState<Bool>.Binding,
+        focusedField: FocusState<FocusField?>.Binding,
         namespace: Namespace.ID
     ) {
         self._searchQuery = searchQuery
         self._isShowSearch = isShowSearch
-        self.isCoverFocused = isCoverFocused
-        self.isSearchFocused = isSearchFocused
+        self.focusedField = focusedField
         self.namespace = namespace
     }
     
@@ -75,12 +72,12 @@ struct SearchResultView: View {
                 
                 HStack {
                     TextField("searchPlaceholder", text: $searchQuery)
-                        .focused(isSearchFocused)
+                        .focused(focusedField, equals: .search)
                         .autocorrectionDisabled()
                         .padding()
                         .font(.ibmPlexMonoSemiBold(size: 16))
                         .onSubmit {
-                            isSearchFocused.wrappedValue = false
+                            focusedField.wrappedValue = nil
                             if isFirstSearch { isFirstSearch = false }
                             
                             withAnimation {
@@ -115,7 +112,6 @@ struct SearchResultView: View {
                                 isShowSearch = false
                             } else {
                                 isSearched = true
-                                isSearchFocused.wrappedValue = false
                             }
                         }
                     } label: {
@@ -221,8 +217,8 @@ struct SearchResultView: View {
             }
         }
         .background(.background)
-        .valueChanged(value: isSearchFocused.wrappedValue) { _ in
-            if isSearchFocused.wrappedValue {
+        .valueChanged(value: focusedField.wrappedValue) { _ in
+            if focusedField.wrappedValue == .search {
                 withAnimation {
                     isSearched = false
                 }
