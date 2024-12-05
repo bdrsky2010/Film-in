@@ -134,7 +134,7 @@ struct SearchView: View {
                                 case .movie:
                                     trendingMovieSection()
                                 case .person:
-                                    trendingPeopleSection()
+                                    popularPeopleSection()
                                 }
                             }
                             .padding(.horizontal)
@@ -176,8 +176,8 @@ struct SearchView: View {
     }
     
     @ViewBuilder
-    private func trendingPeopleSection() -> some View {
-        ForEach(viewModel.output.trendingPeople, id: \.id) { person in
+    private func popularPeopleSection() -> some View {
+        ForEach(viewModel.output.popularPeople, id: \.id) { person in
             VStack {
                 let url = URL(string: ImageURL.tmdb(image: person.profilePath).urlString)
                 PosterImage(

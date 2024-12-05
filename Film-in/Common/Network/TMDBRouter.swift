@@ -24,7 +24,6 @@ extension TMDBTargetType {
 enum TMDBRouter {
     case genres(_ dto: GenreRequestDTO)
     case trendingMovie(_ dto: TrendingRequestDTO)
-    case trendingPeople(_ dto: TrendingRequestDTO)
     case nowPlaying(_ dto: NowPlayingRequestDTO)
     case upcoming(_ dto: UpcomingRequestDTO)
     case discover(_ dto: DiscoverRequestDTO)
@@ -45,7 +44,6 @@ extension TMDBRouter: TMDBTargetType {
         switch self {
         case .genres: return "genre/movie/list"
         case .trendingMovie: return "trending/movie/day"
-        case .trendingPeople: return "trending/person/day"
         case .nowPlaying: return "movie/now_playing"
         case .upcoming: return "movie/upcoming"
         case .discover: return "discover/movie"
@@ -67,8 +65,6 @@ extension TMDBRouter: TMDBTargetType {
         case .genres(let dto):
             return .requestParameters(parameters: dto.asParameters, encoding: URLEncoding.queryString)
         case .trendingMovie(let dto):
-            return .requestParameters(parameters: dto.asParameters, encoding: URLEncoding.queryString)
-        case .trendingPeople(let dto):
             return .requestParameters(parameters: dto.asParameters, encoding: URLEncoding.queryString)
         case .nowPlaying(let dto):
             return .requestParameters(parameters: dto.asParameters, encoding: URLEncoding.queryString)
