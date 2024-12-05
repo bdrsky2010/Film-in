@@ -28,6 +28,7 @@ enum SearchTab: CaseIterable, CustomStringConvertible {
 }
 
 struct SearchResultView: View {
+    @AppStorage("recentQuery") private var recentQuery: [String : Date] = [:]
     @State private var selection: SearchTab = .movie
     @State private var isFirstSearch = true
     @State private var isSearched = false
@@ -119,6 +120,7 @@ struct SearchResultView: View {
                                 ]
                                 
                                 if searchQuery.isEmpty { searchQuery = mcuMovies.randomElement() ?? "Spider Man" }
+                                recentQuery[searchQuery] = Date()
                                 isFetching = true
                                 isSearched = true
                             }
@@ -210,11 +212,12 @@ struct SearchResultView: View {
                 List {
                     if searchQuery.isEmpty {
                         Section {
-                            ForEach(0..<20) { i in
+                            ForEach(recentQuery.sorted(by: { $0.value < $1.value }), id: \.key) { query in
                                 HStack {
-                                    NavigationLink("\(i) 번째 이야기", destination: EmptyView())
+                                    NavigationLink(query.key, destination: EmptyView())
                                 }
                             }
+                            .onDelete(perform: deleteRecentQuery)
                         } header: {
                             HStack(alignment: .lastTextBaseline) {
                                 Text(verbatim: "최근 검색어")
@@ -224,7 +227,7 @@ struct SearchResultView: View {
                                     .padding(.bottom, 4)
                                 
                                 Button {
-                                    // TODO: UserDefaults or AppStorage Data 삭제
+                                    recentQuery.removeAll()
                                 } label: {
                                     Text(verbatim: "전체삭제")
                                         .font(.ibmPlexMonoSemiBold(size: 14))
@@ -278,6 +281,12 @@ struct SearchResultView: View {
                 isFetching = false
             }
         }
+    }
+    
+    private func deleteRecentQuery(at offsets: IndexSet) {
+        guard let index = offsets.first else { return }
+        let key = recentQuery.sorted(by: { $0.key < $1.key })[index].key
+        recentQuery.removeValue(forKey: key)
     }
 }
  
