@@ -16,15 +16,14 @@ struct SearchView: View {
     
     @StateObject private var viewModel: SearchViewModel
     
-    @State private var cellSize: CGSize = .zero
-    @State private var posterSize: CGSize = .zero
-    
-    @Namespace private var namespace
-    
     @FocusState private var focusedField: FocusField?
     
+    @State private var cellSize: CGSize = .zero
+    @State private var posterSize: CGSize = .zero
     @State private var isShowSearch = false
     @State private var searchQuery = ""
+    
+    @Namespace private var namespace
     
     init(
         viewModel: SearchViewModel
