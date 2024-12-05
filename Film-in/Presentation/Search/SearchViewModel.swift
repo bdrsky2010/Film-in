@@ -40,6 +40,7 @@ extension SearchViewModel {
         var networkConnect = true
         var isShowAlert = false
         var trendingMovie = [MovieData]()
+        var popularPeople = [PopularPerson]()
     }
     
     func transform() {
@@ -110,12 +111,15 @@ extension SearchViewModel {
     }
     
     private func fetchTrendingPeople() {
+        let query = PopularQuery(language: "longLanguageCode".localized)
+        let publisher = searchSerivce.fetchPopularPeople(query: query)
         publisher
             .receive(on: DispatchQueue.main)
             .sink { [weak self] result in
                 guard let self else { return }
                 switch result {
                 case .success(let people):
+                    output.popularPeople = people
                     dataLoad(for: #function)
                 case .failure(let error):
                     print(error)

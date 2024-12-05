@@ -10,7 +10,7 @@ import Combine
 
 protocol SearchService: AnyObject {
     func fetchTrendingMovie(query: TrendingQuery) -> AnyPublisher<Result<[MovieData], TMDBError>, Never>
-    func fetchTrendingPeople(query: TrendingQuery) -> AnyPublisher<Result<[TrendingPerson], TMDBError>, Never>
+    func fetchPopularPeople(query: PopularQuery) -> AnyPublisher<Result<[PopularPerson], TMDBError>, Never>
 }
 
 final class DefaultSearchService: BaseObject {
@@ -38,11 +38,11 @@ extension DefaultSearchService: SearchService {
         .eraseToAnyPublisher()
     }
     
-    func fetchTrendingPeople(query: TrendingQuery) -> AnyPublisher<Result<[TrendingPerson], TMDBError>, Never> {
+    func fetchPopularPeople(query: PopularQuery) -> AnyPublisher<Result<[PopularPerson], TMDBError>, Never> {
         return Future { promise in
             Task { [weak self] in
                 guard let self else { return }
-                let result = await tmdbRepository.trendingPeopleRequest(query: query)
+                let result = await tmdbRepository.popularPeopleRequest(query: query)
                 switch result {
                 case .success(let success):
                     promise(.success(.success(success)))
