@@ -30,8 +30,8 @@ enum SearchTab: CaseIterable, CustomStringConvertible {
 struct SearchResultView: View {
     @State private var selection: SearchTab = .movie
     @State private var isFirstSearch = true
-    @State private var isSearching = false
     @State private var isSearched = false
+    @State private var isFetching = false
     @State private var previousQuery = ""
     
     @Binding private var searchQuery: String
@@ -119,7 +119,7 @@ struct SearchResultView: View {
                                 ]
                                 
                                 if searchQuery.isEmpty { searchQuery = mcuMovies.randomElement() ?? "Spider Man" }
-                                isSearching = true
+                                isFetching = true
                                 isSearched = true
                             }
                         }
@@ -164,7 +164,7 @@ struct SearchResultView: View {
             .padding(.horizontal)
 
             if isSearched {
-                if isSearching {
+                if isFetching {
                     ProgressView()
                         .frame(maxWidth: .infinity, maxHeight: .infinity)
                 } else {
@@ -266,16 +266,16 @@ struct SearchResultView: View {
         .valueChanged(value: searchQuery) { _ in
             // TODO: RequestAPI(Debounce) -> Search/Multi
         }
-        .valueChanged(value: isSearching) { _ in
-            if isSearching, previousQuery != searchQuery {
+        .valueChanged(value: isFetching) { _ in
+            if isFetching, previousQuery != searchQuery {
                 // TODO: RequestAPI(Throttle) -> Search/Movie & Actor
                 Task {
                     try await Task.sleep(nanoseconds: 1_500_000_000)
-                    isSearching = false
+                    isFetching = false
                     previousQuery = searchQuery
                 }
             } else {
-                isSearching = false
+                isFetching = false
             }
         }
     }
