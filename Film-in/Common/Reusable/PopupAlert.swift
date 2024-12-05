@@ -9,21 +9,25 @@ import SwiftUI
 import PopupView
 
 protocol PopupAlertModelType {
+    var systemImage: String? { get set }
     var phrase: LocalizedStringKey { get set }
     var normal: LocalizedStringKey { get set }
     var cancel: LocalizedStringKey? { get set }
 }
 
 struct PopupAlertModel: PopupAlertModelType {
+    var systemImage: String?
     var phrase: LocalizedStringKey
     var normal: LocalizedStringKey
     var cancel: LocalizedStringKey?
     
     init(
+        systemImage: String? = nil,
         phrase: LocalizedStringKey,
         normal: LocalizedStringKey,
         cancel: LocalizedStringKey? = nil
     ) {
+        self.systemImage = systemImage
         self.phrase = phrase
         self.normal = normal
         self.cancel = cancel
@@ -114,6 +118,15 @@ struct PopupAlertView<Model: PopupAlertModelType>: View {
     
     var body: some View {
         VStack {
+            if let image = contentModel.systemImage {
+                Image(systemName: image)
+                    .resizable()
+                    .frame(width: 100, height: 100)
+                    .foregroundStyle(.app)
+                
+                Spacer()
+            }
+            
             Text(contentModel.phrase)
                 .font(.ibmPlexMonoSemiBold(size: 20))
             
