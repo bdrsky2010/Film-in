@@ -70,7 +70,15 @@ struct SearchView: View {
                 }
             }
         }
-        .apiRequestErrorAlert(isPresented: $viewModel.output.isShowAlert) {
+        .popupAlert(
+            isPresented: $viewModel.output.isShowAlert,
+            contentModel: .init(
+                systemImage: "wifi.exclamationmark",
+                phrase: "apiRequestError",
+                normal: "refresh"
+            ),
+            heightType: .middle
+        ) {
             viewModel.action(.refresh)
         }
     }
