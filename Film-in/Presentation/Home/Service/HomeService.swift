@@ -30,10 +30,10 @@ final class DefaultHomeService: BaseObject, HomeService {
         return Future { promise in
             Task { [weak self] in
                 guard let self else { return }
-                let result = await tmdbRepository.trendingRequest(query: query)
+                let result = await tmdbRepository.trendingMovieRequest(query: query)
                 switch result {
                 case .success(let success):
-                    promise(.success(.success(success)))
+                    promise(.success(.success(HomeMovie(movies: success))))
                 case .failure(let failure):
                     promise(.success(.failure(failure)))
                 }
