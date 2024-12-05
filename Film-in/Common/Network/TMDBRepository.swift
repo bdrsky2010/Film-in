@@ -9,7 +9,8 @@ import Foundation
 // Details, Credits, Similiar, Images, Videos
 protocol TMDBRepository: AnyObject {
     func movieGenreRequest(query: MovieGenreQuery) async -> Result<[MovieGenre], TMDBError>
-    func trendingRequest(query: TrendingQuery) async -> Result<HomeMovie, TMDBError>
+//    func trendingRequest(query: TrendingQuery) async -> Result<HomeMovie, TMDBError>
+    func trendingMovieRequest(query: TrendingQuery) async -> Result<[MovieData], TMDBError>
     func trendingPeopleRequest(query: TrendingQuery) async -> Result<[TrendingPerson], TMDBError>
     func nowPlayingRequest(query: HomeMovieQuery) async -> Result<HomeMovie, TMDBError>
     func upcomingRequest(query: HomeMovieQuery) async -> Result<HomeMovie, TMDBError>
@@ -44,9 +45,27 @@ final class DefaultTMDBRepository: TMDBRepository {
         }
     }
     
-    func trendingRequest(query: TrendingQuery) async -> Result<HomeMovie, TMDBError> {
+//    func trendingRequest(query: TrendingQuery) async -> Result<HomeMovie, TMDBError> {
+//        let requestDTO = TrendingRequestDTO(language: query.language)
+//        let result = await networkManager.request(.trendingMovie(requestDTO), of: TrendingMovieResponseDTO.self)
+//        switch result {
+//        case .success(let success):
+//            return .success(success.toEntity())
+//        case .failure(let failure):
+//            return .failure(failure)
+//        }
+//    }
+    func trendingMovieRequest(query: TrendingQuery) async -> Result<[MovieData], TMDBError> {
         let requestDTO = TrendingRequestDTO(language: query.language)
-        let result = await networkManager.request(.trending(requestDTO), of: TrendingResponseDTO.self)
+        let result = await networkManager.request(.trendingMovie(requestDTO), of: TrendingMovieResponseDTO.self)
+        switch result {
+        case .success(let success):
+            return .success(success.toEntity())
+        case .failure(let failure):
+            return .failure(failure)
+        }
+    }
+    
     func trendingPeopleRequest(query: TrendingQuery) async -> Result<[TrendingPerson], TMDBError> {
         let requestDTO = TrendingRequestDTO(language: query.language)
         let result = await networkManager.request(.trendingPeople(requestDTO), of: TrendingPeopleResponseDTO.self)
