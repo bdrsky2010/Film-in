@@ -20,7 +20,7 @@ fileprivate struct AppButtonModifier: ViewModifier {
             .frame(maxWidth: .infinity)
             .padding(.horizontal, 20)
             .padding(.vertical, 8)
-            .background(Color(uiColor: .app).opacity(0.3))
-            .foregroundStyle(.app)
+            .foregroundStyle(.white)
+            .background(.app)
     }
 }
