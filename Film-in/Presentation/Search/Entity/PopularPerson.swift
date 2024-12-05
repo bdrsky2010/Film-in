@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct TrendingPerson: Hashable, Identifiable {
+struct PopularPerson: Hashable, Identifiable {
     let id = UUID()
     let _id: Int
     let name: String
