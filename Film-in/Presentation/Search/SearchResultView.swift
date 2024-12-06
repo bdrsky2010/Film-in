@@ -28,14 +28,16 @@ enum SearchTab: CaseIterable, CustomStringConvertible {
 }
 
 struct SearchResultView: View {
+    @StateObject private var viewModel: SearchResultViewModel
+    
     @AppStorage("recentQuery") private var recentQuery: [String : Date] = [:]
+    
     @State private var selection: SearchTab = .movie
     @State private var isFirstSearch = true
     @State private var isSearched = false
     @State private var isFetching = false
     @State private var previousQuery = ""
     
-    @Binding private var searchQuery: String
     @Binding private var isShowSearch: Bool
     
     private var focusedField: FocusState<FocusField?>.Binding
@@ -43,12 +45,12 @@ struct SearchResultView: View {
     private let namespace: Namespace.ID
     
     init(
-        searchQuery: Binding<String>,
+        viewModel: SearchResultViewModel,
         isShowSearch: Binding<Bool>,
         focusedField: FocusState<FocusField?>.Binding,
         namespace: Namespace.ID
     ) {
-        self._searchQuery = searchQuery
+        self._viewModel = StateObject(wrappedValue: viewModel)
         self._isShowSearch = isShowSearch
         self.focusedField = focusedField
         self.namespace = namespace
@@ -60,7 +62,7 @@ struct SearchResultView: View {
                 if isSearched {
                     Button {
                         withAnimation {
-                            searchQuery = ""
+                            viewModel.output.searchQuery = ""
                             isShowSearch = false
                         }
                     } label: {
@@ -72,7 +74,7 @@ struct SearchResultView: View {
                 }
                 
                 HStack {
-                    TextField("searchPlaceholder", text: $searchQuery)
+                    TextField("searchPlaceholder", text: $viewModel.output.searchQuery)
                         .focused(focusedField, equals: .search)
                         .autocorrectionDisabled()
                         .submitLabel(.search)
@@ -119,16 +121,18 @@ struct SearchResultView: View {
                                     "The Marvels"
                                 ]
                                 
-                                if searchQuery.isEmpty { searchQuery = mcuMovies.randomElement() ?? "Spider Man" }
-                                recentQuery[searchQuery] = Date()
+                                if viewModel.output.searchQuery.isEmpty { viewModel.output.searchQuery = mcuMovies.randomElement() ?? "Spider Man" }
+                                // TODO: RequestAPI(Throttle) -> Search/Movie & Actor
+                                viewModel.action(.onSubmitSearchQuery(viewModel.output.searchQuery))
+                                recentQuery[viewModel.output.searchQuery] = Date()
                                 isFetching = true
                                 isSearched = true
                             }
                         }
                     
-                    if !searchQuery.isEmpty {
+                    if !viewModel.output.searchQuery.isEmpty {
                         Button {
-                            searchQuery = ""
+                            viewModel.output.searchQuery = ""
                         } label: {
                             Image(systemName: "xmark.app.fill")
                                 .resizable()
@@ -148,7 +152,7 @@ struct SearchResultView: View {
                     Button {
                         withAnimation {
                             if isFirstSearch {
-                                searchQuery = ""
+                                viewModel.output.searchQuery = ""
                                 isShowSearch = false
                             } else {
                                 isSearched = true
@@ -210,7 +214,7 @@ struct SearchResultView: View {
                 }
             } else {
                 List {
-                    if searchQuery.isEmpty {
+                    if viewModel.output.searchQuery.isEmpty {
                         Section {
                             ForEach(recentQuery.sorted(by: { $0.value < $1.value }), id: \.key) { query in
                                 HStack {
@@ -225,6 +229,8 @@ struct SearchResultView: View {
                                     .bold()
                                     .foregroundStyle(.appText)
                                     .padding(.bottom, 4)
+                                
+                                Spacer()
                                 
                                 Button {
                                     recentQuery.removeAll()
@@ -266,16 +272,16 @@ struct SearchResultView: View {
                 }
             }
         }
-        .valueChanged(value: searchQuery) { _ in
+        .valueChanged(value: viewModel.output.searchQuery) { query in
             // TODO: RequestAPI(Debounce) -> Search/Multi
+            viewModel.action(.onChangeSearchQuery(query))
         }
         .valueChanged(value: isFetching) { _ in
-            if isFetching, previousQuery != searchQuery {
-                // TODO: RequestAPI(Throttle) -> Search/Movie & Actor
+            if isFetching, previousQuery != viewModel.output.searchQuery {
                 Task {
                     try await Task.sleep(nanoseconds: 1_500_000_000)
                     isFetching = false
-                    previousQuery = searchQuery
+                    previousQuery = viewModel.output.searchQuery
                 }
             } else {
                 isFetching = false
