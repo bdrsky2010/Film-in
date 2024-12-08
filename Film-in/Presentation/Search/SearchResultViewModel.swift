@@ -52,15 +52,13 @@ extension SearchResultViewModel {
         
         input.onChangeSearchQuery
             .debounce(for: .seconds(0.5), scheduler: RunLoop.main)
-            .sink { query in
+            .sink(with: self) { owner, query in
                 print(query)
             }
             .store(in: &cancellable)
         
         input.onSubmitSearchQuery
             .throttle(for: 10, scheduler: RunLoop.main, latest: true)
-            .sink { query in
-                print(query)
             .sink(with: self) { owner, query in
                 owner.output.isSearched = true
                 
