@@ -32,7 +32,6 @@ extension SearchResultViewModel {
     }
     
     struct Output {
-        var searchQuery = ""
     }
     
     func transform() {
