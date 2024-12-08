@@ -13,10 +13,10 @@ final class SearchResultViewModel: BaseObject, ViewModelType {
     
     private var previousQuery = ""
     
-    @Published var output = Output()
+    @Published private(set) var output = Output()
 
-    var input = Input()
-    var cancellable = Set<AnyCancellable>()
+    private(set) var input = Input()
+    private(set) var cancellable = Set<AnyCancellable>()
     
     init(
         networkMonitor: NetworkMonitor
