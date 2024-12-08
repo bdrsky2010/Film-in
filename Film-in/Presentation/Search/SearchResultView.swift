@@ -36,9 +36,6 @@ struct SearchResultView: View {
     @State private var searchQuery = ""
     
     @State private var isFirstSearch = true
-    @State private var isSearched = false
-    @State private var isFetching = false
-    @State private var previousQuery = ""
     
     @Binding private var isShowSearch: Bool
     
@@ -85,51 +82,12 @@ struct SearchResultView: View {
                         .onSubmit {
                             focusedField.wrappedValue = nil
                             if isFirstSearch { isFirstSearch = false }
-                            
-                            withAnimation {
-                                let mcuMovies: [String] = [
-                                    "Iron Man",
-                                    "The Incredible Hulk",
-                                    "Iron Man 2",
-                                    "Thor",
-                                    "Captain America: The First Avenger",
-                                    "The Avengers",
-                                    "Iron Man 3",
-                                    "Thor: The Dark World",
-                                    "Captain America: The Winter Soldier",
-                                    "Guardians of the Galaxy",
-                                    "Avengers: Age of Ultron",
-                                    "Ant-Man",
-                                    "Captain America: Civil War",
-                                    "Doctor Strange",
-                                    "Guardians of the Galaxy Vol. 2",
-                                    "Spider-Man: Homecoming",
-                                    "Thor: Ragnarok",
-                                    "Black Panther",
-                                    "Avengers: Infinity War",
-                                    "Ant-Man and the Wasp",
-                                    "Captain Marvel",
-                                    "Avengers: Endgame",
-                                    "Spider-Man: Far From Home",
-                                    "Black Widow",
-                                    "Shang-Chi and the Legend of the Ten Rings",
-                                    "Eternals",
-                                    "Spider-Man: No Way Home",
-                                    "Doctor Strange in the Multiverse of Madness",
-                                    "Thor: Love and Thunder",
-                                    "Black Panther: Wakanda Forever",
-                                    "Ant-Man and the Wasp: Quantumania",
-                                    "Guardians of the Galaxy Vol. 3",
-                                    "The Marvels"
-                                ]
-                                
-                                if searchQuery.isEmpty { searchQuery = mcuMovies.randomElement() ?? "Spider Man" }
-                                // TODO: RequestAPI(Throttle) -> Search/Movie & Actor
-                                viewModel.action(.onSubmitSearchQuery(searchQuery))
-                                recentQuery[searchQuery] = Date()
-                                isFetching = true
-                                isSearched = true
+                            if searchQuery.isEmpty {
+                                viewModel.action(.getRandomSearchQuery)
+                                searchQuery = viewModel.output.randomSearchQuery
                             }
+                            recentQuery[searchQuery] = Date()
+                            viewModel.action(.onSubmitSearchQuery(searchQuery))
                         }
                     
                     if !searchQuery.isEmpty {
@@ -150,15 +108,15 @@ struct SearchResultView: View {
                         .matchedGeometryEffect(id: "TextField", in: namespace)
                 }
                 
-                if !isSearched {
+                if !viewModel.output.isSearched {
                     Button {
                         withAnimation {
                             if isFirstSearch {
                                 searchQuery = ""
                                 isShowSearch = false
                             } else {
-                                isSearched = true
                                 focusedField.wrappedValue = nil
+                                viewModel.action(.onDismiss)
                             }
                         }
                     } label: {
@@ -170,9 +128,10 @@ struct SearchResultView: View {
                 }
             }
             .padding(.horizontal)
+            .animation(.easeInOut, value: viewModel.output.isSearched)
 
-            if isSearched {
-                if isFetching {
+            if viewModel.output.isSearched {
+                if viewModel.output.isFetching {
                     ProgressView()
                         .frame(maxWidth: .infinity, maxHeight: .infinity)
                 } else {
@@ -264,33 +223,19 @@ struct SearchResultView: View {
                 }
                 .listStyle(.plain)
                 .scrollDismissesKeyboard(.interactively)
+                .animation(.easeInOut, value: recentQuery)
             }
         }
         .background(.background)
         .valueChanged(value: focusedField.wrappedValue) { _ in
             if focusedField.wrappedValue == .search {
-                withAnimation {
-                    isSearched = false
-                }
+                viewModel.action(.onFocusTextField)
             }
         }
-        .valueChanged(value: viewModel.output.searchQuery) { query in
         .valueChanged(value: searchQuery) { query in
             viewModel.action(.onChangeSearchQuery(query))
         }
-        .valueChanged(value: isFetching) { _ in
-            if isFetching, previousQuery != viewModel.output.searchQuery {
-                Task {
-                    try await Task.sleep(nanoseconds: 1_500_000_000)
-                    isFetching = false
-                    previousQuery = searchQuery
-                }
-            } else {
-                isFetching = false
-            }
-        }
     }
-    
     private func deleteRecentQuery(at offsets: IndexSet) {
         guard let index = offsets.first else { return }
         let key = recentQuery.sorted(by: { $0.key < $1.key })[index].key
