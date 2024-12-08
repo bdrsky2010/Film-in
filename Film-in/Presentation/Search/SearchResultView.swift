@@ -236,6 +236,9 @@ struct SearchResultView: View {
             viewModel.action(.onChangeSearchQuery(query))
         }
     }
+}
+
+extension SearchResultView {
     private func deleteRecentQuery(at offsets: IndexSet) {
         guard let index = offsets.first else { return }
         let key = recentQuery.sorted(by: { $0.key < $1.key })[index].key
