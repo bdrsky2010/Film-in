@@ -176,10 +176,14 @@ struct SearchResultView: View {
                 List {
                     if searchQuery.isEmpty {
                         Section {
-                            ForEach(recentQuery.sorted(by: { $0.value < $1.value }), id: \.key) { query in
-                                HStack {
-                                    NavigationLink(query.key, destination: EmptyView())
-                                }
+                            ForEach(recentQuery.sorted(by: { $0.value > $1.value }), id: \.key) { query in
+                                Text(verbatim: query.key)
+                                    .onTapGesture {
+                                        searchQuery = query.key
+                                        focusedField.wrappedValue = nil
+                                        recentQuery[searchQuery] = Date()
+                                        viewModel.action(.onSubmitSearchQuery(searchQuery))
+                                    }
                             }
                             .onDelete(perform: deleteRecentQuery)
                         } header: {
