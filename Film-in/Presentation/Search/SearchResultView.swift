@@ -80,7 +80,6 @@ struct SearchResultView: View {
                         .padding()
                         .font(.ibmPlexMonoSemiBold(size: 16))
                         .onSubmit {
-                            focusedField.wrappedValue = nil
                             if isFirstSearch { isFirstSearch = false }
                             if searchQuery.isEmpty {
                                 viewModel.action(.getRandomSearchQuery)
