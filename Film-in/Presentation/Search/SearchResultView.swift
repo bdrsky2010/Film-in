@@ -201,9 +201,18 @@ struct SearchResultView: View {
                         }
                     } else {
                         Section {
-                            ForEach(0..<20) { i in
-                                HStack {
-                                    NavigationLink("\(i) 번째 이야기", destination: EmptyView())
+                            ForEach(viewModel.output.multiSearchList, id: \.self) { item in
+                                HStack{
+                                    Image(systemName: item.type == .movie ? "movieclapper.fill" : "person.fill")
+                                        .resizable()
+                                        .frame(width: 20, height: 20)
+                                    Text(verbatim: item.keyword)
+                                        .onTapGesture {
+                                            searchQuery = item.keyword
+                                            focusedField.wrappedValue = nil
+                                            recentQuery[searchQuery] = Date()
+                                            viewModel.action(.onSubmitSearchQuery(searchQuery))
+                                        }
                                 }
                             }
                         } header: {
