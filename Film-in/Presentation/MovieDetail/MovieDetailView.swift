@@ -237,7 +237,7 @@ struct MovieDetailView: View {
             Spacer()
             
             NavigationLink {
-                SeeMoreView(usedTo: .similar(viewModel.movieId))
+                LazyView(SeeMoreView(usedTo: .similar(viewModel.movieId)))
             } label: {
                 Text("more")
                     .font(.ibmPlexMonoSemiBold(size: 16))
