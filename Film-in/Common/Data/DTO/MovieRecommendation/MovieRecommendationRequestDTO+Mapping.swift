@@ -7,13 +7,7 @@
 
 import Foundation
 
-struct MovieRecommendationRequestDTO: Encodable {
+struct MovieRecommendationRequestDTO: Encodable, RequestParametable {
     let language: String
     let page: Int
-}
-
-extension MovieRecommendationRequestDTO {
-    var asParameters: [String: Any] {
-        return JSONEncoder.toDictionary(self)
-    }
 }

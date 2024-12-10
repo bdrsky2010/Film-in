@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct DiscoverRequestDTO: Encodable {
+struct DiscoverRequestDTO: Encodable, RequestParametable {
     let language: String
     let page: Int
     let releaseDateGte: String = "2000-01-01"
@@ -24,11 +24,5 @@ struct DiscoverRequestDTO: Encodable {
         case sortBy = "sort_by"
         case voteAvgGte = "vote_average.gte"
         case withGenres = "with_genres"
-    }
-}
-
-extension DiscoverRequestDTO {
-    var asParameters: [String: Any] {
-        return JSONEncoder.toDictionary(self)
     }
 }

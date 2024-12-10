@@ -7,15 +7,9 @@
 
 import Foundation
 
-struct SearchMovieRequestDTO: Encodable {
+struct SearchMovieRequestDTO: Encodable, RequestParametable {
     let query: String
     let language: String
     let page: Int
     let region: String
-}
-
-extension SearchMovieRequestDTO {
-    var asParameters: [String: Any] {
-        return JSONEncoder.toDictionary(self)
-    }
 }
