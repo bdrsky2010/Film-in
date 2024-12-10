@@ -32,7 +32,8 @@ final class SearchResultViewModel: BaseObject, ViewModelType {
 
 extension SearchResultViewModel {
     struct Input {
-        var viewOnTask = PassthroughSubject<Void, Never>()
+        var onRefresh = PassthroughSubject<Void, Never>()
+        var onDismissAlert = PassthroughSubject<Void, Never>()
         var onFocusTextField = PassthroughSubject<Void, Never>()
         var onChangeSearchQuery = PassthroughSubject<String, Never>()
         var onSubmitSearchQuery = PassthroughSubject<String, Never>()
@@ -41,18 +42,16 @@ extension SearchResultViewModel {
     }
     
     struct Output {
-        var networkConnect = true
         var isShowAlert = false
         var isSearched = false
-        var isFetching = false
         var multiSearchList = [RelatedKeyword]()
         var randomSearchQuery = ""
     }
     
     func transform() {
-        input.viewOnTask
+        input.onDismissAlert
             .sink(with: self) { owner, _ in
-                owner.networkHandling()
+                owner.output.isShowAlert = false
             }
             .store(in: &cancellable)
         
@@ -88,12 +87,6 @@ extension SearchResultViewModel {
                 owner.output.isSearched = true
                 
                 if owner.previousQuery != query {
-                    owner.output.isFetching = true
-                    Task {
-                        // TODO: TMDB Search(Movie / People) API Request
-                        try await Task.sleep(nanoseconds: 1_500_000_000)
-                        owner.output.isFetching = false
-                    }
                     owner.previousQuery = query
                 }
             }
@@ -115,7 +108,7 @@ extension SearchResultViewModel {
 
 extension SearchResultViewModel {
     enum Action {
-        case viewOnTask
+        case onDismissAlert
         case onFocusTextField
         case onChangeSearchQuery(_ query: String)
         case onSubmitSearchQuery(_ query: String)
@@ -125,8 +118,8 @@ extension SearchResultViewModel {
     
     func action(_ action: Action) {
         switch action {
-        case .viewOnTask:
-            input.viewOnTask.send(())
+        case .onDismissAlert:
+            input.onDismissAlert.send(())
         case .onFocusTextField:
             input.onFocusTextField.send(())
         case .onChangeSearchQuery(let query):
@@ -142,14 +135,6 @@ extension SearchResultViewModel {
 }
 
 extension SearchResultViewModel {
-    private func networkHandling() {
-        guard networkMonitor.networkType != .notConnect else {
-            output.networkConnect = false
-            return
-        }
-        output.networkConnect = true
-    }
-    
     private func errorHandling() {
         if !output.isShowAlert {
             output.isShowAlert = true
