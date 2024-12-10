@@ -8,16 +8,7 @@
 import SwiftUI
 import Combine
 
-enum SearchTab: CaseIterable, CustomStringConvertible {
-    case movie, person
-    
-    var description: String {
-        switch self {
-        case .movie:  "MOVIE"
-        case .person: "ACTOR"
-        }
-    }
-    
+fileprivate extension SearchType {
     @ViewBuilder
     var view: some View {
         switch self {
@@ -32,7 +23,7 @@ struct SearchResultView: View {
     
     @AppStorage("recentQuery") private var recentQuery: [String : Date] = [:]
     
-    @State private var selection: SearchTab = .movie
+    @State private var selection: SearchType = .movie
     @State private var searchQuery = ""
     
     @State private var isFirstSearch = true
@@ -136,7 +127,7 @@ struct SearchResultView: View {
                 } else {
                     VStack {
                         HStack(spacing: 12) {
-                            ForEach(SearchTab.allCases, id: \.self) { tab in
+                            ForEach(SearchType.allCases, id: \.self) { tab in
                                 Text(verbatim: tab.description)
                                     .font(.ibmPlexMonoSemiBold(size: 20))
                                     .bold()
@@ -161,7 +152,7 @@ struct SearchResultView: View {
                         .padding(.horizontal, 20)
                         
                         TabView(selection: $selection) {
-                            ForEach(SearchTab.allCases, id: \.self) { tab in
+                            ForEach(SearchType.allCases, id: \.self) { tab in
                                 LazyView(tab.view)
                                     .tabItem { }
                                     .tag(tab)
