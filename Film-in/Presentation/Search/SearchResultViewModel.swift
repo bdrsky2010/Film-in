@@ -10,6 +10,7 @@ import Combine
 
 final class SearchResultViewModel: BaseObject, ViewModelType {
     private let networkMonitor: NetworkMonitor
+    private let searchResultService: SearchResultService
     
     private var previousQuery = ""
     
@@ -19,9 +20,11 @@ final class SearchResultViewModel: BaseObject, ViewModelType {
     private(set) var cancellable = Set<AnyCancellable>()
     
     init(
-        networkMonitor: NetworkMonitor
+        networkMonitor: NetworkMonitor,
+        searchResultService: SearchResultService
     ) {
         self.networkMonitor = networkMonitor
+        self.searchResultService = searchResultService
         super.init()
         transform()
     }
