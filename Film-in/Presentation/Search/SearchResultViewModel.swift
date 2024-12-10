@@ -32,6 +32,7 @@ final class SearchResultViewModel: BaseObject, ViewModelType {
 
 extension SearchResultViewModel {
     struct Input {
+        var viewOnTask = PassthroughSubject<Void, Never>()
         var onFocusTextField = PassthroughSubject<Void, Never>()
         var onChangeSearchQuery = PassthroughSubject<String, Never>()
         var onSubmitSearchQuery = PassthroughSubject<String, Never>()
@@ -40,6 +41,8 @@ extension SearchResultViewModel {
     }
     
     struct Output {
+        var networkConnect = true
+        var isShowAlert = false
         var isSearched = false
         var isFetching = false
         var multiSearchList = [RelatedKeyword]()
@@ -47,6 +50,12 @@ extension SearchResultViewModel {
     }
     
     func transform() {
+        input.viewOnTask
+            .sink(with: self) { owner, _ in
+                owner.networkHandling()
+            }
+            .store(in: &cancellable)
+        
         input.onFocusTextField
             .sink(with: self) { owner, _ in
                 owner.output.isSearched = false
@@ -106,6 +115,7 @@ extension SearchResultViewModel {
 
 extension SearchResultViewModel {
     enum Action {
+        case viewOnTask
         case onFocusTextField
         case onChangeSearchQuery(_ query: String)
         case onSubmitSearchQuery(_ query: String)
@@ -115,6 +125,8 @@ extension SearchResultViewModel {
     
     func action(_ action: Action) {
         switch action {
+        case .viewOnTask:
+            input.viewOnTask.send(())
         case .onFocusTextField:
             input.onFocusTextField.send(())
         case .onChangeSearchQuery(let query):
@@ -168,5 +180,17 @@ extension SearchResultViewModel {
         ]
         
         return mcuMovies.randomElement() ?? "Spider Man"
+    private func networkHandling() {
+        guard networkMonitor.networkType != .notConnect else {
+            output.networkConnect = false
+            return
+        }
+        output.networkConnect = true
+    }
+    
+    private func errorHandling() {
+        if !output.isShowAlert {
+            output.isShowAlert = true
+        }
     }
 }
