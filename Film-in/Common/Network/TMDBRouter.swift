@@ -27,6 +27,7 @@ enum TMDBRouter {
     case nowPlaying(_ dto: NowPlayingRequestDTO)
     case upcoming(_ dto: UpcomingRequestDTO)
     case discover(_ dto: DiscoverRequestDTO)
+    case searchMulti(_ dto: SearchMultiRequestDTO)
     case searchMovie(_ dto: SearchMovieRequestDTO)
     case searchPerson(_ dto: SearchPersonRequestDTO)
     case movieDetail(_ dto: MovieDetailRequestDTO, movieId: Int)
@@ -48,6 +49,7 @@ extension TMDBRouter: TMDBTargetType {
         case .nowPlaying: return "movie/now_playing"
         case .upcoming: return "movie/upcoming"
         case .discover: return "discover/movie"
+        case .searchMulti: return "search/multi"
         case .searchMovie: return "search/movie"
         case .searchPerson: return "search/person"
         case .movieDetail(_, let movieId): return "movie/\(movieId)"
@@ -73,6 +75,8 @@ extension TMDBRouter: TMDBTargetType {
         case .upcoming(let dto):
             return .requestParameters(parameters: dto.asParameters, encoding: URLEncoding.queryString)
         case .discover(let dto):
+            return .requestParameters(parameters: dto.asParameters, encoding: URLEncoding.queryString)
+        case .searchMulti(let dto):
             return .requestParameters(parameters: dto.asParameters, encoding: URLEncoding.queryString)
         case .searchMovie(let dto):
             return .requestParameters(parameters: dto.asParameters, encoding: URLEncoding.queryString)

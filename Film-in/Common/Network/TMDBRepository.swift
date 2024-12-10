@@ -20,6 +20,7 @@ protocol TMDBRepository: AnyObject {
     func imagesRequest(query: MovieImagesQuery) async -> Result<MovieImages, TMDBError>
     func videosRequest(query: MovieVideosQuery) async -> Result<[MovieVideo], TMDBError>
     func popularPeopleRequest(query: PopularQuery) async -> Result<[PopularPerson], TMDBError>
+    func searchMultiRequest(query: SearchQuery) async -> Result<[RelatedKeyword], TMDBError>
     func personDetailRequest(query: PersonQuery) async -> Result<PersonDetail, TMDBError>
     func personMovieRequest(query: PersonQuery) async -> Result<PersonMovie, TMDBError>
 }
@@ -197,6 +198,17 @@ final class DefaultTMDBRepository: TMDBRepository {
     func popularPeopleRequest(query: PopularQuery) async -> Result<[PopularPerson], TMDBError> {
         let requestDTO = PopularPeopleRequestDTO(language: query.language)
         let result = await networkManager.request(.popularPeople(requestDTO), of: PopularPeopleResponseDTO.self)
+        switch result {
+        case .success(let success):
+            return .success(success.toEntity())
+        case .failure(let failure):
+            return .failure(failure)
+        }
+    }
+    
+    func searchMultiRequest(query: SearchQuery) async -> Result<[RelatedKeyword], TMDBError> {
+        let requestDTO = SearchMultiRequestDTO(query: query.query, language: "longLanguageCode".localized)
+        let result = await networkManager.request(.searchMulti(requestDTO), of: SearchMultiResponseDTO.self)
         switch result {
         case .success(let success):
             return .success(success.toEntity())
