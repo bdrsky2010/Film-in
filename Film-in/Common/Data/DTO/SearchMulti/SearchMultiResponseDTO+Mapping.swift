@@ -22,16 +22,18 @@ struct SearchMultiResponseDTO: Decodable {
 }
 
 extension SearchMultiResponseDTO {
-    func toEntity() -> Set<RelatedKeyword> {
-        return Set(
-            results.compactMap {
-                guard $0.mediaType == "movie" || $0.mediaType == "person" else { return nil }
-                let isMovie = $0.mediaType == "movie"
-                return RelatedKeyword(
-                    type: isMovie ? .movie : .person,
-                    keyword: isMovie ? $0.title : $0.name
-                )
-            }
+    func toEntity() -> [RelatedKeyword] {
+        return Array(
+            Set(
+                results.compactMap {
+                    guard $0.mediaType == "movie" || $0.mediaType == "person" else { return nil }
+                    let isMovie = $0.mediaType == "movie"
+                    return RelatedKeyword(
+                        type: isMovie ? .movie : .person,
+                        keyword: isMovie ? $0.title : $0.name
+                    )
+                }
+            )
         )
     }
 }
