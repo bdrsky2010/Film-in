@@ -32,7 +32,7 @@ struct SearchView: View {
     }
         
     var body: some View {
-        NavigationStack {
+        NavigationStack { 
             if !viewModel.output.networkConnect {
                 UnnetworkedView(refreshAction: viewModel.action(.refresh))
             } else {
@@ -54,7 +54,9 @@ struct SearchView: View {
             
             if isShowSearch {
                 SearchResultView(
-                    searchQuery: $searchQuery,
+                    viewModel: SearchResultViewModel(
+                        networkMonitor: NetworkMonitor.shared, searchResultService: DefaultSearchResultService(tmdbRepository: DefaultTMDBRepository.shared)
+                    ),
                     isShowSearch: $isShowSearch,
                     focusedField: $focusedField,
                     namespace: namespace
@@ -114,8 +116,8 @@ struct SearchView: View {
     private func trendingContentSection() -> some View {
         GeometryReader { proxy in
             ScrollView(.vertical) {
-                ForEach(SearchTab.allCases, id: \.self) { tab in
-                    VStack {
+                ForEach(SearchType.allCases, id: \.self) { tab in
+                    VStack { 
                         HStack {
                             Text(verbatim: tab.description)
                                 .font(.ibmPlexMonoSemiBold(size: 20))
