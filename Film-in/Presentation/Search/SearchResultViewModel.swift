@@ -42,7 +42,7 @@ extension SearchResultViewModel {
     struct Output {
         var isSearched = false
         var isFetching = false
-        
+        var multiSearchList = [RelatedKeyword]()
         var randomSearchQuery = ""
     }
     
@@ -56,7 +56,20 @@ extension SearchResultViewModel {
         input.onChangeSearchQuery
             .debounce(for: .seconds(0.5), scheduler: RunLoop.main)
             .sink(with: self) { owner, query in
-                print(query)
+                let searchQuery = SearchQuery(query: query)
+                let publisher = owner.searchResultService.fetchMultiSearch(query: searchQuery)
+                publisher
+                    .receive(on: DispatchQueue.main)
+                    .sink(with: owner) { owner, result in
+                        switch result {
+                        case .success(let multiSearch):
+                            owner.output.multiSearchList = multiSearch
+                        case .failure(let failure):
+                            print(failure)
+                            owner.errorHandling()
+                        }
+                    }
+                    .store(in: &owner.cancellable)
             }
             .store(in: &cancellable)
         
