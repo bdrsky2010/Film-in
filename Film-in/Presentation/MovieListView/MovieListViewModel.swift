@@ -13,13 +13,13 @@ enum UsedTo {
     case upcoming
     case recommend
     case similar(_ movieId: Int)
-    case search(_ text: String)
+    case searchMovie(_ query: String)
+    case searchPerson(_ query: String)
 }
 
 final class MovieListViewModel: BaseObject, ViewModelType {
     private let movieListService: MovieListService
     private let networkMonitor: NetworkMonitor
-    private let usedTo: UsedTo
     
     private var recentPage = 1
     private var isLastPage = false
@@ -28,6 +28,8 @@ final class MovieListViewModel: BaseObject, ViewModelType {
     
     var input = Input()
     var cancellable = Set<AnyCancellable>()
+    
+    let usedTo: UsedTo
     
     init(
         movieListService: MovieListService,
@@ -53,6 +55,7 @@ extension MovieListViewModel {
         var isShowAlert = false
         var isPagination = false
         var movies = HomeMovie(movies: [])
+        var people = PagingPeople(page: 1, totalPage: 0, people: [])
     }
     
     func transform() {
@@ -101,7 +104,7 @@ extension MovieListViewModel {
         }
         output.networkConnect = true
         
-        fetchMovie(page: 1)
+        fetchData(page: 1)
     }
     
     private func nextFetch() {
@@ -114,12 +117,12 @@ extension MovieListViewModel {
         defer { output.isPagination = false }  // 페이지네이션 완료 설정
         
         guard !isLastPage else { return }
-        fetchMovie(page: recentPage + 1)
+        fetchData(page: recentPage + 1)
     }
 }
 
 extension MovieListViewModel {
-    private func fetchMovie(page: Int) {
+    private func fetchData(page: Int) {
         switch usedTo {
         case .nowPlaying:
             fetchNowPlaying(page: page)
@@ -129,8 +132,10 @@ extension MovieListViewModel {
             fetchRecommend(page: page)
         case .similar(let movieId):
             fetchSimilar(movieId: movieId, page: page)
-        case .search(_ ):
-            break
+        case .searchMovie(let query):
+            fetchMovieSearch(query: query, page: page)
+        case .searchPerson(let query):
+            fetchPeopleSearch(query: query, page: page)
         }
     }
     
@@ -201,6 +206,30 @@ extension MovieListViewModel {
             }
             .store(in: &cancellable)
     }
+    
+    private func fetchMovieSearch(query: String, page: Int) {
+        let query = SearchMovieQuery(query: query, page: page)
+        let publisher = movieListService.fetchMovieSearch(query: query)
+        
+        publisher
+            .receive(on: DispatchQueue.main)
+            .sink(with: self) { owner, result in
+                owner.resultHandler(result, page: page)
+            }
+            .store(in: &cancellable)
+    }
+    
+    private func fetchPeopleSearch(query: String, page: Int) {
+        let query = SearchPersonQuery(query: query, page: page)
+        let publisher = movieListService.fetchPeopleSearch(query: query)
+        
+        publisher
+            .receive(on: DispatchQueue.main)
+            .sink(with: self) { owner, result in
+                owner.resultHandler(result, page: page)
+            }
+            .store(in: &cancellable)
+    }
 }
 
 extension MovieListViewModel {
@@ -220,6 +249,23 @@ extension MovieListViewModel {
                 isLastPage = responsePage == responseTotalPage
             }
         case .failure(_):
+            if !output.isShowAlert { output.isShowAlert = true }
+        }
+    }
+    
+    private func resultHandler(_ result: Result<PagingPeople, TMDBError>, page: Int) {
+        switch result {
+        case .success(let people):
+            if page == 1 {
+                output.people = people
+            } else {
+                output.people.people.append(contentsOf: people.people)
+            }
+            
+            recentPage = people.page
+            isLastPage = people.page == people.totalPage
+        case .failure(let error):
+            print(error)
             if !output.isShowAlert { output.isShowAlert = true }
         }
     }

@@ -11,7 +11,6 @@ struct MovieListView: View {
     @StateObject private var viewModel: MovieListViewModel
     
     @State private var posterSize: CGSize = .zero
-    @State private var movie: MovieData?
     
     @Binding var isShowAlert: Bool
     @Binding var isRefresh: Bool
@@ -60,7 +59,12 @@ struct MovieListView: View {
     
     @ViewBuilder
     private func contentSection(width: CGFloat, height: CGFloat) -> some View {
-        movieListSection(width: width, height: height)
+        switch viewModel.usedTo {
+        case .searchPerson:
+            peopleListSection()
+        default:
+            movieListSection(width: width, height: height)
+        }
         
         if viewModel.output.isPagination {
             ProgressView()
@@ -85,6 +89,31 @@ struct MovieListView: View {
                 .task {
                     if let last = viewModel.output.movies.movies.last,
                        last.id == movie.id {
+                        viewModel.action(.lastElement)
+                    }
+                }
+            }
+        }
+    }
+    
+    @ViewBuilder
+    private func peopleListSection() -> some View {
+        LazyVGrid(columns: gridItemLayout) {
+            ForEach(viewModel.output.people.people, id: \.id) { person in
+                NavigationLink {
+                    LazyView(PersonDetailFactory.makeView(personId: person._id))
+                } label: {
+                    let url = URL(string: ImageURL.tmdb(image: person.profile).urlString)
+                    PosterImage(
+                        url: url,
+                        size: CGSize(width: 90, height: 90),
+                        title: person.name,
+                        isDownsampling: true
+                    )
+                }
+                .task {
+                    if let last = viewModel.output.people.people.last,
+                       last.id == person.id {
                         viewModel.action(.lastElement)
                     }
                 }
