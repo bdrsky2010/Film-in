@@ -13,6 +13,8 @@ protocol MovieListService: AnyObject {
     func fetchUpcoming(query: HomeMovieQuery) -> Future<Result<HomeMovie, TMDBError>, Never>
     func fetchDiscover(query: HomeMovieQuery) -> Future<Result<HomeMovie, TMDBError>, Never>
     func fetchMovieSimilar(query: MovieSimilarQuery) -> Future<Result<HomeMovie, TMDBError>, Never>
+    func fetchMovieSearch(query: SearchMovieQuery) -> AnyPublisher<Result<HomeMovie, TMDBError>, Never>
+    func fetchPeopleSearch(query: SearchPersonQuery) -> AnyPublisher<Result<PagingPeople, TMDBError>, Never>
 }
 
 final class DefaultMovieListService: BaseObject, MovieListService {
@@ -93,5 +95,37 @@ extension DefaultMovieListService {
                 }
             }
         }
+    }
+    
+    func fetchMovieSearch(query: SearchMovieQuery) -> AnyPublisher<Result<HomeMovie, TMDBError>, Never> {
+        return Future { promise in
+            Task { [weak self] in
+                guard let self else { return }
+                let result = await tmdbRepository.searchMovieRequest(query: query)
+                switch result {
+                case .success(let success):
+                    promise(.success(.success(success)))
+                case .failure(let failure):
+                    promise(.success(.failure(failure)))
+                }
+            }
+        }
+        .eraseToAnyPublisher()
+    }
+    
+    func fetchPeopleSearch(query: SearchPersonQuery) -> AnyPublisher<Result<PagingPeople, TMDBError>, Never> {
+        return Future { promise in
+            Task { [weak self] in
+                guard let self else { return }
+                let result = await tmdbRepository.searchPersonRequest(query: query)
+                switch result {
+                case .success(let success):
+                    promise(.success(.success(success)))
+                case .failure(let failure):
+                    promise(.success(.failure(failure)))
+                }
+            }
+        }
+        .eraseToAnyPublisher()
     }
 }
