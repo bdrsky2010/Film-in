@@ -9,7 +9,5 @@ import Foundation
 
 struct SearchMovieQuery {
     let query: String
-    let language: String
     let page: Int
-    let region: String
 }

@@ -9,6 +9,5 @@ import Foundation
 
 struct SearchPersonQuery {
     let query: String
-    let language: String
     let page: Int
 }
