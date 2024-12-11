@@ -18,3 +18,19 @@ struct SearchPersonResposeDTO: Decodable {
         case totalPage = "total_pages"
     }
 }
+
+extension SearchPersonResposeDTO {
+    func toEntity() -> PagingPeople {
+        return PagingPeople(
+            page: self.page,
+            totalPage: self.totalPage,
+            people: self.results.map {
+                PersonData(
+                    _id: $0.id,
+                    name: $0.name,
+                    profile: $0.profilePath
+                )
+            }
+        )
+    }
+}
