@@ -46,21 +46,24 @@ struct SearchView: View {
     
     @ViewBuilder
     private func contentSection() -> some View {
-        ZStack {
-            VStack {
-                textFieldSection()
-                trendingContentSection()
-            }
-            
+        VStack {
             if isShowSearch {
                 SearchResultView(
                     viewModel: SearchResultViewModel(
-                        networkMonitor: NetworkMonitor.shared, searchResultService: DefaultSearchResultService(tmdbRepository: DefaultTMDBRepository.shared)
+                        networkMonitor: NetworkMonitor.shared,
+                        searchResultService: DefaultSearchResultService(
+                            tmdbRepository: DefaultTMDBRepository.shared
+                        )
                     ),
                     isShowSearch: $isShowSearch,
                     focusedField: $focusedField,
                     namespace: namespace
                 )
+            } else {
+                VStack {
+                    textFieldSection()
+                    trendingContentSection()
+                }
             }
         }
         .valueChanged(value: focusedField) { _ in
@@ -198,14 +201,4 @@ struct SearchView: View {
             .padding(.horizontal, 4)
         }
     }
-}
-
-#Preview {
-    SearchView(
-        viewModel: SearchViewModel(
-            searchSerivce: DefaultSearchService(
-                tmdbRepository: DefaultTMDBRepository.shared
-            ),
-            networkMonitor: NetworkMonitor.shared)
-    )
 }
