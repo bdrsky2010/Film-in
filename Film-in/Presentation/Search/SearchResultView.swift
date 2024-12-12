@@ -242,6 +242,31 @@ struct SearchResultView: View {
         .valueChanged(value: searchQuery) { query in
             viewModel.action(.onChangeSearchQuery(query))
         }
+        .popupAlert(
+            isPresented: Binding(
+                get: { viewModel.output.isShowAlert },
+                set: { _ in viewModel.action(.onDismissAlert) }
+            ),
+            contentModel: .init(
+                systemImage: "wifi.exclamationmark",
+                phrase: "apiRequestError",
+                normal: "refresh"
+            ),
+            heightType: .middle
+        ) {
+            viewModel.action(.onChangeSearchQuery(searchQuery))
+        }
+        .popupAlert(
+            isPresented: $isShowAlert,
+            contentModel: .init(
+                systemImage: "wifi.exclamationmark",
+                phrase: "apiRequestError",
+                normal: "refresh"
+            ),
+            heightType: .middle
+        ) {
+            isRefresh = true
+        }
     }
 }
 
