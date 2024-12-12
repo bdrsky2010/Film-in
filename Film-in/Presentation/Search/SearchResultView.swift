@@ -172,6 +172,7 @@ struct SearchResultView: View {
                             ForEach(recentQuery.sorted(by: { $0.value > $1.value }), id: \.key) { query in
                                 Text(verbatim: query.key)
                                     .onTapGesture {
+                                        if isFirstSearch { isFirstSearch = false }
                                         searchQuery = query.key
                                         focusedField.wrappedValue = nil
                                         recentQuery[searchQuery] = Date()
@@ -210,6 +211,7 @@ struct SearchResultView: View {
                                         .frame(width: 20, height: 20)
                                     Text(verbatim: item.keyword)
                                         .onTapGesture {
+                                            if isFirstSearch { isFirstSearch = false }
                                             searchQuery = item.keyword
                                             focusedField.wrappedValue = nil
                                             recentQuery[searchQuery] = Date()
