@@ -18,7 +18,7 @@ struct SeeMoreView: View {
     }
     
     var body: some View {
-        MovieListFactory.makeView(
+        MultiListFactory.makeView(
             to: usedTo,
             isShowAlert: $isShowAlert,
             isRefresh: $isRefresh

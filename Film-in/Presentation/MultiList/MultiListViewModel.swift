@@ -17,8 +17,8 @@ enum UsedTo {
     case searchPerson(_ query: String)
 }
 
-final class MovieListViewModel: BaseObject, ViewModelType {
-    private let movieListService: MovieListService
+final class MultiListViewModel: BaseObject, ViewModelType {
+    private let multiListService: MultiListService
     private let networkMonitor: NetworkMonitor
     
     private var recentPage = 1
@@ -32,11 +32,11 @@ final class MovieListViewModel: BaseObject, ViewModelType {
     let usedTo: UsedTo
     
     init(
-        movieListService: MovieListService,
+        multiListService: MultiListService,
         networkMonitor: NetworkMonitor,
         usedTo: UsedTo
     ) {
-        self.movieListService = movieListService
+        self.multiListService = multiListService
         self.networkMonitor = networkMonitor
         self.usedTo = usedTo
         super.init()
@@ -44,15 +44,17 @@ final class MovieListViewModel: BaseObject, ViewModelType {
     }
 }
 
-extension MovieListViewModel {
+extension MultiListViewModel {
     struct Input {
         var viewOnTask = PassthroughSubject<Void, Never>()
+        var onRefresh = PassthroughSubject<Void, Never>()
         var nextPage = PassthroughSubject<Void, Never>()
     }
     
     struct Output {
         var networkConnect = true
         var isShowAlert = false
+        var isFirstFetch = false
         var isPagination = false
         var movies = HomeMovie(movies: [])
         var people = PagingPeople(page: 1, totalPage: 0, people: [])
@@ -62,22 +64,31 @@ extension MovieListViewModel {
         input.viewOnTask
             .sink { [weak self] in
                 guard let self else { return }
-                output.isShowAlert = false
                 firstFetch()
+            }
+            .store(in: &cancellable)
+        
+        input.onRefresh
+            .sink(with: self) { owner, _ in
+                if owner.output.isShowAlert { owner.output.isShowAlert = false }
+                if owner.recentPage == 1 {
+                    owner.firstFetch()
+                } else {
+                    owner.nextFetch()
+                }
             }
             .store(in: &cancellable)
         
         input.nextPage
             .sink { [weak self] in
                 guard let self else { return }
-                output.isShowAlert = false
                 nextFetch()
             }
             .store(in: &cancellable)
     }
 }
 
-extension MovieListViewModel {
+extension MultiListViewModel {
     enum Action {
         case viewOnTask
         case refresh
@@ -89,21 +100,21 @@ extension MovieListViewModel {
         case .viewOnTask:
             input.viewOnTask.send(())
         case .refresh:
-            input.viewOnTask.send(())
+            input.onRefresh.send(())
         case .lastElement:
             input.nextPage.send(())
         }
     }
 }
 
-extension MovieListViewModel {
+extension MultiListViewModel {
     private func firstFetch() {
         guard networkMonitor.networkType != .notConnect else {
             output.networkConnect = false
             return
         }
         output.networkConnect = true
-        
+        output.isFirstFetch = true
         fetchData(page: 1)
     }
     
@@ -121,7 +132,7 @@ extension MovieListViewModel {
     }
 }
 
-extension MovieListViewModel {
+extension MultiListViewModel {
     private func fetchData(page: Int) {
         switch usedTo {
         case .nowPlaying:
@@ -145,7 +156,7 @@ extension MovieListViewModel {
             page: page,
             region: "regionCode".localized
         )
-        let publisher = movieListService.fetchNowPlaying(query: query)
+        let publisher = multiListService.fetchNowPlaying(query: query)
         
         publisher
             .receive(on: DispatchQueue.main)
@@ -162,7 +173,7 @@ extension MovieListViewModel {
             page: page,
             region: "regionCode".localized
         )
-        let publisher = movieListService.fetchUpcoming(query: query)
+        let publisher = multiListService.fetchUpcoming(query: query)
         
         publisher
             .receive(on: DispatchQueue.main)
@@ -179,7 +190,7 @@ extension MovieListViewModel {
             page: page,
             region: "regionCode".localized
         )
-        let publisher = movieListService.fetchDiscover(query: query)
+        let publisher = multiListService.fetchDiscover(query: query)
         
         publisher
             .receive(on: DispatchQueue.main)
@@ -196,7 +207,7 @@ extension MovieListViewModel {
             language: "longLanguageCode".localized,
             page: page
         )
-        let publisher = movieListService.fetchMovieSimilar(query: query)
+        let publisher = multiListService.fetchMovieSimilar(query: query)
         
         publisher
             .receive(on: DispatchQueue.main)
@@ -209,7 +220,7 @@ extension MovieListViewModel {
     
     private func fetchMovieSearch(query: String, page: Int) {
         let query = SearchMovieQuery(query: query, page: page)
-        let publisher = movieListService.fetchMovieSearch(query: query)
+        let publisher = multiListService.fetchMovieSearch(query: query)
         
         publisher
             .receive(on: DispatchQueue.main)
@@ -221,7 +232,7 @@ extension MovieListViewModel {
     
     private func fetchPeopleSearch(query: String, page: Int) {
         let query = SearchPersonQuery(query: query, page: page)
-        let publisher = movieListService.fetchPeopleSearch(query: query)
+        let publisher = multiListService.fetchPeopleSearch(query: query)
         
         publisher
             .receive(on: DispatchQueue.main)
@@ -232,7 +243,7 @@ extension MovieListViewModel {
     }
 }
 
-extension MovieListViewModel {
+extension MultiListViewModel {
     private func resultHandler(_ result: Result<HomeMovie, TMDBError>, page: Int) {
         switch result {
         case .success(let movies):
@@ -251,6 +262,7 @@ extension MovieListViewModel {
         case .failure(_):
             if !output.isShowAlert { output.isShowAlert = true }
         }
+        if output.isFirstFetch { output.isFirstFetch = false }
     }
     
     private func resultHandler(_ result: Result<PagingPeople, TMDBError>, page: Int) {
@@ -268,5 +280,6 @@ extension MovieListViewModel {
             print(error)
             if !output.isShowAlert { output.isShowAlert = true }
         }
+        if output.isFirstFetch { output.isFirstFetch = false }
     }
 }

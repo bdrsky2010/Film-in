@@ -7,8 +7,10 @@
 
 import SwiftUI
 
-struct MovieListView: View {
-    @StateObject private var viewModel: MovieListViewModel
+struct MultiListView: View {
+    @Environment(\.colorScheme) var colorScheme
+    
+    @StateObject private var viewModel: MultiListViewModel
     
     @State private var posterSize: CGSize = .zero
     
@@ -18,7 +20,7 @@ struct MovieListView: View {
     private let gridItemLayout = [GridItem(.flexible()), GridItem(.flexible()), GridItem(.flexible())]
     
     init(
-        viewModel: MovieListViewModel,
+        viewModel: MultiListViewModel,
         isShowAlert: Binding<Bool>,
         isRefresh: Binding<Bool>
     ) {
@@ -31,16 +33,19 @@ struct MovieListView: View {
         GeometryReader { proxy in
             let width = (proxy.size.width - (8 * 2)) / 3
             let height = (proxy.size.width - (8 * 2)) / 3 * 1.5
-            ScrollView {
-                if !viewModel.output.networkConnect {
-                    UnnetworkedView(refreshAction: viewModel.action(.refresh))
-                    .frame(maxWidth: proxy.size.width, alignment: .center)
-                } else {
+            if !viewModel.output.networkConnect {
+                UnnetworkedView(refreshAction: viewModel.action(.refresh))
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+            } else if viewModel.output.isFirstFetch {
+                ProgressView()
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+            } else {
+                ScrollView {
                     contentSection(width: width, height: height)
                 }
-            }
-            .task {
-                posterSize = CGSize(width: proxy.size.width * 0.7, height: proxy.size.width * 0.7 * 1.5)
+                .task {
+                    posterSize = CGSize(width: proxy.size.width * 0.7, height: proxy.size.width * 0.7 * 1.5)
+                }
             }
         }
         .task {
@@ -103,13 +108,22 @@ struct MovieListView: View {
                 NavigationLink {
                     LazyView(PersonDetailFactory.makeView(personId: person._id))
                 } label: {
-                    let url = URL(string: ImageURL.tmdb(image: person.profile).urlString)
-                    PosterImage(
-                        url: url,
-                        size: CGSize(width: 90, height: 90),
-                        title: person.name,
-                        isDownsampling: true
-                    )
+                    VStack {
+                        let url = URL(string: ImageURL.tmdb(image: person.profile).urlString)
+                        PosterImage(
+                            url: url,
+                            size: CGSize(width: 90, height: 90),
+                            title: person.name,
+                            isDownsampling: true
+                        )
+                        .clipShape(Circle())
+                        .grayscale(colorScheme == .dark ? 1 : 0)
+                        
+                        Text("\(person.name)")
+                            .font(.ibmPlexMonoRegular(size: 14))
+                            .foregroundStyle(.appText)
+                            .frame(width: 90)
+                    }
                 }
                 .task {
                     if let last = viewModel.output.people.people.last,

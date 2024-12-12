@@ -7,15 +7,15 @@
 
 import SwiftUI
 
-enum MovieListFactory {
+enum MultiListFactory {
     static func makeView(
         to usedTo: UsedTo,
         isShowAlert: Binding<Bool>,
         isRefresh: Binding<Bool>
     ) -> some View {
-        MovieListView(
-            viewModel: MovieListViewModel(
-                movieListService: DefaultMovieListService(
+        MultiListView(
+            viewModel: MultiListViewModel(
+                multiListService: DefaultMultiListService(
                     tmdbRepository: DefaultTMDBRepository.shared,
                     databaseRepository: RealmRepository.shared
                 ),
