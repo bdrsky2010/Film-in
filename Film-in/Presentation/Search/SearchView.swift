@@ -164,36 +164,44 @@ struct SearchView: View {
     @ViewBuilder
     private func trendingMovieSection() -> some View {
         ForEach(viewModel.output.trendingMovie, id: \.id) { movie in
-            let url = URL(string: ImageURL.tmdb(image: movie.poster).urlString)
-            PosterImage(
-                url: url,
-                size: cellSize,
-                title: movie.title,
-                isDownsampling: true
-            )
+            NavigationLink {
+                LazyView(MovieDetailFactory.makeView(movie: movie, posterSize: posterSize))
+            } label: {
+                let url = URL(string: ImageURL.tmdb(image: movie.poster).urlString)
+                PosterImage(
+                    url: url,
+                    size: cellSize,
+                    title: movie.title,
+                    isDownsampling: true
+                )
+            }
         }
     }
     
     @ViewBuilder
     private func popularPeopleSection() -> some View {
         ForEach(viewModel.output.popularPeople, id: \.id) { person in
-            VStack {
-                let url = URL(string: ImageURL.tmdb(image: person.profilePath).urlString)
-                PosterImage(
-                    url: url,
-                    size: CGSize(width: 90, height: 90),
-                    title: person.name.replacingOccurrences(of: " ", with: "\n"),
-                    isDownsampling: true
-                )
-                .clipShape(Circle())
-                .grayscale(colorScheme == .dark ? 1 : 0)
-                
-                Text("\(person.name)")
-                    .font(.ibmPlexMonoRegular(size: 14))
-                    .foregroundStyle(.appText)
-                    .frame(width: 90)
+            NavigationLink {
+                LazyView(PersonDetailFactory.makeView(personId: person._id))
+            } label: {
+                VStack {
+                    let url = URL(string: ImageURL.tmdb(image: person.profilePath).urlString)
+                    PosterImage(
+                        url: url,
+                        size: CGSize(width: 90, height: 90),
+                        title: person.name.replacingOccurrences(of: " ", with: "\n"),
+                        isDownsampling: true
+                    )
+                    .clipShape(Circle())
+                    .grayscale(colorScheme == .dark ? 1 : 0)
+                    
+                    Text("\(person.name)")
+                        .font(.ibmPlexMonoRegular(size: 14))
+                        .foregroundStyle(.appText)
+                        .frame(width: 90)
+                }
+                .padding(.horizontal, 4)
             }
-            .padding(.horizontal, 4)
         }
     }
 }
