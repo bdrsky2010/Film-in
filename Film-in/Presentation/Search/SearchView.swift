@@ -48,17 +48,12 @@ struct SearchView: View {
     private func contentSection() -> some View {
         VStack {
             if isShowSearch {
-                SearchResultView(
-                    viewModel: SearchResultViewModel(
-                        networkMonitor: NetworkMonitor.shared,
-                        searchResultService: DefaultSearchResultService(
-                            tmdbRepository: DefaultTMDBRepository.shared
-                        )
-                    ),
-                    isShowSearch: $isShowSearch,
-                    focusedField: $focusedField,
-                    namespace: namespace
-                )
+                SearchFactory
+                    .makeView(
+                        isShowSearch: $isShowSearch,
+                        focusedField: $focusedField,
+                        namespace: namespace
+                    )
             } else {
                 VStack {
                     textFieldSection()
