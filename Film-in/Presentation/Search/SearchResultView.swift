@@ -124,35 +124,28 @@ struct SearchResultView: View {
             .animation(.easeInOut, value: viewModel.output.isSearched)
 
             if viewModel.output.isSearched {
-                if viewModel.output.isFetching {
-                    ProgressView()
-                        .frame(maxWidth: .infinity, maxHeight: .infinity)
-                } else {
-                    VStack {
-                        HStack(spacing: 12) {
-                            ForEach(SearchType.allCases, id: \.self) { tab in
-                                Text(verbatim: tab.description)
-                                    .font(.ibmPlexMonoSemiBold(size: 20))
-                                    .bold()
-                                    .foregroundStyle(.appText)
-                                    .padding(.bottom, 4)
-                                    .matchedGeometryEffect(id: "\(tab.description)", in: namespace)
-                                    .overlay(alignment: .bottom) {
-                                        if selection == tab {
-                                            Capsule()
-                                                .frame(height: 4)
-                                                .foregroundStyle(.app)
-                                                .matchedGeometryEffect(id: "tab", in: namespace)
-                                        }
+                VStack {
+                    HStack(spacing: 12) {
+                        ForEach(SearchType.allCases, id: \.self) { tab in
+                            Text(verbatim: tab.description)
+                                .font(.ibmPlexMonoSemiBold(size: 20))
+                                .bold()
+                                .foregroundStyle(.appText)
+                                .padding(.bottom, 4)
+                                .matchedGeometryEffect(id: "\(tab.description)", in: namespace)
+                                .overlay(alignment: .bottom) {
+                                    if selection == tab {
+                                        Capsule()
+                                            .frame(height: 4)
+                                            .foregroundStyle(.app)
+                                            .matchedGeometryEffect(id: "tab", in: namespace)
                                     }
-                                    .animation(.easeInOut, value: selection)
-                                    .onTapGesture {
-                                        selection = tab
-                                    }
-                            }
+                                }
+                                .animation(.easeInOut, value: selection)
+                                .onTapGesture {
+                                    selection = tab
+                                }
                         }
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                        .padding(.horizontal, 20)
                     }
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .padding(.horizontal, 20)
