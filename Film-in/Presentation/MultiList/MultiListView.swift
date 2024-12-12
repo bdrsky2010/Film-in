@@ -12,6 +12,7 @@ struct MultiListView: View {
     
     @StateObject private var viewModel: MultiListViewModel
     
+    @State private var contentSize: CGSize = .zero
     @State private var posterSize: CGSize = .zero
     
     @Binding var isShowAlert: Bool
@@ -31,8 +32,6 @@ struct MultiListView: View {
     
     var body: some View {
         GeometryReader { proxy in
-            let width = (proxy.size.width - (8 * 2)) / 3
-            let height = (proxy.size.width - (8 * 2)) / 3 * 1.5
             if !viewModel.output.networkConnect {
                 UnnetworkedView(refreshAction: viewModel.action(.refresh))
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -41,13 +40,17 @@ struct MultiListView: View {
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
             } else {
                 ScrollView {
-                    contentSection(width: width, height: height)
+                    contentSection()
                 }
                 .task {
+                    contentSize = CGSize(width: (proxy.size.width - (8 * 2)) / 3, height: (proxy.size.width - (8 * 2)) / 3 * 1.5)
                     posterSize = CGSize(width: proxy.size.width * 0.7, height: proxy.size.width * 0.7 * 1.5)
                 }
             }
         }
+        .navigationTitle(viewModel.usedTo.title)
+        .ignoresSafeArea(.all, edges: .bottom)
+        .toolbar(.hidden, for: .tabBar)
         .task {
             viewModel.action(.viewOnTask)
         }
@@ -63,12 +66,12 @@ struct MultiListView: View {
     }
     
     @ViewBuilder
-    private func contentSection(width: CGFloat, height: CGFloat) -> some View {
+    private func contentSection() -> some View {
         switch viewModel.usedTo {
         case .searchPerson:
             peopleListSection()
         default:
-            movieListSection(width: width, height: height)
+            movieListSection()
         }
         
         if viewModel.output.isPagination {
@@ -77,7 +80,7 @@ struct MultiListView: View {
     }
     
     @ViewBuilder
-    private func movieListSection(width: CGFloat, height: CGFloat) -> some View {
+    private func movieListSection() -> some View {
         LazyVGrid(columns: gridItemLayout) {
             ForEach(viewModel.output.movies.movies, id: \.id) { movie in
                 NavigationLink {
@@ -86,7 +89,7 @@ struct MultiListView: View {
                     let url = URL(string: ImageURL.tmdb(image: movie.poster).urlString)
                     PosterImage(
                         url: url,
-                        size: CGSize(width: width, height: height),
+                        size: contentSize,
                         title: movie.title,
                         isDownsampling: true
                     )
