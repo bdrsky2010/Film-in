@@ -10,10 +10,12 @@ import Combine
 
 fileprivate extension SearchType {
     @ViewBuilder
-    var view: some View {
+    func makeView(query: String, isShowAlert: Binding<Bool>, isRefresh: Binding<Bool>) -> some View {
         switch self {
-        case .movie: FirstView()
-        case .person: SecondView()
+        case .movie:
+            MultiListFactory.makeView(to: .searchMovie(query), isShowAlert: isShowAlert, isRefresh: isRefresh)
+        case .person:
+            MultiListFactory.makeView(to: .searchPerson(query), isShowAlert: isShowAlert, isRefresh: isRefresh)
         }
     }
 }
