@@ -27,8 +27,9 @@ struct SearchResultView: View {
     
     @State private var selection: SearchType = .movie
     @State private var searchQuery = ""
-    
     @State private var isFirstSearch = true
+    @State private var isShowAlert = false
+    @State private var isRefresh = false
     
     @Binding private var isShowSearch: Bool
     
@@ -152,18 +153,24 @@ struct SearchResultView: View {
                         }
                         .frame(maxWidth: .infinity, alignment: .leading)
                         .padding(.horizontal, 20)
-                        
-                        TabView(selection: $selection) {
-                            ForEach(SearchType.allCases, id: \.self) { tab in
-                                LazyView(tab.view)
-                                    .tabItem { }
-                                    .tag(tab)
-                            }
-                        }
-                        .tabViewStyle(.page(indexDisplayMode: .never))
-                        .animation(.easeInOut, value: selection)
-                        .ignoresSafeArea(edges: .bottom)
                     }
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .padding(.horizontal, 20)
+                    
+                    TabView(selection: $selection) {
+                        ForEach(SearchType.allCases, id: \.self) { tab in
+                            LazyView(tab.makeView(
+                                query: searchQuery,
+                                isShowAlert: $isShowAlert,
+                                isRefresh: $isRefresh
+                            ))
+                                .tabItem { }
+                                .tag(tab)
+                        }
+                    }
+                    .tabViewStyle(.page(indexDisplayMode: .never))
+                    .animation(.easeInOut, value: selection)
+                    .ignoresSafeArea(edges: .bottom)
                 }
             } else {
                 List {
