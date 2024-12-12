@@ -8,15 +8,6 @@
 import Foundation
 import Combine
 
-enum UsedTo {
-    case nowPlaying
-    case upcoming
-    case recommend
-    case similar(_ movieId: Int)
-    case searchMovie(_ query: String)
-    case searchPerson(_ query: String)
-}
-
 final class MultiListViewModel: BaseObject, ViewModelType {
     private let multiListService: MultiListService
     private let networkMonitor: NetworkMonitor
