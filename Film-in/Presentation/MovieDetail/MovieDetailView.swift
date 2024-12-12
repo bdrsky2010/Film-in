@@ -48,7 +48,7 @@ struct MovieDetailView: View {
         .task {
             viewModel.action(.viewOnTask)
         }
-        .padding()
+        .ignoresSafeArea(.all, edges: .bottom)
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
         .background(.background)
         .toolbar(.hidden, for: .tabBar)
@@ -83,6 +83,7 @@ struct MovieDetailView: View {
                 posterSection()
                 videoSection()
             }
+            .padding(.bottom, 28)
         }
         .scrollIndicators(.hidden)
     }
@@ -102,30 +103,33 @@ struct MovieDetailView: View {
     
     @ViewBuilder
     private func keyInfoSection() -> some View {
-        HStack(alignment: .lastTextBaseline) {
-            Text(viewModel.output.movieDetail.title)
-                .lineLimit(2)
-                .font(.ibmPlexMonoSemiBold(size: 26))
-                .foregroundStyle(.appText)
-            Spacer()
-            Image(systemName: "star.fill")
-                .resizable()
-                .frame(width: 30, height: 30)
-                .foregroundStyle(.yellow)
-            Text("\(String(format: "%.1f", viewModel.output.movieDetail.rating))")
-                .font(.system(size: 26))
-                .foregroundStyle(.appText)
+        VStack {
+            HStack(alignment: .lastTextBaseline) {
+                Text(viewModel.output.movieDetail.title)
+                    .lineLimit(2)
+                    .font(.ibmPlexMonoSemiBold(size: 26))
+                    .foregroundStyle(.appText)
+                Spacer()
+                Image(systemName: "star.fill")
+                    .resizable()
+                    .frame(width: 30, height: 30)
+                    .foregroundStyle(.yellow)
+                Text("\(String(format: "%.1f", viewModel.output.movieDetail.rating))")
+                    .font(.system(size: 26))
+                    .foregroundStyle(.appText)
+            }
+            .frame(maxWidth: .infinity, alignment: .leading)
+            
+            HStack(alignment: .lastTextBaseline) {
+                Text(viewModel.output.movieDetail.releaseDate.replacingOccurrences(of: "-", with: "."))
+                Text("\(viewModel.output.movieDetail.runtime / 60)h \(viewModel.output.movieDetail.runtime % 60)m")
+                    .padding(.leading, 8)
+            }
+            .font(.ibmPlexMonoSemiBold(size: 16))
+            .foregroundStyle(.appText)
+            .frame(maxWidth: .infinity, alignment: .leading)
         }
-        .frame(maxWidth: .infinity, alignment: .leading)
-        
-        HStack(alignment: .lastTextBaseline) {
-            Text(viewModel.output.movieDetail.releaseDate.replacingOccurrences(of: "-", with: "."))
-            Text("\(viewModel.output.movieDetail.runtime / 60)h \(viewModel.output.movieDetail.runtime % 60)m")
-                .padding(.leading, 8)
-        }
-        .font(.ibmPlexMonoSemiBold(size: 16))
-        .foregroundStyle(.appText)
-        .frame(maxWidth: .infinity, alignment: .leading)
+        .padding(.horizontal)
     }
     
     @ViewBuilder
@@ -147,35 +151,40 @@ struct MovieDetailView: View {
                     .appButtonText()
             }
         }
+        .padding(.horizontal)
     }
     
     @ViewBuilder
     private func overviewSection() -> some View {
-        InfoHeader(titleKey: "overview")
-            .padding(.top, 4)
-        Text(viewModel.output.movieDetail.overview)
-            .font(.ibmPlexMonoMedium(size: 18))
-            .foregroundStyle(.appText)
-            .lineLimit(isFullOverview ? nil : 4)
-            .multilineTextAlignment(.leading)
-            .padding(4)
-        
-        Button {
-            isFullOverview.toggle()
-        } label: {
-            Image(systemName: isFullOverview ? "chevron.up" : "chevron.down")
-                .resizable()
-                .frame(width: 20, height: 12)
-                .foregroundStyle(.app)
+        VStack {
+            InfoHeader(titleKey: "overview")
+                .padding(.top, 4)
+            Text(viewModel.output.movieDetail.overview)
+                .font(.ibmPlexMonoMedium(size: 18))
+                .foregroundStyle(.appText)
+                .lineLimit(isFullOverview ? nil : 4)
+                .multilineTextAlignment(.leading)
+                .padding(4)
+            
+            Button {
+                isFullOverview.toggle()
+            } label: {
+                Image(systemName: isFullOverview ? "chevron.up" : "chevron.down")
+                    .resizable()
+                    .frame(width: 20, height: 12)
+                    .foregroundStyle(.app)
+            }
+            .padding()
         }
-        .padding()
+        .padding(.horizontal)
     }
     
     @ViewBuilder
     private func castcrewSection() -> some View {
         InfoHeader(titleKey: "castcrew")
+            .padding(.horizontal)
         ScrollView(.horizontal) {
-            LazyHStack(spacing: 12) {
+            LazyHStack {
                 ForEach(viewModel.output.creditInfo, id: \.id) { person in
                     NavigationLink {
                         LazyView(PersonDetailFactory.makeView(personId: person._id))
@@ -204,29 +213,34 @@ struct MovieDetailView: View {
                     }
                 }
             }
+            .padding(.horizontal)
         }
         .padding(.vertical, 8)
     }
     
     @ViewBuilder
     private func genreSection() -> some View {
-        InfoHeader(titleKey: "genre")
-        ScrollView(.horizontal) {
-            LazyHStack(spacing: 12) {
-                ForEach(viewModel.output.movieDetail.genres, id: \.id) { genre in
-                    Text("\(genre.name)")
-                        .font(.ibmPlexMonoMedium(size: 20))
-                        .foregroundStyle(.app)
-                        .padding(.horizontal)
-                        .padding(.vertical, 4)
-                        .overlay {
-                            Rectangle()
-                                .fill(Color(uiColor: .app).opacity(0.1))
-                        }
+        VStack {
+            InfoHeader(titleKey: "genre")
+                .padding(.horizontal)
+            ScrollView(.horizontal) {
+                LazyHStack(spacing: 12) {
+                    ForEach(viewModel.output.movieDetail.genres, id: \.id) { genre in
+                        Text("\(genre.name)")
+                            .font(.ibmPlexMonoMedium(size: 20))
+                            .foregroundStyle(.app)
+                            .padding(.horizontal)
+                            .padding(.vertical, 4)
+                            .overlay {
+                                Rectangle()
+                                    .fill(Color(uiColor: .app).opacity(0.2))
+                            }
+                    }
                 }
+                .padding(.horizontal)
             }
+            .padding(.vertical, 8)
         }
-        .padding(.vertical, 8)
     }
     
     @ViewBuilder
@@ -245,9 +259,10 @@ struct MovieDetailView: View {
                     .foregroundStyle(.app)
             }
         }
+        .padding(.horizontal)
         
         ScrollView(.horizontal) {
-            LazyHStack(spacing: 12) {
+            LazyHStack {
                 ForEach(viewModel.output.movieSimilars) { similar in
                     NavigationLink {
                         LazyView(
@@ -280,10 +295,10 @@ struct MovieDetailView: View {
                             title: similar.title,
                             isDownsampling: true
                         )
-                        .padding(.horizontal, 8)
                     }
                 }
             }
+            .padding(.horizontal)
         }
         .padding(.vertical, 8)
     }
@@ -291,8 +306,10 @@ struct MovieDetailView: View {
     @ViewBuilder
     private func backdropSection() -> some View {
         InfoHeader(titleKey: "backdrop")
+            .padding(.horizontal)
+        
         ScrollView(.horizontal) {
-            LazyHStack(spacing: 12) {
+            LazyHStack {
                 ForEach(viewModel.output.movieImages.backdrops) { backdrop in
                     let url = URL(string: ImageURL.tmdb(image: backdrop.path).urlString)
                     PosterImage(
@@ -304,9 +321,9 @@ struct MovieDetailView: View {
                         title: "",
                         isDownsampling: true
                     )
-                    .padding(.horizontal, 8)
                 }
             }
+            .padding(.horizontal)
         }
         .padding(.vertical, 8)
     }
@@ -314,8 +331,10 @@ struct MovieDetailView: View {
     @ViewBuilder
     private func posterSection() -> some View {
         InfoHeader(titleKey: "poster")
+            .padding(.horizontal)
+        
         ScrollView(.horizontal) {
-            LazyHStack(spacing: 12) {
+            LazyHStack {
                 ForEach(viewModel.output.movieImages.posters) { poster in
                     let url = URL(string: ImageURL.tmdb(image: poster.path).urlString)
                     PosterImage(
@@ -327,9 +346,9 @@ struct MovieDetailView: View {
                         title: "",
                         isDownsampling: true
                     )
-                    .padding(.horizontal, 8)
                 }
             }
+            .padding(.horizontal)
         }
         .padding(.vertical, 8)
     }
@@ -337,8 +356,10 @@ struct MovieDetailView: View {
     @ViewBuilder
     private func videoSection() -> some View {
         InfoHeader(titleKey: "video")
+            .padding(.horizontal)
+        
         ScrollView(.horizontal) {
-            LazyHStack(spacing: 12) {
+            LazyHStack {
                 ForEach(viewModel.output.movieVideos) { video in
                     let youTubePlayer = YouTubePlayer(source: .url(VideoURL.youtube(key: video.key).urlString))
                     YouTubePlayerView(youTubePlayer) { state in
@@ -355,9 +376,9 @@ struct MovieDetailView: View {
                         width: size.height * 0.4 * 1.778,
                         height: size.height * 0.4
                     )
-                    .padding(.horizontal, 8)
                 }
             }
+            .padding(.horizontal)
         }
     }
     
