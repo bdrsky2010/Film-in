@@ -12,7 +12,7 @@ struct MultiListView: View {
     
     @StateObject private var viewModel: MultiListViewModel
     
-    @State private var contentSize: CGSize = .zero
+    @State private var cellSize: CGSize = .zero
     @State private var posterSize: CGSize = .zero
     
     @Binding var isShowAlert: Bool
@@ -43,7 +43,7 @@ struct MultiListView: View {
                     contentSection()
                 }
                 .task {
-                    contentSize = CGSize(width: (proxy.size.width - (8 * 2)) / 3, height: (proxy.size.width - (8 * 2)) / 3 * 1.5)
+                    cellSize = CGSize(width: (proxy.size.width - (8 * 2)) / 3, height: (proxy.size.width - (8 * 2)) / 3 * 1.5)
                     posterSize = CGSize(width: proxy.size.width * 0.7, height: proxy.size.width * 0.7 * 1.5)
                 }
             }
@@ -89,7 +89,7 @@ struct MultiListView: View {
                     let url = URL(string: ImageURL.tmdb(image: movie.poster).urlString)
                     PosterImage(
                         url: url,
-                        size: contentSize,
+                        size: cellSize,
                         title: movie.title,
                         isDownsampling: true
                     )
