@@ -122,7 +122,7 @@ struct MultiListView: View {
                         .clipShape(Circle())
                         .grayscale(colorScheme == .dark ? 1 : 0)
                         
-                        Text("\(person.name)")
+                        Text(verbatim: "\(person.name)")
                             .font(.ibmPlexMonoRegular(size: 14))
                             .foregroundStyle(.appText)
                             .frame(width: 90)

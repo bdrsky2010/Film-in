@@ -21,7 +21,7 @@ struct PosterImage: View {
                 .resizable()
                 .setProcessor(DownsampleProcessor(pointSize: size))
                 .placeholder{
-                    Text(title)
+                    Text(verbatim: title)
                         .foregroundStyle(.appText)
                 }
                 .cacheOriginalImage()
@@ -34,7 +34,7 @@ struct PosterImage: View {
             KFImage(url)
                 .resizable()
                 .placeholder{
-                    Text(title)
+                    Text(verbatim: title)
                         .foregroundStyle(.appText)
                 }
                 .cacheOriginalImage()

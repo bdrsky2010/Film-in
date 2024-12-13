@@ -7,21 +7,15 @@
 
 import SwiftUI
 
-struct LaunchScreen: View {
-    var body: some View {
-        Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
-    }
-}
-
 struct WaveTransitionTextView: View {
     @State private var isVisible: Bool = false
-    let text: String = "Film-in"
+    private let text: String = "Film-in"
 
     var body: some View {
         HStack(spacing: 0) {
             ForEach(Array(text.enumerated()), id: \.offset) { index, letter in
-                Text(String(letter))
-                    .font(.ibmPlexMonoSemiBold(size: 50))
+                Text(verbatim: String(letter))
+                    .font(.ibmPlexMonoSemiBold(size: 60))
                     .foregroundStyle(.app)
                     .opacity(isVisible ? 1 : 0)
                     .offset(y: isVisible ? 0 : 30)
@@ -39,5 +33,5 @@ struct WaveTransitionTextView: View {
 }
 
 #Preview {
-    LaunchScreen()
+    WaveTransitionTextView()
 }

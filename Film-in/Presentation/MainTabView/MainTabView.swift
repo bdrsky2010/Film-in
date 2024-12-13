@@ -14,21 +14,21 @@ struct MainTabView: View {
                 .makeView()
                 .tabItem {
                     Image("home")
-                    Text("HOME")
+                    Text(verbatim: "HOME")
                 }
             
             SearchFactory
                 .makeView()
                 .tabItem {
                     Image("search")
-                    Text("SEARCH")
+                    Text(verbatim: "SEARCH")
                 }
             
             MyFactory
                 .makeView()
                 .tabItem {
                     Image("movie")
-                    Text("MY")
+                    Text(verbatim: "MY")
                 }
         }
         .tint(.app)

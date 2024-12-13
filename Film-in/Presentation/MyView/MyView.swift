@@ -66,7 +66,7 @@ struct MyView: View {
     
     @ViewBuilder
     private func wantSection(proxy: GeometryProxy) -> some View {
-        Text("WANT")
+        Text(verbatim: "WANT")
             .font(.ibmPlexMonoSemiBold(size: 24))
             .foregroundStyle(.appText)
             .frame(maxWidth: proxy.size.width, alignment: .leading)
@@ -90,7 +90,7 @@ struct MyView: View {
                         .frame(height: proxy.size.width * 0.56 * 0.2)
                 }
                 .overlay(alignment: .bottomLeading) {
-                    Text(movie.title)
+                    Text(verbatim: movie.title)
                         .foregroundStyle(.app)
                         .font(.ibmPlexMonoRegular(size: 16))
                         .lineLimit(2)
@@ -115,7 +115,7 @@ struct MyView: View {
     
     @ViewBuilder
     private func watchedSection(proxy: GeometryProxy) -> some View {
-        Text("WATCHED")
+        Text(verbatim: "WATCHED")
             .font(.ibmPlexMonoSemiBold(size: 24))
             .foregroundStyle(.appText)
             .frame(maxWidth: proxy.size.width, alignment: .leading)
@@ -139,7 +139,7 @@ struct MyView: View {
                         .frame(height: proxy.size.width * 0.56 * 0.2)
                 }
                 .overlay(alignment: .bottomLeading) {
-                    Text(movie.title)
+                    Text(verbatim: movie.title)
                         .foregroundStyle(.app)
                         .font(.ibmPlexMonoRegular(size: 16))
                         .lineLimit(2)

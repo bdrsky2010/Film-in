@@ -149,7 +149,7 @@ struct TransitionMovieDetailView: View {
     @ViewBuilder
     private func keyInfoSection() -> some View {
         HStack(alignment: .lastTextBaseline) {
-            Text(viewModel.output.movieDetail.title)
+            Text(verbatim: viewModel.output.movieDetail.title)
                 .lineLimit(2)
                 .font(.ibmPlexMonoSemiBold(size: 26))
                 .foregroundStyle(.appText)
@@ -158,15 +158,15 @@ struct TransitionMovieDetailView: View {
                 .resizable()
                 .frame(width: 30, height: 30)
                 .foregroundStyle(.yellow)
-            Text("\(String(format: "%.1f", viewModel.output.movieDetail.rating))")
+            Text(verbatim: "\(String(format: "%.1f", viewModel.output.movieDetail.rating))")
                 .font(.system(size: 26))
                 .foregroundStyle(.appText)
         }
         .frame(maxWidth: .infinity, alignment: .leading)
         
         HStack(alignment: .lastTextBaseline) {
-            Text(viewModel.output.movieDetail.releaseDate.replacingOccurrences(of: "-", with: "."))
-            Text("\(viewModel.output.movieDetail.runtime / 60)h \(viewModel.output.movieDetail.runtime % 60)m")
+            Text(verbatim: viewModel.output.movieDetail.releaseDate.replacingOccurrences(of: "-", with: "."))
+            Text(verbatim: "\(viewModel.output.movieDetail.runtime / 60)h \(viewModel.output.movieDetail.runtime % 60)m")
                 .padding(.leading, 8)
         }
         .font(.ibmPlexMonoSemiBold(size: 16))
@@ -181,7 +181,7 @@ struct TransitionMovieDetailView: View {
                 dateSetupType = .want
                 isDateSetup.toggle()
             } label: {
-                Text("WANT")
+                Text(verbatim: "WANT")
                     .appButtonText()
             }
             
@@ -189,7 +189,7 @@ struct TransitionMovieDetailView: View {
                 dateSetupType = .watched
                 isDateSetup.toggle()
             } label: {
-                Text("WATHCED")
+                Text(verbatim: "WATHCED")
                     .appButtonText()
             }
         }
@@ -199,7 +199,7 @@ struct TransitionMovieDetailView: View {
     private func overviewSection() -> some View {
         InfoHeader(titleKey: "overview")
             .padding(.top, 4)
-        Text(viewModel.output.movieDetail.overview)
+        Text(verbatim: viewModel.output.movieDetail.overview)
             .font(.ibmPlexMonoMedium(size: 18))
             .foregroundStyle(.appText)
             .lineLimit(isFullOverview ? nil : 4)
@@ -237,11 +237,11 @@ struct TransitionMovieDetailView: View {
                             .clipShape(Circle())
                             .grayscale(colorScheme == .dark ? 1 : 0)
                             
-                            Text("\(person.role.replacingOccurrences(of: " ", with: "\n"))")
+                            Text(verbatim: "\(person.role.replacingOccurrences(of: " ", with: "\n"))")
                                 .font(.ibmPlexMonoRegular(size: 14))
                                 .foregroundStyle(.appText)
                                 .frame(width: 90)
-                            Text("\(person.name)")
+                            Text(verbatim: "\(person.name)")
                                 .font(.ibmPlexMonoRegular(size: 14))
                                 .foregroundStyle(.appText)
                                 .frame(width: 90)
@@ -260,7 +260,7 @@ struct TransitionMovieDetailView: View {
         ScrollView(.horizontal) {
             LazyHStack(spacing: 12) {
                 ForEach(viewModel.output.movieDetail.genres, id: \.id) { genre in
-                    Text("\(genre.name)")
+                    Text(verbatim: "\(genre.name)")
                         .font(.ibmPlexMonoMedium(size: 20))
                         .foregroundStyle(.app)
                         .padding(.horizontal)
@@ -425,8 +425,3 @@ fileprivate struct InfoHeader: View {
             .frame(maxWidth: .infinity, alignment: .leading)
     }
 }
-
-//#Preview {
-//    @Namespace var namespace
-//    return TransitionMovieDetailView(offset: .constant(0), showDetailView: .constant(true), namespace: namespace, movie: .init(_id: 1022789, title: "인사이드 아웃 2", poster: "/x2BHx02jMbvpKjMvbf8XxJkYwHJ.jpg"), size: CGSize(width: 275.09999999999997, height: 412.65))
-//}

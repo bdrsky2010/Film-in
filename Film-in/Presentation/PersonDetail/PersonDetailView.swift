@@ -78,15 +78,15 @@ struct PersonDetailView: View {
     
     @ViewBuilder
     private func keyInfoSection() -> some View {
-        Text(viewModel.output.personDetail.name)
+        Text(verbatim: viewModel.output.personDetail.name)
             .font(.ibmPlexMonoSemiBold(size: 30))
             .foregroundStyle(.appText)
             .frame(maxWidth: .infinity, alignment: .leading)
         
         VStack {
-            Text(viewModel.output.personDetail.birthday)
+            Text(verbatim: viewModel.output.personDetail.birthday)
                 .frame(maxWidth: .infinity, alignment: .leading)
-            Text(viewModel.output.personDetail.placeOfBirth)
+            Text(verbatim: viewModel.output.personDetail.placeOfBirth)
                 .frame(maxWidth: .infinity, alignment: .leading)
         }
         .font(.ibmPlexMonoMedium(size: 18))

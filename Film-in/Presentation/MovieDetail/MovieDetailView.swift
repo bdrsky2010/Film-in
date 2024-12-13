@@ -105,7 +105,7 @@ struct MovieDetailView: View {
     private func keyInfoSection() -> some View {
         VStack {
             HStack(alignment: .lastTextBaseline) {
-                Text(viewModel.output.movieDetail.title)
+                Text(verbatim: viewModel.output.movieDetail.title)
                     .lineLimit(2)
                     .font(.ibmPlexMonoSemiBold(size: 26))
                     .foregroundStyle(.appText)
@@ -114,15 +114,15 @@ struct MovieDetailView: View {
                     .resizable()
                     .frame(width: 30, height: 30)
                     .foregroundStyle(.yellow)
-                Text("\(String(format: "%.1f", viewModel.output.movieDetail.rating))")
+                Text(verbatim: "\(String(format: "%.1f", viewModel.output.movieDetail.rating))")
                     .font(.system(size: 26))
                     .foregroundStyle(.appText)
             }
             .frame(maxWidth: .infinity, alignment: .leading)
             
             HStack(alignment: .lastTextBaseline) {
-                Text(viewModel.output.movieDetail.releaseDate.replacingOccurrences(of: "-", with: "."))
-                Text("\(viewModel.output.movieDetail.runtime / 60)h \(viewModel.output.movieDetail.runtime % 60)m")
+                Text(verbatim: viewModel.output.movieDetail.releaseDate.replacingOccurrences(of: "-", with: "."))
+                Text(verbatim: "\(viewModel.output.movieDetail.runtime / 60)h \(viewModel.output.movieDetail.runtime % 60)m")
                     .padding(.leading, 8)
             }
             .font(.ibmPlexMonoSemiBold(size: 16))
@@ -139,7 +139,7 @@ struct MovieDetailView: View {
                 dateSetupType = .want
                 isDateSetup.toggle()
             } label: {
-                Text("WANT")
+                Text(verbatim: "WANT")
                     .appButtonText()
             }
             
@@ -147,7 +147,7 @@ struct MovieDetailView: View {
                 dateSetupType = .watched
                 isDateSetup.toggle()
             } label: {
-                Text("WATHCED")
+                Text(verbatim: "WATHCED")
                     .appButtonText()
             }
         }
@@ -200,11 +200,11 @@ struct MovieDetailView: View {
                             .clipShape(Circle())
                             .grayscale(colorScheme == .dark ? 1 : 0)
                             
-                            Text("\(person.role.replacingOccurrences(of: " ", with: "\n"))")
+                            Text(verbatim: "\(person.role.replacingOccurrences(of: " ", with: "\n"))")
                                 .font(.ibmPlexMonoRegular(size: 14))
                                 .foregroundStyle(.appText)
                                 .frame(width: 90)
-                            Text("\(person.name)")
+                            Text(verbatim: "\(person.name)")
                                 .font(.ibmPlexMonoRegular(size: 14))
                                 .foregroundStyle(.appText)
                                 .frame(width: 90)
@@ -226,7 +226,7 @@ struct MovieDetailView: View {
             ScrollView(.horizontal) {
                 LazyHStack(spacing: 12) {
                     ForEach(viewModel.output.movieDetail.genres, id: \.id) { genre in
-                        Text("\(genre.name)")
+                        Text(verbatim: "\(genre.name)")
                             .font(.ibmPlexMonoMedium(size: 20))
                             .foregroundStyle(.app)
                             .padding(.horizontal)

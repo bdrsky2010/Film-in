@@ -63,7 +63,7 @@ struct HomeView: View {
     
     @ViewBuilder
     private func appTitleSection() -> some View {
-        Text("Film-in")
+        Text(verbatim: "Film-in")
             .font(.ibmPlexMonoSemiBold(size: 50))
             .foregroundStyle(.app)
             .frame(maxWidth: .infinity, alignment: .leading)
@@ -91,7 +91,7 @@ struct HomeView: View {
     
     @ViewBuilder
     private func nowPlayingSection() -> some View {
-        ListHeader(title: "nowPlaying", usedTo: .nowPlaying)
+        ListHeader(localizedTitle: "nowPlaying", usedTo: .nowPlaying)
         
         ScrollView(.horizontal, showsIndicators: false) {
             LazyHStack {
@@ -114,7 +114,7 @@ struct HomeView: View {
     
     @ViewBuilder
     private func upcomingSection() -> some View {
-        ListHeader(title: "upcoming", usedTo: .upcoming)
+        ListHeader(localizedTitle: "upcoming", usedTo: .upcoming)
         
         ScrollView(.horizontal, showsIndicators: false) {
             LazyHStack {
@@ -137,7 +137,7 @@ struct HomeView: View {
     
     @ViewBuilder
     private func recommendSection() -> some View {
-        ListHeader(title: "recommend", usedTo: .recommend)
+        ListHeader(localizedTitle: "recommend", usedTo: .recommend)
         
         ScrollView(.horizontal, showsIndicators: false) {
             LazyHStack {
@@ -170,12 +170,12 @@ struct HomeView: View {
 }
 
 fileprivate struct ListHeader: View {
-    let title: LocalizedStringKey
+    let localizedTitle: LocalizedStringKey
     let usedTo: UsedTo
     
     var body: some View {
         HStack(alignment: .lastTextBaseline) {
-            Text(title)
+            Text(localizedTitle)
                 .font(.ibmPlexMonoSemiBold(size: 24))
                 .foregroundStyle(.appText)
                 .frame(maxWidth: .infinity, alignment: .leading)
