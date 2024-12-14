@@ -273,7 +273,7 @@ struct SearchResultView: View {
 extension SearchResultView {
     private func deleteRecentQuery(at offsets: IndexSet) {
         guard let index = offsets.first else { return }
-        let key = recentQuery.sorted(by: { $0.key < $1.key })[index].key
+        let key = recentQuery.sorted(by: { $0.value > $1.value })[index].key
         recentQuery.removeValue(forKey: key)
     }
 }
