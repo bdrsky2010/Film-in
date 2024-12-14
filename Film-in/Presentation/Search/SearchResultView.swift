@@ -271,6 +271,17 @@ struct SearchResultView: View {
 }
 
 extension SearchResultView {
+    private func addRecentQuery() {
+        recentQuery[searchQuery] = Date()
+        if recentQuery.count > 10 {
+            while recentQuery.count > 10 {
+                if let key = recentQuery.sorted(by: { $0.value < $1.value }).first?.key {
+                    recentQuery.removeValue(forKey: key)
+                }
+            }
+        }
+    }
+    
     private func deleteRecentQuery(at offsets: IndexSet) {
         guard let index = offsets.first else { return }
         let key = recentQuery.sorted(by: { $0.value > $1.value })[index].key
