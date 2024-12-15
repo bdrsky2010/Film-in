@@ -47,17 +47,15 @@ extension HomeViewModel {
     
     func transform() {
         input.viewOnTask
-            .sink { [weak self] in
-                guard let self else { return }
-                fetchMovies()
+            .sink(with: self) { owner, _ in
+                owner.fetchMovies()
             }
             .store(in: &cancellable)
         
         input.refresh
-            .sink { [weak self] in
-                guard let self else { return }
-                loadData = [:]
-                fetchMovies()
+            .sink(with: self) { owner, _ in
+                owner.loadData = [:]
+                owner.fetchMovies()
             }
             .store(in: &cancellable)
     }
@@ -103,14 +101,13 @@ extension HomeViewModel {
         let publisher = homeService.fetchTrending(query: query)
         publisher
             .receive(on: DispatchQueue.main)
-            .sink { [weak self] result in
-                guard let self else { return }
+            .sink(with: self) { owner, result in
                 switch result {
                 case .success(let trending):
-                    output.trendingMovies = trending
-                    dataLoad(for: #function)
+                    owner.output.trendingMovies = trending
+                    owner.dataLoad(for: #function)
                 case .failure(_):
-                    errorHandling()
+                    owner.errorHandling()
                 }
             }
             .store(in: &cancellable)
@@ -125,14 +122,13 @@ extension HomeViewModel {
         let publisher = homeService.fetchNowPlaying(query: query)
         publisher
             .receive(on: DispatchQueue.main)
-            .sink { [weak self] result in
-                guard let self else { return }
+            .sink(with: self) { owner, result in
                 switch result {
                 case .success(let nowPlaying):
-                    output.nowPlayingMovies = nowPlaying
-                    dataLoad(for: #function)
+                    owner.output.nowPlayingMovies = nowPlaying
+                    owner.dataLoad(for: #function)
                 case .failure(_):
-                    errorHandling()
+                    owner.errorHandling()
                 }
             }
             .store(in: &cancellable)
@@ -147,14 +143,13 @@ extension HomeViewModel {
         let publisher = homeService.fetchUpcoming(query: query)
         publisher
             .receive(on: DispatchQueue.main)
-            .sink { [weak self] result in
-                guard let self else { return }
+            .sink(with: self) { owner, result in
                 switch result {
                 case .success(let upcoming):
-                    output.upcomingMovies = upcoming
-                    dataLoad(for: #function)
+                    owner.output.upcomingMovies = upcoming
+                    owner.dataLoad(for: #function)
                 case .failure(_):
-                    errorHandling()
+                    owner.errorHandling()
                 }
             }
             .store(in: &cancellable)
@@ -172,26 +167,25 @@ extension HomeViewModel {
         let publisher = homeService.fetchDiscover(query: query)
         publisher
             .receive(on: DispatchQueue.main)
-            .sink { [weak self] result in
-                guard let self else { return }
+            .sink(with: self) { owner, result in
                 switch result {
                 case .success(let recommend):
                     if isRecommend {
-                        output.recommendMovies = recommend
-                        dataLoad(for: #function)
+                        owner.output.recommendMovies = recommend
+                        owner.dataLoad(for: #function)
                     } else {
                         if let totalPage = recommend.totalPage {
-                            fetchRecommend(
+                            owner.fetchRecommend(
                                 isRecommend: true,
                                 recommendTotalPage: totalPage <= 500 ? totalPage : 500
                             )
                         } else {
-                            output.recommendMovies = recommend
-                            dataLoad(for: #function)
+                            owner.output.recommendMovies = recommend
+                            owner.dataLoad(for: #function)
                         }
                     }
                 case .failure(_):
-                    errorHandling()
+                    owner.errorHandling()
                 }
             }
             .store(in: &cancellable)
