@@ -10,22 +10,25 @@ import SwiftUI
 struct MainTabView: View {
     var body: some View {
         TabView {
-            HomeFactory.makeView()
+            HomeFactory
+                .makeView()
                 .tabItem {
                     Image("home")
-                    Text("HOME")
+                    Text(verbatim: "HOME")
                 }
             
-//            Text("done")
-//                .tabItem {
-//                    Image("search")
-//                    Text("SEARCH")
-//                }
+            SearchFactory
+                .makeView()
+                .tabItem {
+                    Image("search")
+                    Text(verbatim: "SEARCH")
+                }
             
-            MyFactory.makeView()
+            MyFactory
+                .makeView()
                 .tabItem {
                     Image("movie")
-                    Text("MY")
+                    Text(verbatim: "MY")
                 }
         }
         .tint(.app)

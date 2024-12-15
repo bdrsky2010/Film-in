@@ -7,16 +7,10 @@
 
 import Foundation
 
-struct MovieImageRequestDTO: Encodable {
+struct MovieImageRequestDTO: Encodable, RequestParametable {
     let imageLanguage: String
     
     enum CodingKeys: String, CodingKey {
         case imageLanguage = "include_image_language"
-    }
-}
-
-extension MovieImageRequestDTO {
-    var asParameters: [String: Any] {
-        return JSONEncoder.toDictionary(self)
     }
 }

@@ -9,16 +9,20 @@ import Foundation
 // Details, Credits, Similiar, Images, Videos
 protocol TMDBRepository: AnyObject {
     func movieGenreRequest(query: MovieGenreQuery) async -> Result<[MovieGenre], TMDBError>
-    func trendingRequest(query: TrendingQuery) async -> Result<HomeMovie, TMDBError>
+    func trendingMovieRequest(query: TrendingQuery) async -> Result<[MovieData], TMDBError>
     func nowPlayingRequest(query: HomeMovieQuery) async -> Result<HomeMovie, TMDBError>
     func upcomingRequest(query: HomeMovieQuery) async -> Result<HomeMovie, TMDBError>
     func discoverRequest(query: HomeMovieQuery) async -> Result<HomeMovie, TMDBError>
+    func searchMultiRequest(query: SearchQuery) async -> Result<[RelatedKeyword], TMDBError>
+    func searchMovieRequest(query: SearchMovieQuery) async -> Result<HomeMovie, TMDBError>
+    func searchPersonRequest(query: SearchPersonQuery) async -> Result<PagingPeople, TMDBError>
     func detailRequest(query: MovieDetailQuery) async -> Result<MovieInfo, TMDBError>
     func creditRequest(query: MovieCreditQuery) async -> Result<[CreditInfo], TMDBError>
     func similarRequest(query: MovieSimilarQuery) async -> Result<MovieSimilar, TMDBError>
     func similarRequest(query: MovieSimilarQuery) async -> Result<HomeMovie, TMDBError>
     func imagesRequest(query: MovieImagesQuery) async -> Result<MovieImages, TMDBError>
     func videosRequest(query: MovieVideosQuery) async -> Result<[MovieVideo], TMDBError>
+    func popularPeopleRequest(query: PopularQuery) async -> Result<[PopularPerson], TMDBError>
     func personDetailRequest(query: PersonQuery) async -> Result<PersonDetail, TMDBError>
     func personMovieRequest(query: PersonQuery) async -> Result<PersonMovie, TMDBError>
 }
@@ -43,9 +47,9 @@ final class DefaultTMDBRepository: TMDBRepository {
         }
     }
     
-    func trendingRequest(query: TrendingQuery) async -> Result<HomeMovie, TMDBError> {
+    func trendingMovieRequest(query: TrendingQuery) async -> Result<[MovieData], TMDBError> {
         let requestDTO = TrendingRequestDTO(language: query.language)
-        let result = await networkManager.request(.trending(requestDTO), of: TrendingResponseDTO.self)
+        let result = await networkManager.request(.trendingMovie(requestDTO), of: TrendingMovieResponseDTO.self)
         switch result {
         case .success(let success):
             return .success(success.toEntity())
@@ -101,6 +105,51 @@ final class DefaultTMDBRepository: TMDBRepository {
             .discover(requestDTO),
             of: DiscoverResponseDTO.self
         )
+        switch result {
+        case .success(let success):
+            return .success(success.toEntity())
+        case .failure(let failure):
+            return .failure(failure)
+        }
+    }
+    
+    func searchMultiRequest(query: SearchQuery) async -> Result<[RelatedKeyword], TMDBError> {
+        let requestDTO = SearchMultiRequestDTO(
+            query: query.query,
+            language: "longLanguageCode".localized
+        )
+        let result = await networkManager.request(.searchMulti(requestDTO), of: SearchMultiResponseDTO.self)
+        switch result {
+        case .success(let success):
+            return .success(success.toEntity())
+        case .failure(let failure):
+            return .failure(failure)
+        }
+    }
+    
+    func searchMovieRequest(query: SearchMovieQuery) async -> Result<HomeMovie, TMDBError> {
+        let requestDTO = SearchMovieRequestDTO(
+            query: query.query,
+            language: "longLanguageCode".localized,
+            page: query.page,
+            region: "regionCode".localized
+        )
+        let result = await networkManager.request(.searchMovie(requestDTO), of: SearchMovieResponseDTO.self)
+        switch result {
+        case .success(let success):
+            return .success(success.toEntity())
+        case .failure(let failure):
+            return .failure(failure)
+        }
+    }
+    
+    func searchPersonRequest(query: SearchPersonQuery) async -> Result<PagingPeople, TMDBError> {
+        let requestDTO = SearchPersonRequestDTO(
+            query: query.query,
+            language: "longLanguageCode".localized,
+            page: query.page
+        )
+        let result = await networkManager.request(.searchPerson(requestDTO), of: SearchPersonResposeDTO.self)
         switch result {
         case .success(let success):
             return .success(success.toEntity())
@@ -185,6 +234,17 @@ final class DefaultTMDBRepository: TMDBRepository {
             .movieVideo(requestDTO, movieId: query.movieId),
             of: MovieVideoResponseDTO.self
         )
+        switch result {
+        case .success(let success):
+            return .success(success.toEntity())
+        case .failure(let failure):
+            return .failure(failure)
+        }
+    }
+    
+    func popularPeopleRequest(query: PopularQuery) async -> Result<[PopularPerson], TMDBError> {
+        let requestDTO = PopularPeopleRequestDTO(language: query.language)
+        let result = await networkManager.request(.popularPeople(requestDTO), of: PopularPeopleResponseDTO.self)
         switch result {
         case .success(let success):
             return .success(success.toEntity())

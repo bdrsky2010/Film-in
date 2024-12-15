@@ -7,14 +7,8 @@
 
 import Foundation
 
-struct SearchPersonRequestDTO: Encodable {
+struct SearchPersonRequestDTO: Encodable, RequestParametable {
     let query: String
     let language: String
     let page: Int
-}
-
-extension SearchPersonRequestDTO {
-    var asParameters: [String: Any] {
-        return JSONEncoder.toDictionary(self)
-    }
 }

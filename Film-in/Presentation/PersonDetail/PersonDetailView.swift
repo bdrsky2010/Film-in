@@ -8,10 +8,13 @@
 import SwiftUI
 
 struct PersonDetailView: View {
-    private var gridItemLayout = [GridItem(.flexible()), GridItem(.flexible()), GridItem(.flexible())]
     @Environment(\.colorScheme) var colorScheme
+    
     @StateObject private var viewModel: PersonDetailViewModel
+    
     @State private var posterSize: CGSize = .zero
+    
+    private let gridItemLayout = [GridItem(.flexible()), GridItem(.flexible()), GridItem(.flexible())]
     
     init(viewModel: PersonDetailViewModel) {
         self._viewModel = StateObject(wrappedValue: viewModel)
@@ -75,15 +78,15 @@ struct PersonDetailView: View {
     
     @ViewBuilder
     private func keyInfoSection() -> some View {
-        Text(viewModel.output.personDetail.name)
+        Text(verbatim: viewModel.output.personDetail.name)
             .font(.ibmPlexMonoSemiBold(size: 30))
             .foregroundStyle(.appText)
             .frame(maxWidth: .infinity, alignment: .leading)
         
         VStack {
-            Text(viewModel.output.personDetail.birthday)
+            Text(verbatim: viewModel.output.personDetail.birthday)
                 .frame(maxWidth: .infinity, alignment: .leading)
-            Text(viewModel.output.personDetail.placeOfBirth)
+            Text(verbatim: viewModel.output.personDetail.placeOfBirth)
                 .frame(maxWidth: .infinity, alignment: .leading)
         }
         .font(.ibmPlexMonoMedium(size: 18))
@@ -94,7 +97,7 @@ struct PersonDetailView: View {
     private func filmographySection(size: CGSize) -> some View {
         InfoHeader(titleKey: "filmography")
             .padding(.vertical)
-        LazyVGrid(columns: gridItemLayout, spacing: 8) {
+        LazyVGrid(columns: gridItemLayout) {
             ForEach(viewModel.output.personMovie.movies, id: \.id) { movie in
                 NavigationLink {
                     LazyView(MovieDetailFactory.makeView(movie: movie, posterSize: posterSize))
@@ -106,8 +109,6 @@ struct PersonDetailView: View {
                         title: movie.title,
                         isDownsampling: true
                     )
-                    .padding(.bottom, 4)
-                    .padding(.horizontal, 8)
                 }
             }
         }

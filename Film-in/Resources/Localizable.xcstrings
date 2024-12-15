@@ -4,22 +4,6 @@
     "" : {
 
     },
-    "%@" : {
-
-    },
-    "%lld" : {
-
-    },
-    "%lldh %lldm" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "%1$lldh %2$lldm"
-          }
-        }
-      }
-    },
     "apiRequestError" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -37,7 +21,7 @@
         },
         "ko" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "네트워크 에러 발생"
           }
         }
@@ -146,13 +130,13 @@
         },
         "ja" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "削除しますか？"
           }
         },
         "ko" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "삭제하시겠습니까?"
           }
         }
@@ -180,9 +164,6 @@
           }
         }
       }
-    },
-    "Film-in" : {
-
     },
     "filmography" : {
       "extractionState" : "manual",
@@ -241,7 +222,7 @@
         },
         "ja" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "好きな ジャンルを お選びください"
           }
         },
@@ -252,9 +233,6 @@
           }
         }
       }
-    },
-    "HOME" : {
-
     },
     "inquiry" : {
       "extractionState" : "manual",
@@ -348,9 +326,6 @@
         }
       }
     },
-    "MY" : {
-
-    },
     "notConnectInternet" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -368,7 +343,7 @@
         },
         "ko" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "연결된 인터넷이 없습니다."
           }
         }
@@ -650,6 +625,29 @@
         }
       }
     },
+    "searchPlaceholder" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Movie, Actor..."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "映画、俳優···"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "영화, 배우..."
+          }
+        }
+      }
+    },
     "shortLanguageCode" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -764,15 +762,6 @@
           }
         }
       }
-    },
-    "WANT" : {
-
-    },
-    "WATCHED" : {
-
-    },
-    "WATHCED" : {
-
     }
   },
   "version" : "1.0"

@@ -7,13 +7,7 @@
 
 import Foundation
 
-struct MovieSimilarRequestDTO: Encodable {
+struct MovieSimilarRequestDTO: Encodable, RequestParametable {
     let language: String
     let page: Int
-}
-
-extension MovieSimilarRequestDTO {
-    var asParameters: [String: Any] {
-        return JSONEncoder.toDictionary(self)
-    }
 }
