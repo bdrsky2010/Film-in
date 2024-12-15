@@ -48,9 +48,8 @@ extension MovieDetailViewModel {
     
     func transform() {
         input.viewOnTask
-            .sink { [weak self] in
-                guard let self else { return }
-                fetchMovieInfo()
+            .sink(with: self) { owner, _ in
+                owner.fetchMovieInfo()
             }
             .store(in: &cancellable)
     }
@@ -92,13 +91,13 @@ extension MovieDetailViewModel {
         let publisher = movieDetailService.fetchMovieDetail(query: query)
         publisher
             .receive(on: DispatchQueue.main)
-            .sink { [weak self] result in
-                guard let self else { return }
+            .sink(with: self) { owner, result in
                 switch result {
                 case .success(let movieInfo):
-                    output.movieDetail = movieInfo
-                case .failure(_):
-                    if !output.isShowAlert { output.isShowAlert = true }
+                    owner.output.movieDetail = movieInfo
+                case .failure(let error):
+                    owner.errorHandling()
+                    print(#function, error)
                 }
             }
             .store(in: &cancellable)
@@ -109,13 +108,13 @@ extension MovieDetailViewModel {
         let publisher = movieDetailService.fetchMovieCredit(query: query)
         publisher
             .receive(on: DispatchQueue.main)
-            .sink { [weak self] result in
-                guard let self else { return }
+            .sink(with: self) { owner, result in
                 switch result {
                 case .success(let creditInfo):
-                    output.creditInfo = creditInfo
-                case .failure(_):
-                    if !output.isShowAlert { output.isShowAlert = true }
+                    owner.output.creditInfo = creditInfo
+                case .failure(let error):
+                    owner.errorHandling()
+                    print(#function, error)
                 }
             }
             .store(in: &cancellable)
@@ -133,20 +132,20 @@ extension MovieDetailViewModel {
         let publisher = movieDetailService.fetchMovieSimilar(query: query)
         publisher
             .receive(on: DispatchQueue.main)
-            .sink { [weak self] result in
-                guard let self else { return }
+            .sink(with: self) { owner, result in
                 switch result {
                 case .success(let similar):
                     if isRandomed {
-                        output.movieSimilars = similar.movies
+                        owner.output.movieSimilars = similar.movies
                     } else {
-                        fetchSimilar(
+                        owner.fetchSimilar(
                             isRandomed: true,
                             totalPage: similar.totalPage <= 500 ? totalPage : 500
                         )
                     }
-                case .failure(_):
-                    if !output.isShowAlert { output.isShowAlert = true }
+                case .failure(let error):
+                    owner.errorHandling()
+                    print(#function, error)
                 }
             }
             .store(in: &cancellable)
@@ -157,13 +156,13 @@ extension MovieDetailViewModel {
         let publisher = movieDetailService.fetchMovieImages(query: query)
         publisher
             .receive(on: DispatchQueue.main)
-            .sink { [weak self] result in
-                guard let self else { return }
+            .sink(with: self) { owner, result in
                 switch result {
                 case .success(let images):
-                    output.movieImages = images
-                case .failure(_):
-                    if !output.isShowAlert { output.isShowAlert = true }
+                    owner.output.movieImages = images
+                case .failure(let error):
+                    owner.errorHandling()
+                    print(#function, error)
                 }
             }
             .store(in: &cancellable)
@@ -174,15 +173,21 @@ extension MovieDetailViewModel {
         let publisher = movieDetailService.fetchMovieVideos(query: query)
         publisher
             .receive(on: DispatchQueue.main)
-            .sink { [weak self] result in
-                guard let self else { return }
+            .sink(with: self) { owner, result in
                 switch result {
                 case .success(let videos):
-                    output.movieVideos = videos
-                case .failure(_):
-                    if !output.isShowAlert { output.isShowAlert = true }
+                    owner.output.movieVideos = videos
+                case .failure(let error):
+                    owner.errorHandling()
+                    print(#function, error)
                 }
             }
             .store(in: &cancellable)
+    }
+}
+
+extension MovieDetailViewModel {
+    private func errorHandling() {
+        if !output.isShowAlert { output.isShowAlert = true }
     }
 }

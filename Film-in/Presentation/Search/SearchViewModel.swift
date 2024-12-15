@@ -45,17 +45,15 @@ extension SearchViewModel {
     
     func transform() {
         input.viewOnTask
-            .sink { [weak self] in
-                guard let self else { return }
-                fetchData()
+            .sink(with: self) { owner, _ in
+                owner.fetchData()
             }
             .store(in: &cancellable)
         
         input.refresh
-            .sink { [weak self] in
-                guard let self else { return }
-                loadData = [:]
-                fetchData()
+            .sink(with: self) { owner, _ in
+                owner.loadData = [:]
+                owner.fetchData()
             }
             .store(in: &cancellable)
     }
@@ -96,15 +94,14 @@ extension SearchViewModel {
         let publisher = searchSerivce.fetchTrendingMovie(query: query)
         publisher
             .receive(on: DispatchQueue.main)
-            .sink { [weak self] result in
-                guard let self else { return }
+            .sink(with: self) { owner, result in
                 switch result {
                 case .success(let movie):
-                    output.trendingMovie = movie
-                    dataLoad(for: #function)
+                    owner.output.trendingMovie = movie
+                    owner.dataLoad(for: #function)
                 case .failure(let error):
+                    owner.errorHandling()
                     print(error)
-                    errorHandling()
                 }
             }
             .store(in: &cancellable)
@@ -115,15 +112,14 @@ extension SearchViewModel {
         let publisher = searchSerivce.fetchPopularPeople(query: query)
         publisher
             .receive(on: DispatchQueue.main)
-            .sink { [weak self] result in
-                guard let self else { return }
+            .sink(with: self) { owner, result in
                 switch result {
                 case .success(let people):
-                    output.popularPeople = people
-                    dataLoad(for: #function)
+                    owner.output.popularPeople = people
+                    owner.dataLoad(for: #function)
                 case .failure(let error):
+                    owner.errorHandling()
                     print(error)
-                    errorHandling()
                 }
             }
             .store(in: &cancellable)
@@ -132,9 +128,7 @@ extension SearchViewModel {
 
 extension SearchViewModel {
     private func errorHandling() {
-        if !output.isShowAlert {
-            output.isShowAlert = true
-        }
+        if !output.isShowAlert { output.isShowAlert = true }
     }
     
     private func dataLoad(for key: String) {
