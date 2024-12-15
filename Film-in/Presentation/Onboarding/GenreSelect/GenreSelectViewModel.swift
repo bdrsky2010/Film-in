@@ -47,17 +47,15 @@ extension GenreSelectViewModel {
     
     func transform() {
         input.viewOnTask
-            .sink { [weak self] in
-                guard let self else { return }
-                fetchGenres()
+            .sink(with: self) { owner, _ in
+                owner.fetchGenres()
             }
             .store(in: &cancellable)
         
         input.changedGenres
-            .sink { [weak self] in
-                guard let self else { return }
-                output.selectedGenreRows = GenreHandler.getRows(
-                    genres: output.selectedGenres,
+            .sink(with: self) { owner, _ in
+                owner.output.selectedGenreRows = GenreHandler.getRows(
+                    genres: owner.output.selectedGenres,
                     spacing: 40,
                     fontSize: 16,
                     windowWidth: GenreHandler.windowWidth)
@@ -65,28 +63,24 @@ extension GenreSelectViewModel {
             .store(in: &cancellable)
         
         input.addGenre
-            .sink { [weak self] genre in
-                guard let self else { return }
-                
-                if output.selectedGenres.contains(genre) {
-                    output.selectedGenres.remove(genre)
+            .sink(with: self) { owner, genre in
+                if owner.output.selectedGenres.contains(genre) {
+                    owner.output.selectedGenres.remove(genre)
                 } else {
-                    output.selectedGenres.insert(genre)
+                    owner.output.selectedGenres.insert(genre)
                 }
             }
             .store(in: &cancellable)
         
         input.removeGenre
-            .sink { [weak self] genre in
-                guard let self else { return }
-                output.selectedGenres.remove(genre)
+            .sink(with: self) { owner, genre in
+                owner.output.selectedGenres.remove(genre)
             }
             .store(in: &cancellable)
         
         input.createUser
-            .sink { [weak self] _ in
-                guard let self else { return }
-                genreSelectService.createUser(genres: output.selectedGenres)
+            .sink(with: self) { owner, _ in
+                owner.genreSelectService.createUser(genres: owner.output.selectedGenres)
             }
             .store(in: &cancellable)
     }
@@ -101,13 +95,13 @@ extension GenreSelectViewModel {
         let publisher = genreSelectService.fetchGenres(query: query)
         publisher
             .receive(on: DispatchQueue.main)
-            .sink { [weak self] result in
-                guard let self else { return }
+            .sink(with: self) { owner, result in
                 switch result {
                 case .success(let genres):
-                    output.genres = genres
-                case .failure(_):
-                    output.isShowAlert = true
+                    owner.output.genres = genres
+                case .failure(let error):
+                    owner.output.isShowAlert = true
+                    print(error)
                 }
             }
             .store(in: &cancellable)
