@@ -10,12 +10,12 @@ import Combine
 import RealmSwift
 
 protocol MyViewService: AnyObject {
-    func requestDeleteMovie(movieId: Int) -> Future<Void, Never>
+    func requestDeleteMovie(movieId: Int) -> AnyPublisher<Void, Never>
     func generateDays(for date: Date) -> [Day]
     func changeMonth(by value: Int, for currentDate: Date) -> Date
     func changeYearMonth(by value: (year: Int, month: Int), for currentDate: Date) -> Date
     func currentMonthYearString(for currentDate: Date) -> String
-    func generateLocalizedYears(from pastYear: Int, to futureYear: Int) -> Future<[Int: String], Never>
+    func generateLocalizedYears(from pastYear: Int, to futureYear: Int) -> AnyPublisher<[Int: String], Never>
     func generateLocalizedMonths() -> [Int: String]
     func judgedIsEnglish() -> Bool
 }
@@ -37,7 +37,7 @@ final class DefaultMyViewService: BaseObject {
 }
 
 extension DefaultMyViewService: MyViewService {
-    func requestDeleteMovie(movieId: Int) -> Future<Void, Never> {
+    func requestDeleteMovie(movieId: Int) -> AnyPublisher<Void, Never> {
         databaseRepository.deleteMovie(movieId: movieId)
         
         return Future { promise in
@@ -47,6 +47,7 @@ extension DefaultMyViewService: MyViewService {
                 promise(.success(()))
             }
         }
+        .eraseToAnyPublisher()
     }
     
     private func removePendingNotification(movieId: Int) async {
@@ -100,7 +101,7 @@ extension DefaultMyViewService: MyViewService {
         return calendarManager.currentMonthYearString(for: currentDate)
     }
     
-    func generateLocalizedYears(from pastYear: Int, to futureYear: Int) -> Future<[Int : String], Never> {
+    func generateLocalizedYears(from pastYear: Int, to futureYear: Int) -> AnyPublisher<[Int : String], Never> {
         return Future { promise in
             Task { [weak self] in
                 guard let self else { return }
@@ -108,6 +109,7 @@ extension DefaultMyViewService: MyViewService {
                 promise(.success(localizedYears))
             }
         }
+        .eraseToAnyPublisher()
     }
     
     func generateLocalizedMonths() -> [Int: String] {
