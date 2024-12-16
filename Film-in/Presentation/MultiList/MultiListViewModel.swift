@@ -53,9 +53,8 @@ extension MultiListViewModel {
     
     func transform() {
         input.viewOnTask
-            .sink { [weak self] in
-                guard let self else { return }
-                firstFetch()
+            .sink(with: self) { owner, _ in
+                owner.firstFetch()
             }
             .store(in: &cancellable)
         
@@ -71,9 +70,8 @@ extension MultiListViewModel {
             .store(in: &cancellable)
         
         input.nextPage
-            .sink { [weak self] in
-                guard let self else { return }
-                nextFetch()
+            .sink(with: self) { owner, _ in
+                owner.nextFetch()
             }
             .store(in: &cancellable)
     }
@@ -151,9 +149,8 @@ extension MultiListViewModel {
         
         publisher
             .receive(on: DispatchQueue.main)
-            .sink { [weak self] result in
-                guard let self else { return }
-                resultHandler(result, page: page)
+            .sink(with: self) { owner, result in
+                owner.resultHandler(result, page: page)
             }
             .store(in: &cancellable)
     }
@@ -168,9 +165,8 @@ extension MultiListViewModel {
         
         publisher
             .receive(on: DispatchQueue.main)
-            .sink { [weak self] result in
-                guard let self else { return }
-                resultHandler(result, page: page)
+            .sink(with: self) { owner, result in
+                owner.resultHandler(result, page: page)
             }
             .store(in: &cancellable)
     }
@@ -185,9 +181,8 @@ extension MultiListViewModel {
         
         publisher
             .receive(on: DispatchQueue.main)
-            .sink { [weak self] result in
-                guard let self else { return }
-                resultHandler(result, page: page)
+            .sink(with: self) { owner, result in
+                owner.resultHandler(result, page: page)
             }
             .store(in: &cancellable)
     }
@@ -202,9 +197,8 @@ extension MultiListViewModel {
         
         publisher
             .receive(on: DispatchQueue.main)
-            .sink { [weak self] result in
-                guard let self else { return }
-                resultHandler(result, page: page)
+            .sink(with: self) { owner, result in
+                owner.resultHandler(result, page: page)
             }
             .store(in: &cancellable)
     }

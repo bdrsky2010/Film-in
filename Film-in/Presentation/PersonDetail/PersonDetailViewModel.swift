@@ -45,9 +45,8 @@ extension PersonDetailViewModel {
     
     func transform() {
         input.viewOnTask
-            .sink { [weak self] in
-                guard let self else { return }
-                fetchPersonInfo()
+            .sink(with: self) { owner, _ in
+                owner.fetchPersonInfo()
             }
             .store(in: &cancellable)
     }
@@ -86,13 +85,13 @@ extension PersonDetailViewModel {
         let publisher = personDetailService.fetchPersonDetail(query: query)
         publisher
             .receive(on: DispatchQueue.main)
-            .sink { [weak self] result in
-                guard let self else { return }
+            .sink(with: self) { owner, result in
                 switch result {
                 case .success(let personDetail):
-                    output.personDetail = personDetail
-                case .failure(_):
-                    if !output.isShowAlert { output.isShowAlert = true }
+                    owner.output.personDetail = personDetail
+                case .failure(let error):
+                    owner.errorHandling()
+                    print(error)
                 }
             }
             .store(in: &cancellable)
@@ -103,15 +102,21 @@ extension PersonDetailViewModel {
         let publisher = personDetailService.fetchPersonMovie(query: query)
         publisher
             .receive(on: DispatchQueue.main)
-            .sink { [weak self] result in
-                guard let self else { return }
+            .sink(with: self) { owner, result in
                 switch result {
                 case .success(let personMovie):
-                    output.personMovie = personMovie
-                case .failure(_):
-                    if !output.isShowAlert { output.isShowAlert = true }
+                    owner.output.personMovie = personMovie
+                case .failure(let error):
+                    owner.errorHandling()
+                    print(error)
                 }
             }
             .store(in: &cancellable)
+    }
+}
+
+extension PersonDetailViewModel {
+    private func errorHandling() {
+        if !output.isShowAlert { output.isShowAlert = true }
     }
 }
