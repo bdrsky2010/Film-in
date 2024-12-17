@@ -14,10 +14,10 @@ final class HomeViewModel: BaseObject, ViewModelType {
     
     private var loadData: [String : Bool] = [:]
     
-    @Published var output = Output()
-    
-    var input = Input()
-    var cancellable = Set<AnyCancellable>()
+    @Published private(set) var output = Output()
+
+    private(set) var input = Input()
+    private(set) var cancellable = Set<AnyCancellable>()
     
     init(
         homeService: HomeService,
@@ -34,6 +34,7 @@ extension HomeViewModel {
     struct Input {
         let viewOnTask = PassthroughSubject<Void, Never>()
         let refresh = PassthroughSubject<Void, Never>()
+        let onDismissAlert = PassthroughSubject<Void, Never>()
     }
     
     struct Output {
@@ -58,6 +59,12 @@ extension HomeViewModel {
                 owner.fetchMovies()
             }
             .store(in: &cancellable)
+        
+        input.onDismissAlert
+            .sink(with: self) { owner, _ in
+                owner.output.isShowAlert = false
+            }
+            .store(in: &cancellable)
     }
 }
 
@@ -65,6 +72,7 @@ extension HomeViewModel {
     enum Action {
         case viewOnTask
         case refresh
+        case onDismissAlert
     }
     
     func action(_ action: Action) {
@@ -73,6 +81,8 @@ extension HomeViewModel {
             input.viewOnTask.send(())
         case .refresh:
             input.refresh.send(())
+        case .onDismissAlert:
+            input.onDismissAlert.send(())
         }
     }
 }
@@ -184,8 +194,9 @@ extension HomeViewModel {
                             owner.dataLoad(for: #function)
                         }
                     }
-                case .failure(_):
+                case .failure(let error):
                     owner.errorHandling()
+                    print(#function, error)
                 }
             }
             .store(in: &cancellable)

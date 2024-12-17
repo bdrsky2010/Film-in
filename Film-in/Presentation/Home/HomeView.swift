@@ -49,12 +49,19 @@ struct HomeView: View {
                         detailView(by: movie)
                     }
                 }
-                .task {
-                    withAnimation {
-                        viewModel.action(.viewOnTask)
-                    }
-                }
-                .apiRequestErrorAlert(isPresented: $viewModel.output.isShowAlert) {
+                .task { viewModel.action(.viewOnTask) }
+                .popupAlert(
+                    isPresented: Binding(
+                        get: { viewModel.output.isShowAlert },
+                        set: { _ in viewModel.action(.onDismissAlert) }
+                    ),
+                    contentModel: .init(
+                        systemImage: "wifi.exclamationmark",
+                        phrase: "apiRequestError",
+                        normal: "refresh"
+                    ),
+                    heightType: .middle
+                ) {
                     viewModel.action(.refresh)
                 }
             }
