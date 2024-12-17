@@ -13,6 +13,7 @@ struct HomeView: View {
     @State private var index = 0
     @State private var showDetailView = false
     @State private var movie: MovieData?
+    @State private var cellSize: CGSize = .zero
     @State private var posterSize: CGSize = .zero
     
     init(viewModel: HomeViewModel) {
@@ -40,7 +41,16 @@ struct HomeView: View {
                         }
                     }
                     .task {
-                        posterSize = CGSize(width: proxy.size.width * 0.7, height: proxy.size.width * 0.7 * 1.5)
+                        if posterSize == .zero {
+                            posterSize = CGSize(width: proxy.size.width * 0.7, height: proxy.size.width * 0.7 * 1.5)
+                        }
+                        
+                        if cellSize == .zero {
+                            cellSize = CGSize(
+                                width: posterSize.width * 0.5,
+                                height: posterSize.height * 0.5
+                            )
+                        }
                     }
                 }
                 .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
