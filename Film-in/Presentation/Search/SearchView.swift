@@ -18,6 +18,7 @@ struct SearchView: View {
     
     @FocusState private var focusedField: FocusField?
     
+    @State private var visibility: Visibility = .visible
     @State private var cellSize: CGSize = .zero
     @State private var posterSize: CGSize = .zero
     @State private var isShowSearch = false
@@ -32,13 +33,15 @@ struct SearchView: View {
     }
         
     var body: some View {
-        NavigationStack { 
+        NavigationStack {
             if !viewModel.output.networkConnect {
                 UnnetworkedView(refreshAction: viewModel.action(.refresh))
             } else {
                 contentSection()
             }
         }
+        .toolbar(visibility, for: .tabBar)
+        .animation(.easeInOut, value: visibility)
         .task {
             viewModel.action(.viewOnTask)
         }
@@ -169,6 +172,13 @@ struct SearchView: View {
         ForEach(viewModel.output.trendingMovie, id: \.id) { movie in
             NavigationLink {
                 LazyView(MovieDetailFactory.makeView(movie: movie, posterSize: posterSize))
+                    .onAppear {
+                        if visibility == .visible { visibility = .hidden }
+                    }
+                    .onDisappear {
+                        if visibility == .hidden { visibility = .visible }
+                    }
+                
             } label: {
                 let url = URL(string: ImageURL.tmdb(image: movie.poster).urlString)
                 PosterImage(
@@ -186,6 +196,13 @@ struct SearchView: View {
         ForEach(viewModel.output.popularPeople, id: \.id) { person in
             NavigationLink {
                 LazyView(PersonDetailFactory.makeView(personId: person._id))
+                    .onAppear {
+                        if visibility == .visible { visibility = .hidden }
+                    }
+                    .onDisappear {
+                        if visibility == .hidden { visibility = .visible }
+                    }
+                
             } label: {
                 VStack {
                     let url = URL(string: ImageURL.tmdb(image: person.profilePath).urlString)
@@ -203,6 +220,7 @@ struct SearchView: View {
                         .foregroundStyle(.appText)
                         .frame(width: 90)
                 }
+                .frame(maxHeight: .infinity, alignment: .top)
                 .padding(.horizontal, 4)
             }
         }
