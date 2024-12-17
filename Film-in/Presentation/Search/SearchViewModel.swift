@@ -14,10 +14,10 @@ final class SearchViewModel: BaseObject, ViewModelType {
     
     private var loadData: [String : Bool] = [:]
     
-    @Published var output = Output()
-    
-    var input = Input()
-    var cancellable = Set<AnyCancellable>()
+    @Published private(set) var output = Output()
+
+    private(set) var input = Input()
+    private(set) var cancellable = Set<AnyCancellable>()
     
     init(
         searchSerivce: SearchService,
@@ -34,6 +34,7 @@ extension SearchViewModel {
     struct Input {
         let viewOnTask = PassthroughSubject<Void, Never>()
         let refresh = PassthroughSubject<Void, Never>()
+        let onDismissAlert = PassthroughSubject<Void, Never>()
     }
     
     struct Output {
@@ -56,6 +57,12 @@ extension SearchViewModel {
                 owner.fetchData()
             }
             .store(in: &cancellable)
+        
+        input.onDismissAlert
+            .sink(with: self) { owner, _ in
+                owner.output.isShowAlert = false
+            }
+            .store(in: &cancellable)
     }
 }
 
@@ -63,6 +70,7 @@ extension SearchViewModel {
     enum Action {
         case viewOnTask
         case refresh
+        case onDismissAlert
     }
     
     func action(_ action: Action) {
@@ -71,6 +79,8 @@ extension SearchViewModel {
             input.viewOnTask.send(())
         case .refresh:
             input.refresh.send(())
+        case .onDismissAlert:
+            input.onDismissAlert.send(())
         }
     }
 }

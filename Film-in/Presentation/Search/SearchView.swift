@@ -70,7 +70,10 @@ struct SearchView: View {
             }
         }
         .popupAlert(
-            isPresented: $viewModel.output.isShowAlert,
+            isPresented: Binding(
+                get: { viewModel.output.isShowAlert },
+                set: { _ in viewModel.action(.onDismissAlert) }
+            ),
             contentModel: .init(
                 systemImage: "wifi.exclamationmark",
                 phrase: "apiRequestError",
