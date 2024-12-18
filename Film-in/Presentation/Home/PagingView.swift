@@ -1,11 +1,12 @@
 //
-//  CustomPagingView.swift
+//  PagingView.swift
 //  Film-in
 //
 //  Created by Minjae Kim on 12/17/24.
 //
 
 import SwiftUI
+import Kingfisher
 
 struct Temp: Hashable, Identifiable {
     let id = UUID()
@@ -14,35 +15,55 @@ struct Temp: Hashable, Identifiable {
 
 struct CustomPagingView: View {
     @State private var index = 0
-    @State private var selectedItem: Temp?
+    @State private var posterSize: CGSize = .zero
+    @State private var cellSize: CGSize = .zero
     
     var body: some View {
         NavigationStack {
-            PagingCollectionView(currentIndex: $index, items: (0..<10).map { Temp(data: $0) }) { item in
-                selectedItem = item
-            } content: { item in
-                switch item.data {
-                case 0: Rectangle().foregroundStyle(.red)
-                case 1: Rectangle().foregroundStyle(.blue)
-                case 2: Rectangle().foregroundStyle(.green)
-                case 3: Rectangle().foregroundStyle(.yellow)
-                case 4: Rectangle().foregroundStyle(.cyan)
-                default: Rectangle().foregroundStyle(.brown)
+            GeometryReader { proxy in
+                ScrollView {
+                    VStack {
+                        PagingView(currentIndex: $index, items: (0..<10).map { Temp(data: $0) }) { item in
+                            NavigationLink {
+                                EmptyView()
+                            } label: {
+                                switch item.data {
+                                case 0:
+                                    let url = URL(string: ImageURL.tmdb(image: "/x2BHx02jMbvpKjMvbf8XxJkYwHJ.jpg").urlString)
+                                    PosterImage(url: url, size: posterSize, title: "", isDownsampling: true)
+                                case 1: Rectangle().foregroundStyle(.blue)/*.frame(width: posterSize.width, height: posterSize.height)*/
+                                case 2: Rectangle().foregroundStyle(.green)/*.frame(width: posterSize.width, height: posterSize.height)*/
+                                case 3: Rectangle().foregroundStyle(.yellow).frame(width: posterSize.width, height: posterSize.height)
+                                case 4: Rectangle().foregroundStyle(.cyan).frame(width: posterSize.width, height: posterSize.height)
+                                default: Rectangle().foregroundStyle(.brown).frame(width: posterSize.width, height: posterSize.height)
+                                }
+                            }
+                        }
+                        .frame(height: posterSize.height) // 높이 설정
+                        .border(.red)
+                        
+                        ScrollView(.horizontal) {
+                            HStack {
+                                ForEach((0..<10)) { _ in
+                                    Rectangle()
+                                        .frame(width: cellSize.width, height: cellSize.height)
+                                }
+                            }
+                        }
+                    }
                 }
-            }
-            .frame(height: 400) // 높이 설정
-            .navigationDestination(isPresented: Binding(get: {
-                selectedItem != nil
-            }, set: { isActive in
-                if !isActive { selectedItem = nil }
-            })) {
-                EmptyView()
-                    .onAppear {
-                        print("onAppear")
+                .task {
+                    if posterSize == .zero {
+                        posterSize = CGSize(width: proxy.size.width * 0.7, height: proxy.size.width * 0.7 * 1.5)
                     }
-                    .onDisappear {
-                        print("onDisappear")
+                    
+                    if cellSize == .zero {
+                        cellSize = CGSize(
+                            width: posterSize.width * 0.5,
+                            height: posterSize.height * 0.5
+                        )
                     }
+                }
             }
         }
     }
