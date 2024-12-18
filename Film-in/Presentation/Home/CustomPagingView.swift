@@ -48,31 +48,28 @@ struct CustomPagingView: View {
     }
 }
 
-struct PagingCollectionView<Item: Hashable, Content: View>: UIViewRepresentable {
+struct PagingView<Item: Hashable, Content: View>: UIViewRepresentable {
     @Binding var currentIndex: Int
     let items: [Item]
     let spacing: CGFloat?
-    var onSelect: ((Item) -> Void)?
     var content: (Item) -> Content
     
     init(
         currentIndex: Binding<Int>,
         items: [Item],
         spacing: CGFloat? = 0,
-        onSelect: ((Item) -> Void)? = nil,
         @ViewBuilder content: @escaping (Item) -> Content
     ) {
         self._currentIndex = currentIndex
         self.items = items
         self.spacing = spacing
-        self.onSelect = onSelect
         self.content = content
     }
-    
+     
     func createLayout() -> UICollectionViewLayout {
         let item = NSCollectionLayoutItem(layoutSize: NSCollectionLayoutSize(
             widthDimension: .fractionalWidth(1.0), heightDimension: .fractionalHeight(1.0)))
-        item.contentInsets = NSDirectionalEdgeInsets(top: 10, leading: spacing ?? 0, bottom: 10, trailing: spacing ?? 0)
+        item.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: spacing ?? 0, bottom: 0, trailing: spacing ?? 0)
         
         let containerGroup = NSCollectionLayoutGroup.horizontal(
             layoutSize: NSCollectionLayoutSize(widthDimension: .fractionalWidth(0.85),
@@ -87,14 +84,10 @@ struct PagingCollectionView<Item: Hashable, Content: View>: UIViewRepresentable 
     }
     
     func makeUIView(context: Context) -> UICollectionView {
-        let layout = UICollectionViewFlowLayout()
-        layout.scrollDirection = .horizontal
-        layout.itemSize = CGSize(width: UIScreen.main.bounds.width * 0.8, height: 400) // 셀 크기 설정
-        layout.minimumLineSpacing = 12 // 셀 간 간격
-
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: createLayout())
         collectionView.isPagingEnabled = true
         collectionView.showsHorizontalScrollIndicator = false
+        collectionView.alwaysBounceVertical = false
         collectionView.delegate = context.coordinator
         collectionView.register(UICollectionViewCell.self, forCellWithReuseIdentifier: "Cell")
         context.coordinator.configureDataSource(for: collectionView)
@@ -110,21 +103,22 @@ struct PagingCollectionView<Item: Hashable, Content: View>: UIViewRepresentable 
     }
     
     class Coordinator: NSObject, UICollectionViewDelegateFlowLayout {
-        var parent: PagingCollectionView
+        var parent: PagingView
         var dataSource: UICollectionViewDiffableDataSource<Int, Item>!
         
-        init(_ parent: PagingCollectionView) {
+        init(_ parent: PagingView) {
             self.parent = parent
         }
         
-        // DiffableDataSource 구성
         func configureDataSource(for collectionView: UICollectionView) {
-            dataSource = UICollectionViewDiffableDataSource<Int, Item>(collectionView: collectionView) { collectionView, indexPath, item in
-                let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "Cell", for: indexPath)
-                cell.contentConfiguration = UIHostingConfiguration {
-                    self.parent.content(item)
+            let cellRegistration = UICollectionView.CellRegistration<UICollectionViewCell, Item> { cell, indexPath, identifier in
+                cell.contentConfiguration = UIHostingConfiguration { [weak self] in
+                    self?.parent.content(identifier)
                 }
-                return cell
+            }
+            
+            dataSource = UICollectionViewDiffableDataSource<Int, Item>(collectionView: collectionView) { collectionView, indexPath, item in
+                return collectionView.dequeueConfiguredReusableCell(using: cellRegistration, for: indexPath, item: item)
             }
             
             applySnapshot()
@@ -135,11 +129,6 @@ struct PagingCollectionView<Item: Hashable, Content: View>: UIViewRepresentable 
             snapshot.appendSections([0])
             snapshot.appendItems(parent.items)
             dataSource.apply(snapshot, animatingDifferences: true)
-        }
-        
-        func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-            collectionView.scrollToItem(at: indexPath, at: .centeredHorizontally, animated: true)
-            parent.onSelect?(parent.items[indexPath.item])
         }
         
         func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
