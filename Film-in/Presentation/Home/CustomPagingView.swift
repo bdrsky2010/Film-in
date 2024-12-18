@@ -72,7 +72,7 @@ struct PagingView<Item: Hashable, Content: View>: UIViewRepresentable {
         item.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: spacing ?? 0, bottom: 0, trailing: spacing ?? 0)
         
         let containerGroup = NSCollectionLayoutGroup.horizontal(
-            layoutSize: NSCollectionLayoutSize(widthDimension: .fractionalWidth(0.85),
+            layoutSize: NSCollectionLayoutSize(widthDimension: .fractionalWidth(0.80),
                                                heightDimension: .fractionalHeight(1.0)),
             subitems: [item])
         
