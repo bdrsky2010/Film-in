@@ -95,6 +95,7 @@ struct PagingView<Item: Hashable, Content: View>: UIViewRepresentable {
     }
     
     func updateUIView(_ uiView: UICollectionView, context: Context) {
+        context.coordinator.parent = self
         context.coordinator.applySnapshot()
     }
     
