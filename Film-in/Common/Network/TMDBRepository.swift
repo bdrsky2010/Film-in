@@ -6,7 +6,7 @@
 //
 
 import Foundation
-// Details, Credits, Similiar, Images, Videos
+// Details, Credits, Similar, Images, Videos
 protocol TMDBRepository: AnyObject {
     func movieGenreRequest(query: MovieGenreQuery) async -> Result<[MovieGenre], TMDBError>
     func trendingMovieRequest(query: TrendingQuery) async -> Result<[MovieData], TMDBError>
@@ -189,7 +189,7 @@ final class DefaultTMDBRepository: TMDBRepository {
     func similarRequest(query: MovieSimilarQuery) async -> Result<MovieSimilar, TMDBError> {
         let requestDTO = MovieSimilarRequestDTO(language: query.language, page: query.page)
         let result = await networkManager.request(
-            .movieSimiliar(requestDTO, movieId: query.movieId),
+            .movieSimilar(requestDTO, movieId: query.movieId),
             of: MovieSimilarResponseDTO.self
         )
         switch result {
@@ -203,7 +203,7 @@ final class DefaultTMDBRepository: TMDBRepository {
     func similarRequest(query: MovieSimilarQuery) async -> Result<HomeMovie, TMDBError> {
         let requestDTO = MovieSimilarRequestDTO(language: query.language, page: query.page)
         let result = await networkManager.request(
-            .movieSimiliar(requestDTO, movieId: query.movieId),
+            .movieSimilar(requestDTO, movieId: query.movieId),
             of: MovieSimilarResponseDTO.self
         )
         switch result {
