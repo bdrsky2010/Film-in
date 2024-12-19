@@ -64,6 +64,9 @@ struct SearchView: View {
                 }
             }
         }
+        .onAppear {
+            if visibility == .hidden { visibility = .visible }
+        }
         .valueChanged(value: focusedField) { _ in
             if focusedField == .cover {
                 withAnimation {
@@ -175,9 +178,6 @@ struct SearchView: View {
                     .onAppear {
                         if visibility == .visible { visibility = .hidden }
                     }
-                    .onDisappear {
-                        if visibility == .hidden { visibility = .visible }
-                    }
                 
             } label: {
                 let url = URL(string: ImageURL.tmdb(image: movie.poster).urlString)
@@ -198,9 +198,6 @@ struct SearchView: View {
                 LazyView(PersonDetailFactory.makeView(personId: person._id))
                     .onAppear {
                         if visibility == .visible { visibility = .hidden }
-                    }
-                    .onDisappear {
-                        if visibility == .hidden { visibility = .visible }
                     }
                 
             } label: {
