@@ -62,9 +62,7 @@ struct HomeView: View {
                 }
                 .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
                 .task { viewModel.action(.viewOnTask) }
-                .onAppear {
-                    if visibility == .hidden { visibility = .visible }
-                }
+                .onAppear { if visibility == .hidden { visibility = .visible } }
                 .popupAlert(
                     isPresented: Binding(
                         get: { viewModel.output.isShowAlert },

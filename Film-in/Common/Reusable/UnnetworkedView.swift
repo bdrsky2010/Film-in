@@ -26,9 +26,7 @@ struct UnnetworkedView: View {
                 .foregroundStyle(.appText)
             
             Button {
-                withAnimation {
-                    refreshAction()
-                }
+                withAnimation { refreshAction() }
             } label: {
                 Text("refresh")
                     .font(.ibmPlexMonoMedium(size: 20))

@@ -33,9 +33,7 @@ struct MyView: View {
                 calendarSection()
                 contentSection()
             }
-            .onAppear {
-                if visibility == .hidden { visibility = .visible }
-            }
+            .onAppear { if visibility == .hidden { visibility = .visible } }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
         .toolbar(visibility, for: .tabBar)

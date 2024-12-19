@@ -45,9 +45,7 @@ struct PersonDetailView: View {
         }
         .ignoresSafeArea(.all, edges: .top)
         .toolbar(.hidden, for: .tabBar)
-        .task {
-            viewModel.action(.viewOnTask)
-        }
+        .task { viewModel.action(.viewOnTask) }
         .popupAlert(
             isPresented: Binding(
                 get: { viewModel.output.isShowAlert },

@@ -45,9 +45,7 @@ struct MovieDetailView: View {
                 infoSection()
             }
         }
-        .task {
-            viewModel.action(.viewOnTask)
-        }
+        .task { viewModel.action(.viewOnTask) }
         .ignoresSafeArea(.all, edges: .bottom)
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .background(.background)

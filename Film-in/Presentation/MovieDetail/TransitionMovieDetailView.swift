@@ -56,9 +56,7 @@ struct TransitionMovieDetailView: View {
                     infoSection()
                 }
             }
-            .task {
-                viewModel.action(.viewOnTask)
-            }
+            .task { viewModel.action(.viewOnTask) }
             .coordinateSpace(name: "SCROLL")
             .frame(maxWidth: .infinity, maxHeight: .infinity)
             .background(.background)

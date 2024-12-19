@@ -42,9 +42,7 @@ struct SearchView: View {
         }
         .toolbar(visibility, for: .tabBar)
         .animation(.easeInOut, value: visibility)
-        .task {
-            viewModel.action(.viewOnTask)
-        }
+        .task { viewModel.action(.viewOnTask) }
     }
     
     @ViewBuilder
