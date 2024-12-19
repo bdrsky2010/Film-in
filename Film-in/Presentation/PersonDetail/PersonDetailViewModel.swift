@@ -34,6 +34,8 @@ final class PersonDetailViewModel: BaseObject, ViewModelType {
 extension PersonDetailViewModel {
     struct Input {
         var viewOnTask = PassthroughSubject<Void, Never>()
+        var onRefresh = PassthroughSubject<Void, Never>()
+        var onDismissAlert = PassthroughSubject<Void, Never>()
     }
     
     struct Output {
@@ -49,6 +51,18 @@ extension PersonDetailViewModel {
                 owner.fetchPersonInfo()
             }
             .store(in: &cancellable)
+        
+        input.onRefresh
+            .sink(with: self) { owner, _ in
+                owner.fetchPersonInfo()
+            }
+            .store(in: &cancellable)
+        
+        input.onDismissAlert
+            .sink(with: self) { owner, _ in
+                owner.output.isShowAlert = false
+            }
+            .store(in: &cancellable)
     }
 }
 
@@ -56,6 +70,7 @@ extension PersonDetailViewModel {
     enum Action {
         case viewOnTask
         case refresh
+        case onDismissAlert
     }
     
     func action(_ action: Action) {
@@ -64,6 +79,8 @@ extension PersonDetailViewModel {
             input.viewOnTask.send(())
         case .refresh:
             input.viewOnTask.send(())
+        case .onDismissAlert:
+            input.onDismissAlert.send(())
         }
     }
 }

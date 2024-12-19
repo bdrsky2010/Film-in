@@ -13,10 +13,10 @@ final class MovieDetailViewModel: BaseObject, ViewModelType {
     private let networkMonitor: NetworkMonitor
     let movieId: Int
     
-    @Published var output = Output()
+    @Published private(set) var output = Output()
     
-    var input = Input()
-    var cancellable = Set<AnyCancellable>()
+    private(set) var input = Input()
+    private(set) var cancellable = Set<AnyCancellable>()
     
     init(
         movieDetailService: MovieDetailService,
@@ -34,6 +34,7 @@ final class MovieDetailViewModel: BaseObject, ViewModelType {
 extension MovieDetailViewModel {
     struct Input {
         var viewOnTask = PassthroughSubject<Void, Never>()
+        let onDismissAlert = PassthroughSubject<Void, Never>()
     }
     
     struct Output {
@@ -52,6 +53,12 @@ extension MovieDetailViewModel {
                 owner.fetchMovieInfo()
             }
             .store(in: &cancellable)
+        
+        input.onDismissAlert
+            .sink(with: self) { owner, _ in
+                owner.output.isShowAlert = false
+            }
+            .store(in: &cancellable)
     }
 }
 
@@ -59,6 +66,7 @@ extension MovieDetailViewModel {
     enum Action {
         case viewOnTask
         case refresh
+        case onDismissAlert
     }
     
     func action(_ action: Action) {
@@ -67,6 +75,8 @@ extension MovieDetailViewModel {
             input.viewOnTask.send(())
         case .refresh:
             input.viewOnTask.send(())
+        case .onDismissAlert:
+            input.onDismissAlert.send(())
         }
     }
 }

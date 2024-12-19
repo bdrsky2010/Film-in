@@ -12,10 +12,10 @@ final class GenreSelectViewModel: BaseObject, ViewModelType {
     private let genreSelectService: GenreSelectService
     private let networkMonitor: NetworkMonitor
     
-    @Published var output = Output()
+    @Published private(set) var output = Output()
     
-    var cancellable = Set<AnyCancellable>()
-    var input = Input()
+    private(set) var cancellable = Set<AnyCancellable>()
+    private(set) var input = Input()
     
     init(
         genreSelectService: GenreSelectService,
@@ -31,6 +31,7 @@ final class GenreSelectViewModel: BaseObject, ViewModelType {
 extension GenreSelectViewModel {
     struct Input {
         let viewOnTask = PassthroughSubject<Void, Never>()
+        let onDismissAlert = PassthroughSubject<Void, Never>()
         let changedGenres = PassthroughSubject<Void, Never>()
         let addGenre = PassthroughSubject<MovieGenre, Never>()
         let removeGenre = PassthroughSubject<MovieGenre, Never>()
@@ -49,6 +50,12 @@ extension GenreSelectViewModel {
         input.viewOnTask
             .sink(with: self) { owner, _ in
                 owner.fetchGenres()
+            }
+            .store(in: &cancellable)
+        
+        input.onDismissAlert
+            .sink(with: self) { owner, _ in
+                owner.output.isShowAlert = false
             }
             .store(in: &cancellable)
         
@@ -101,7 +108,7 @@ extension GenreSelectViewModel {
                     owner.output.genres = genres
                 case .failure(let error):
                     owner.output.isShowAlert = true
-                    print(error)
+                    print(#function, error)
                 }
             }
             .store(in: &cancellable)
@@ -112,6 +119,7 @@ extension GenreSelectViewModel {
     enum Action {
         case viewOnTask
         case refresh
+        case onDismissAlert
         case changedGenres
         case addGenre(_ genre: MovieGenre)
         case removeGenre(_ genre: MovieGenre)
@@ -124,6 +132,8 @@ extension GenreSelectViewModel {
             input.viewOnTask.send(())
         case .refresh:
             input.viewOnTask.send(())
+        case .onDismissAlert:
+            input.onDismissAlert.send(())
         case .changedGenres:
             input.changedGenres.send(())
         case .addGenre(let genre):

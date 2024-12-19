@@ -78,7 +78,18 @@ struct TransitionMovieDetailView: View {
             .sheet(isPresented: $isDateSetup){
                 dateSetupSheet()
             }
-            .apiRequestErrorAlert(isPresented: $viewModel.output.isShowAlert) {
+            .popupAlert(
+                isPresented: Binding(
+                    get: { viewModel.output.isShowAlert },
+                    set: { _ in viewModel.action(.onDismissAlert) }
+                ),
+                contentModel: .init(
+                    systemImage: "wifi.exclamationmark",
+                    phrase: "apiRequestError",
+                    normal: "refresh"
+                ),
+                heightType: .middle
+            ) {
                 viewModel.action(.refresh)
             }
         }

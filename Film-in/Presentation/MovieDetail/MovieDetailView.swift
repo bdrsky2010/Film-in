@@ -49,7 +49,7 @@ struct MovieDetailView: View {
             viewModel.action(.viewOnTask)
         }
         .ignoresSafeArea(.all, edges: .bottom)
-        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
         .background(.background)
         .toolbar(.hidden, for: .tabBar)
         .valueChanged(value: dateSetupType) { newValue in
@@ -58,7 +58,18 @@ struct MovieDetailView: View {
         .sheet(isPresented: $isDateSetup){
             dateSetupSheet()
         }
-        .apiRequestErrorAlert(isPresented: $viewModel.output.isShowAlert) {
+        .popupAlert(
+            isPresented: Binding(
+                get: { viewModel.output.isShowAlert },
+                set: { _ in viewModel.action(.onDismissAlert) }
+            ),
+            contentModel: .init(
+                systemImage: "wifi.exclamationmark",
+                phrase: "apiRequestError",
+                normal: "refresh"
+            ),
+            heightType: .middle
+        ) {
             viewModel.action(.refresh)
         }
     }
