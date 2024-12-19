@@ -8,59 +8,6 @@
 import SwiftUI
 import Kingfisher
 
-struct Temp: Hashable, Identifiable {
-    let id = UUID()
-    let data: Int
-}
-
-struct CustomPagingView: View {
-    @State private var index = 0
-    @State private var posterSize: CGSize = .zero
-    @State private var cellSize: CGSize = .zero
-    
-    var body: some View {
-        NavigationStack {
-            GeometryReader { proxy in
-                ScrollView {
-                    VStack {
-                        PagingView(currentIndex: $index, items: (0..<10).map { Temp(data: $0) }) { item in
-                            NavigationLink {
-                                EmptyView()
-                            } label: {
-                                let url = URL(string: ImageURL.tmdb(image: "/x2BHx02jMbvpKjMvbf8XxJkYwHJ.jpg").urlString)
-                                PosterImage(url: url, size: posterSize, title: "", isDownsampling: true)
-                            }
-                        }
-                        .frame(height: posterSize.height) // 높이 설정
-                        .border(.red)
-                        
-                        ScrollView(.horizontal) {
-                            HStack {
-                                ForEach((0..<10)) { _ in
-                                    Rectangle()
-                                        .frame(width: cellSize.width, height: cellSize.height)
-                                }
-                            }
-                        }
-                    }
-                }
-                .task {
-                    if posterSize == .zero {
-                        posterSize = CGSize(width: proxy.size.width * 0.7, height: proxy.size.width * 0.7 * 1.5)
-                    }
-                    
-                    if cellSize == .zero {
-                        cellSize = CGSize(
-                            width: posterSize.width * 0.5,
-                            height: posterSize.height * 0.5
-                        )
-                    }
-                }
-            }
-        }
-    }
-}
-
 struct PagingView<Item: Hashable, Content: View>: UIViewRepresentable {
     @Binding var currentIndex: Int
     let items: [Item]
@@ -152,6 +99,61 @@ struct PagingView<Item: Hashable, Content: View>: UIViewRepresentable {
     }
 }
 
-#Preview {
-    CustomPagingView()
-}
+/*
+ struct Temp: Hashable, Identifiable {
+     let id = UUID()
+     let data: Int
+ }
+
+ struct CustomPagingView: View {
+     @State private var index = 0
+     @State private var posterSize: CGSize = .zero
+     @State private var cellSize: CGSize = .zero
+     
+     var body: some View {
+         NavigationStack {
+             GeometryReader { proxy in
+                 ScrollView {
+                     VStack {
+                         PagingView(currentIndex: $index, items: (0..<10).map { Temp(data: $0) }) { item in
+                             NavigationLink {
+                                 EmptyView()
+                             } label: {
+                                 let url = URL(string: ImageURL.tmdb(image: "/x2BHx02jMbvpKjMvbf8XxJkYwHJ.jpg").urlString)
+                                 PosterImage(url: url, size: posterSize, title: "", isDownsampling: true)
+                             }
+                         }
+                         .frame(height: posterSize.height) // 높이 설정
+                         .border(.red)
+                         
+                         ScrollView(.horizontal) {
+                             HStack {
+                                 ForEach((0..<10)) { _ in
+                                     Rectangle()
+                                         .frame(width: cellSize.width, height: cellSize.height)
+                                 }
+                             }
+                         }
+                     }
+                 }
+                 .task {
+                     if posterSize == .zero {
+                         posterSize = CGSize(width: proxy.size.width * 0.7, height: proxy.size.width * 0.7 * 1.5)
+                     }
+                     
+                     if cellSize == .zero {
+                         cellSize = CGSize(
+                             width: posterSize.width * 0.5,
+                             height: posterSize.height * 0.5
+                         )
+                     }
+                 }
+             }
+         }
+     }
+ }
+
+ #Preview {
+     CustomPagingView()
+ }
+ */
