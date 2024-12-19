@@ -11,14 +11,19 @@ import PopupView
 
 struct MyView: View {
     @ObservedResults(UserTable.self) var user
+    
     @StateObject private var viewModel: MyViewModel
+    
+    @State private var visibility: Visibility
     @State private var posterSize: CGSize
     
     init(
         viewModel: MyViewModel,
+        visibility: Visibility = .visible,
         posterSize: CGSize = .zero
     ) {
         self._viewModel = StateObject(wrappedValue: viewModel)
+        self._visibility = State(initialValue: visibility)
         self._posterSize = State(wrappedValue: posterSize)
     }
     
@@ -28,8 +33,13 @@ struct MyView: View {
                 calendarSection()
                 contentSection()
             }
+            .onAppear {
+                if visibility == .hidden { visibility = .visible }
+            }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
+        .toolbar(visibility, for: .tabBar)
+        .animation(.easeInOut, value: visibility)
         .popupAlert(
             isPresented: $viewModel.output.isRequestDelete,
             contentModel: PopupAlertModel(
@@ -100,6 +110,9 @@ struct MyView: View {
                 
                 NavigationLink {
                     LazyView(MovieDetailFactory.makeView(movie: convertToMovieData(by: movie), posterSize: posterSize))
+                        .onAppear {
+                            if visibility == .visible { visibility = .hidden }
+                        }
                 } label: {
                     EmptyView()
                 }
@@ -149,6 +162,9 @@ struct MyView: View {
                 
                 NavigationLink {
                     LazyView(MovieDetailFactory.makeView(movie: convertToMovieData(by: movie), posterSize: posterSize))
+                        .onAppear {
+                            if visibility == .visible { visibility = .hidden }
+                        }
                 } label: {
                     EmptyView()
                 }

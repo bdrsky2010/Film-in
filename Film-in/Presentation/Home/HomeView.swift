@@ -10,6 +10,8 @@ import SwiftUI
 struct HomeView: View {
     @StateObject private var viewModel: HomeViewModel
     @Namespace var namespace
+    
+    @State private var visibility: Visibility = .visible
     @State private var index = 0
     @State private var showDetailView = false
     @State private var movie: MovieData?
@@ -60,6 +62,9 @@ struct HomeView: View {
                     }
                 }
                 .task { viewModel.action(.viewOnTask) }
+                .onAppear {
+                    if visibility == .hidden { visibility = .visible }
+                }
                 .popupAlert(
                     isPresented: Binding(
                         get: { viewModel.output.isShowAlert },
@@ -76,6 +81,8 @@ struct HomeView: View {
                 }
             }
         }
+        .toolbar(visibility, for: .tabBar)
+        .animation(.easeInOut, value: visibility)
     }
     
     @ViewBuilder
@@ -100,6 +107,9 @@ struct HomeView: View {
                         self.movie = movie
                         showDetailView = true
                     }
+                        .onAppear {
+                            if visibility == .visible { visibility = .hidden }
+                        }
                 }
         }
         .frame(height: posterSize.height)
@@ -122,8 +132,9 @@ struct HomeView: View {
                             withAnimation(.easeInOut) {
                                 self.movie = movie
                                 showDetailView = true
+                            .onAppear {
+                                if visibility == .visible { visibility = .hidden }
                             }
-                        }
                 }
             }
         }
@@ -145,6 +156,8 @@ struct HomeView: View {
                             withAnimation(.easeInOut) {
                                 self.movie = movie
                                 showDetailView = true
+                            .onAppear {
+                                if visibility == .visible { visibility = .hidden }
                             }
                         }
                 }
@@ -168,8 +181,9 @@ struct HomeView: View {
                             withAnimation(.easeInOut) {
                                 self.movie = movie
                                 showDetailView = true
+                            .onAppear {
+                                if visibility == .visible { visibility = .hidden }
                             }
-                        }
                 }
             }
         }
