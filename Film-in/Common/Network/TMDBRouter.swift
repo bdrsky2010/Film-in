@@ -32,7 +32,7 @@ enum TMDBRouter {
     case searchPerson(_ dto: SearchPersonRequestDTO)
     case movieDetail(_ dto: MovieDetailRequestDTO, movieId: Int)
     case movieCredit(_ dto: MovieCreditRequestDTO, movieId: Int)
-    case movieSimiliar(_ dto: MovieSimilarRequestDTO, movieId: Int)
+    case movieSimilar(_ dto: MovieSimilarRequestDTO, movieId: Int)
     case movieRecommendation(_ dto: MovieRecommendationRequestDTO, movieId: Int)
     case movieImage(_ dto: MovieImageRequestDTO, movieId: Int)
     case movieVideo(_ dto: MovieVideoRequestDTO, movieId: Int)
@@ -54,7 +54,7 @@ extension TMDBRouter: TMDBTargetType {
         case .searchPerson: return "search/person"
         case .movieDetail(_, let movieId): return "movie/\(movieId)"
         case .movieCredit(_, let movieId): return "movie/\(movieId)/credits"
-        case .movieSimiliar(_, let movieId): return "movie/\(movieId)/similar"
+        case .movieSimilar(_, let movieId): return "movie/\(movieId)/similar"
         case .movieRecommendation(_, let movieId): return "movie/\(movieId)/recommendations"
         case .movieImage(_, let movieId): return "movie/\(movieId)/images"
         case .movieVideo(_, let movieId): return "movie/\(movieId)/videos"
@@ -86,7 +86,7 @@ extension TMDBRouter: TMDBTargetType {
             return .requestParameters(parameters: dto.asParameters, encoding: URLEncoding.queryString)
         case .movieCredit(let dto, _):
             return .requestParameters(parameters: dto.asParameters, encoding: URLEncoding.queryString)
-        case .movieSimiliar(let dto, _):
+        case .movieSimilar(let dto, _):
             return .requestParameters(parameters: dto.asParameters, encoding: URLEncoding.queryString)
         case .movieRecommendation(let dto, _):
             return .requestParameters(parameters: dto.asParameters, encoding: URLEncoding.queryString)
