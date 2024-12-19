@@ -27,16 +27,8 @@ struct CustomPagingView: View {
                             NavigationLink {
                                 EmptyView()
                             } label: {
-                                switch item.data {
-                                case 0:
-                                    let url = URL(string: ImageURL.tmdb(image: "/x2BHx02jMbvpKjMvbf8XxJkYwHJ.jpg").urlString)
-                                    PosterImage(url: url, size: posterSize, title: "", isDownsampling: true)
-                                case 1: Rectangle().foregroundStyle(.blue)/*.frame(width: posterSize.width, height: posterSize.height)*/
-                                case 2: Rectangle().foregroundStyle(.green)/*.frame(width: posterSize.width, height: posterSize.height)*/
-                                case 3: Rectangle().foregroundStyle(.yellow).frame(width: posterSize.width, height: posterSize.height)
-                                case 4: Rectangle().foregroundStyle(.cyan).frame(width: posterSize.width, height: posterSize.height)
-                                default: Rectangle().foregroundStyle(.brown).frame(width: posterSize.width, height: posterSize.height)
-                                }
+                                let url = URL(string: ImageURL.tmdb(image: "/x2BHx02jMbvpKjMvbf8XxJkYwHJ.jpg").urlString)
+                                PosterImage(url: url, size: posterSize, title: "", isDownsampling: true)
                             }
                         }
                         .frame(height: posterSize.height) // 높이 설정
