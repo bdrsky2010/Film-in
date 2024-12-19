@@ -277,22 +277,7 @@ struct TransitionMovieDetailView: View {
     
     @ViewBuilder
     private func similarSection() -> some View {
-        HStack(alignment: .lastTextBaseline) {
-            InfoHeader(titleKey: "simliar")
-            
-            Spacer()
-            
-            NavigationLink {
-                LazyView(
-                    SeeMoreView(usedTo: .similar(viewModel.movieId))
-                )
-            } label: {
-                Text("more")
-                    .font(.ibmPlexMonoSemiBold(size: 16))
-                    .underline()
-                    .foregroundStyle(.app)
-            }
-        }
+        MoreHeader(usedTo: .similar(viewModel.movieId))
         
         ScrollView(.horizontal) {
             LazyHStack(spacing: 12) {

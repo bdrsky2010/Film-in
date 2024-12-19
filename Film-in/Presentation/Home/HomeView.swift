@@ -108,7 +108,7 @@ struct HomeView: View {
     
     @ViewBuilder
     private func nowPlayingSection() -> some View {
-        ListHeader(localizedTitle: "nowPlaying", usedTo: .nowPlaying)
+        MoreHeader(usedTo: .nowPlaying)
         
         ScrollView(.horizontal, showsIndicators: false) {
             LazyHStack {
@@ -131,7 +131,7 @@ struct HomeView: View {
     
     @ViewBuilder
     private func upcomingSection() -> some View {
-        ListHeader(localizedTitle: "upcoming", usedTo: .upcoming)
+        MoreHeader(usedTo: .upcoming)
         
         ScrollView(.horizontal, showsIndicators: false) {
             LazyHStack {
@@ -154,7 +154,7 @@ struct HomeView: View {
     
     @ViewBuilder
     private func recommendSection() -> some View {
-        ListHeader(localizedTitle: "recommend", usedTo: .recommend)
+        MoreHeader(usedTo: .recommend)
         
         ScrollView(.horizontal, showsIndicators: false) {
             LazyHStack {
@@ -185,29 +185,4 @@ struct HomeView: View {
         )
     }
 }
-
-fileprivate struct ListHeader: View {
-    let localizedTitle: LocalizedStringKey
-    let usedTo: UsedTo
-    
-    var body: some View {
-        HStack(alignment: .lastTextBaseline) {
-            Text(localizedTitle)
-                .font(.ibmPlexMonoSemiBold(size: 24))
-                .foregroundStyle(.appText)
-                .frame(maxWidth: .infinity, alignment: .leading)
-            
-            Spacer()
-            
-            NavigationLink {
-                SeeMoreView(usedTo: usedTo)
-            } label: {
-                Text("more")
-                    .font(.ibmPlexMonoSemiBold(size: 16))
-                    .underline()
-                    .foregroundStyle(.app)
-            }
-        }
-        .padding(.horizontal, 20)
-    }
 }
