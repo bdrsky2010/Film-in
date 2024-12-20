@@ -42,6 +42,7 @@ struct Film_inApp: App {
             } else {
                 GenreSelectFactory.makeView()
             }
+//            CustomPagingView()
         }
     }
 }
