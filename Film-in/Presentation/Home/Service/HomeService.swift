@@ -9,10 +9,10 @@ import Foundation
 import Combine
 
 protocol HomeService: AnyObject {
-    func fetchTrending(query: TrendingQuery) -> Future<Result<HomeMovie, TMDBError>, Never>
-    func fetchNowPlaying(query: HomeMovieQuery) -> Future<Result<HomeMovie, TMDBError>, Never>
-    func fetchUpcoming(query: HomeMovieQuery) -> Future<Result<HomeMovie, TMDBError>, Never>
-    func fetchDiscover(query: HomeMovieQuery) -> Future<Result<HomeMovie, TMDBError>, Never>
+    func fetchTrending(query: TrendingQuery) -> AnyPublisher<Result<HomeMovie, TMDBError>, Never>
+    func fetchNowPlaying(query: HomeMovieQuery) -> AnyPublisher<Result<HomeMovie, TMDBError>, Never>
+    func fetchUpcoming(query: HomeMovieQuery) -> AnyPublisher<Result<HomeMovie, TMDBError>, Never>
+    func fetchDiscover(query: HomeMovieQuery) -> AnyPublisher<Result<HomeMovie, TMDBError>, Never>
 }
 
 final class DefaultHomeService: BaseObject, HomeService {
@@ -26,7 +26,7 @@ final class DefaultHomeService: BaseObject, HomeService {
         self.tmdbRepository = tmdbRepository
         self.databaseRepository = databaseRepository
     }
-    func fetchTrending(query: TrendingQuery) -> Future<Result<HomeMovie, TMDBError>, Never> {
+    func fetchTrending(query: TrendingQuery) -> AnyPublisher<Result<HomeMovie, TMDBError>, Never> {
         return Future { promise in
             Task { [weak self] in
                 guard let self else { return }
@@ -39,9 +39,10 @@ final class DefaultHomeService: BaseObject, HomeService {
                 }
             }
         }
+        .eraseToAnyPublisher()
     }
     
-    func fetchNowPlaying(query: HomeMovieQuery) -> Future<Result<HomeMovie, TMDBError>, Never> {
+    func fetchNowPlaying(query: HomeMovieQuery) -> AnyPublisher<Result<HomeMovie, TMDBError>, Never> {
         return Future { promise in
             Task { [weak self] in
                 guard let self else { return }
@@ -54,9 +55,10 @@ final class DefaultHomeService: BaseObject, HomeService {
                 }
             }
         }
+        .eraseToAnyPublisher()
     }
     
-    func fetchUpcoming(query: HomeMovieQuery) -> Future<Result<HomeMovie, TMDBError>, Never> {
+    func fetchUpcoming(query: HomeMovieQuery) -> AnyPublisher<Result<HomeMovie, TMDBError>, Never> {
         return Future { promise in
             Task { [weak self] in
                 guard let self else { return }
@@ -69,9 +71,10 @@ final class DefaultHomeService: BaseObject, HomeService {
                 }
             }
         }
+        .eraseToAnyPublisher()
     }
     
-    func fetchDiscover(query: HomeMovieQuery) -> Future<Result<HomeMovie, TMDBError>, Never> {
+    func fetchDiscover(query: HomeMovieQuery) -> AnyPublisher<Result<HomeMovie, TMDBError>, Never> {
         return Future { promise in
             Task { [weak self] in
                 guard let self else { return }
@@ -84,5 +87,6 @@ final class DefaultHomeService: BaseObject, HomeService {
                 }
             }
         }
+        .eraseToAnyPublisher()
     }
 }

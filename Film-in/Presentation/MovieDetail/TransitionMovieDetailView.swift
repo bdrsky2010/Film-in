@@ -56,9 +56,7 @@ struct TransitionMovieDetailView: View {
                     infoSection()
                 }
             }
-            .task {
-                viewModel.action(.viewOnTask)
-            }
+            .task { viewModel.action(.viewOnTask) }
             .coordinateSpace(name: "SCROLL")
             .frame(maxWidth: .infinity, maxHeight: .infinity)
             .background(.background)
@@ -78,7 +76,18 @@ struct TransitionMovieDetailView: View {
             .sheet(isPresented: $isDateSetup){
                 dateSetupSheet()
             }
-            .apiRequestErrorAlert(isPresented: $viewModel.output.isShowAlert) {
+            .popupAlert(
+                isPresented: Binding(
+                    get: { viewModel.output.isShowAlert },
+                    set: { _ in viewModel.action(.onDismissAlert) }
+                ),
+                contentModel: .init(
+                    systemImage: "wifi.exclamationmark",
+                    phrase: "apiRequestError",
+                    normal: "refresh"
+                ),
+                heightType: .middle
+            ) {
                 viewModel.action(.refresh)
             }
         }
@@ -277,22 +286,7 @@ struct TransitionMovieDetailView: View {
     
     @ViewBuilder
     private func similarSection() -> some View {
-        HStack(alignment: .lastTextBaseline) {
-            InfoHeader(titleKey: "simliar")
-            
-            Spacer()
-            
-            NavigationLink {
-                LazyView(
-                    SeeMoreView(usedTo: .similar(viewModel.movieId))
-                )
-            } label: {
-                Text("more")
-                    .font(.ibmPlexMonoSemiBold(size: 16))
-                    .underline()
-                    .foregroundStyle(.app)
-            }
-        }
+        MoreHeader(usedTo: .similar(viewModel.movieId))
         
         ScrollView(.horizontal) {
             LazyHStack(spacing: 12) {

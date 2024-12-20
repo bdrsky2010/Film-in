@@ -9,8 +9,8 @@ import Foundation
 import Combine
 
 protocol PersonDetailService {
-    func fetchPersonDetail(query: PersonQuery) -> Future<Result<PersonDetail, TMDBError>, Never>
-    func fetchPersonMovie(query: PersonQuery) -> Future<Result<PersonMovie, TMDBError>, Never>
+    func fetchPersonDetail(query: PersonQuery) -> AnyPublisher<Result<PersonDetail, TMDBError>, Never>
+    func fetchPersonMovie(query: PersonQuery) -> AnyPublisher<Result<PersonMovie, TMDBError>, Never>
 }
 
 final class DefaultPersonDetailService: BaseObject, PersonDetailService {
@@ -27,7 +27,7 @@ final class DefaultPersonDetailService: BaseObject, PersonDetailService {
 }
 
 extension DefaultPersonDetailService {
-    func fetchPersonDetail(query: PersonQuery) -> Future<Result<PersonDetail, TMDBError>, Never> {
+    func fetchPersonDetail(query: PersonQuery) -> AnyPublisher<Result<PersonDetail, TMDBError>, Never> {
         return Future { promise in
             Task { [weak self] in
                 guard let self else { return }
@@ -40,9 +40,10 @@ extension DefaultPersonDetailService {
                 }
             }
         }
+        .eraseToAnyPublisher()
     }
     
-    func fetchPersonMovie(query: PersonQuery) -> Future<Result<PersonMovie, TMDBError>, Never> {
+    func fetchPersonMovie(query: PersonQuery) -> AnyPublisher<Result<PersonMovie, TMDBError>, Never> {
         return Future { promise in
             Task { [weak self] in
                 guard let self else { return }
@@ -55,5 +56,6 @@ extension DefaultPersonDetailService {
                 }
             }
         }
+        .eraseToAnyPublisher()
     }
 }

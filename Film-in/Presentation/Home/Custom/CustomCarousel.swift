@@ -63,3 +63,17 @@ struct SnapCarousel<Content: View, Item: Identifiable>: View {
         .animation(.easeInOut, value: offset == 0)
     }
 }
+
+//        SnapCarousel(spacing: 28, trailingSpace: 120, index: $index, items: viewModel.output.trendingMovies.movies) { movie in
+//            let url = URL(string: ImageURL.tmdb(image: movie.poster).urlString)
+//            PosterImage(url: url, size: posterSize, title: movie.title, isDownsampling: true)
+//                .matchedGeometryEffect(id: movie.id, in: namespace, properties: .frame, isSource: !showDetailView)
+//                .onTapGesture {
+//                    withAnimation(.easeInOut) {
+//                        self.movie = movie
+//                        showDetailView = true
+//                    }
+//                }
+//        }
+//        .frame(height: posterSize.height)
+//        .padding(.bottom, 20)

@@ -9,10 +9,10 @@ import Foundation
 import Combine
 
 protocol MultiListService: AnyObject {
-    func fetchNowPlaying(query: HomeMovieQuery) -> Future<Result<HomeMovie, TMDBError>, Never>
-    func fetchUpcoming(query: HomeMovieQuery) -> Future<Result<HomeMovie, TMDBError>, Never>
-    func fetchDiscover(query: HomeMovieQuery) -> Future<Result<HomeMovie, TMDBError>, Never>
-    func fetchMovieSimilar(query: MovieSimilarQuery) -> Future<Result<HomeMovie, TMDBError>, Never>
+    func fetchNowPlaying(query: HomeMovieQuery) -> AnyPublisher<Result<HomeMovie, TMDBError>, Never>
+    func fetchUpcoming(query: HomeMovieQuery) -> AnyPublisher<Result<HomeMovie, TMDBError>, Never>
+    func fetchDiscover(query: HomeMovieQuery) -> AnyPublisher<Result<HomeMovie, TMDBError>, Never>
+    func fetchMovieSimilar(query: MovieSimilarQuery) -> AnyPublisher<Result<HomeMovie, TMDBError>, Never>
     func fetchMovieSearch(query: SearchMovieQuery) -> AnyPublisher<Result<HomeMovie, TMDBError>, Never>
     func fetchPeopleSearch(query: SearchPersonQuery) -> AnyPublisher<Result<PagingPeople, TMDBError>, Never>
 }
@@ -31,7 +31,7 @@ final class DefaultMultiListService: BaseObject, MultiListService {
 }
 
 extension DefaultMultiListService {
-    func fetchNowPlaying(query: HomeMovieQuery) -> Future<Result<HomeMovie, TMDBError>, Never> {
+    func fetchNowPlaying(query: HomeMovieQuery) -> AnyPublisher<Result<HomeMovie, TMDBError>, Never> {
         return Future { promise in
             Task { [weak self] in
                 guard let self else { return }
@@ -44,9 +44,10 @@ extension DefaultMultiListService {
                 }
             }
         }
+        .eraseToAnyPublisher()
     }
     
-    func fetchUpcoming(query: HomeMovieQuery) -> Future<Result<HomeMovie, TMDBError>, Never> {
+    func fetchUpcoming(query: HomeMovieQuery) -> AnyPublisher<Result<HomeMovie, TMDBError>, Never> {
         return Future { promise in
             Task { [weak self] in
                 guard let self else { return }
@@ -58,11 +59,11 @@ extension DefaultMultiListService {
                     promise(.success(.failure(failure)))
                 }
             }
-        }
+        }.eraseToAnyPublisher()
     }
     
     @MainActor
-    func fetchDiscover(query: HomeMovieQuery) -> Future<Result<HomeMovie, TMDBError>, Never> {
+    func fetchDiscover(query: HomeMovieQuery) -> AnyPublisher<Result<HomeMovie, TMDBError>, Never> {
         return Future { promise in
             Task { [weak self] in
                 guard let self else { return }
@@ -80,9 +81,10 @@ extension DefaultMultiListService {
                 }
             }
         }
+        .eraseToAnyPublisher()
     }
     
-    func fetchMovieSimilar(query: MovieSimilarQuery) -> Future<Result<HomeMovie, TMDBError>, Never> {
+    func fetchMovieSimilar(query: MovieSimilarQuery) -> AnyPublisher<Result<HomeMovie, TMDBError>, Never> {
         return Future { promise in
             Task { [weak self] in
                 guard let self else { return }
@@ -95,6 +97,7 @@ extension DefaultMultiListService {
                 }
             }
         }
+        .eraseToAnyPublisher()
     }
     
     func fetchMovieSearch(query: SearchMovieQuery) -> AnyPublisher<Result<HomeMovie, TMDBError>, Never> {

@@ -16,7 +16,9 @@ struct PersonDetailView: View {
     
     private let gridItemLayout = [GridItem(.flexible()), GridItem(.flexible()), GridItem(.flexible())]
     
-    init(viewModel: PersonDetailViewModel) {
+    init(
+        viewModel: PersonDetailViewModel
+    ) {
         self._viewModel = StateObject(wrappedValue: viewModel)
     }
     
@@ -26,15 +28,14 @@ struct PersonDetailView: View {
             let gridWidth = (proxy.size.width - (8 * 2 + 40)) / 3
             let gridHeight = (proxy.size.width - (8 * 2 + 40)) / 3 * 1.5
             
-            ScrollView {
+            VStack {
                 if !viewModel.output.networkConnect {
                     UnnetworkedView(refreshAction: viewModel.action(.refresh))
-                    .frame(width: width)
-                    .padding(.top, 80)
                 } else {
                     infoSection(width: width, gridSize: CGSize(width: gridWidth, height: gridHeight))
                 }
             }
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
             .task {
                 posterSize = CGSize(
                     width: proxy.size.width * 0.7,
@@ -42,25 +43,37 @@ struct PersonDetailView: View {
                 )
             }
         }
-        .ignoresSafeArea()
-        .task {
-            viewModel.action(.viewOnTask)
-        }
-        .apiRequestErrorAlert(isPresented: $viewModel.output.isShowAlert) {
+        .ignoresSafeArea(.all, edges: .top)
+        .toolbar(.hidden, for: .tabBar)
+        .task { viewModel.action(.viewOnTask) }
+        .popupAlert(
+            isPresented: Binding(
+                get: { viewModel.output.isShowAlert },
+                set: { _ in viewModel.action(.onDismissAlert) }
+            ),
+            contentModel: .init(
+                systemImage: "wifi.exclamationmark",
+                phrase: "apiRequestError",
+                normal: "refresh"
+            ),
+            heightType: .middle
+        ) {
             viewModel.action(.refresh)
         }
     }
     
     @ViewBuilder
     private func infoSection(width: CGFloat, gridSize: CGSize) -> some View {
-        VStack {
-            mainImageSection(width: width)
-            
-            LazyVStack {
-                keyInfoSection()
-                filmographySection(size: gridSize)
+        ScrollView {
+            VStack {
+                mainImageSection(width: width)
+                
+                LazyVStack {
+                    keyInfoSection()
+                    filmographySection(size: gridSize)
+                }
+                .padding()
             }
-            .padding()
         }
     }
     
@@ -125,15 +138,3 @@ fileprivate struct InfoHeader: View {
             .frame(maxWidth: .infinity, alignment: .leading)
     }
 }
-
-//#Preview {
-//    PersonDetailView(
-//        viewModel: PersonDetailViewModel(
-//            personDetailService: DefaultPersonDetailService(
-//                tmdbRepository: DefaultTMDBRepository.shared,
-//                databaseRepository: RealmRepository.shared
-//            ),
-//            networkMonitor: NetworkMonitor.shared,
-//            personId: 74568)
-//    )
-//}

@@ -18,6 +18,9 @@ struct SearchView: View {
     
     @FocusState private var focusedField: FocusField?
     
+    @State private var visibility: Visibility = .visible
+    @State private var isSearchAppear = true
+    @State private var isDetailDisappear = false
     @State private var cellSize: CGSize = .zero
     @State private var posterSize: CGSize = .zero
     @State private var isShowSearch = false
@@ -32,15 +35,32 @@ struct SearchView: View {
     }
         
     var body: some View {
-        NavigationStack { 
+        NavigationStack {
             if !viewModel.output.networkConnect {
                 UnnetworkedView(refreshAction: viewModel.action(.refresh))
             } else {
                 contentSection()
             }
         }
-        .task {
-            viewModel.action(.viewOnTask)
+        .toolbar(visibility, for: .tabBar)
+        .animation(.easeInOut, value: visibility)
+        .task { viewModel.action(.viewOnTask) }
+        .popupAlert(
+            isPresented: Binding(
+                get: { viewModel.output.isShowAlert },
+                set: { _ in viewModel.action(.onDismissAlert) }
+            ),
+            contentModel: .init(
+                systemImage: "wifi.exclamationmark",
+                phrase: "apiRequestError",
+                normal: "refresh"
+            ),
+            heightType: .middle
+        ) {
+            viewModel.action(.refresh)
+        }
+        .valueChanged(value: isDetailDisappear) { _ in
+            if isSearchAppear && isDetailDisappear { visibility = .visible }
         }
     }
     
@@ -61,6 +81,7 @@ struct SearchView: View {
                 }
             }
         }
+        .onAppear { isSearchAppear = true }
         .valueChanged(value: focusedField) { _ in
             if focusedField == .cover {
                 withAnimation {
@@ -68,17 +89,6 @@ struct SearchView: View {
                     focusedField = .search
                 }
             }
-        }
-        .popupAlert(
-            isPresented: $viewModel.output.isShowAlert,
-            contentModel: .init(
-                systemImage: "wifi.exclamationmark",
-                phrase: "apiRequestError",
-                normal: "refresh"
-            ),
-            heightType: .middle
-        ) {
-            viewModel.action(.refresh)
         }
     }
     
@@ -166,6 +176,17 @@ struct SearchView: View {
         ForEach(viewModel.output.trendingMovie, id: \.id) { movie in
             NavigationLink {
                 LazyView(MovieDetailFactory.makeView(movie: movie, posterSize: posterSize))
+                    .onAppear {
+                        if visibility == .visible {
+                            visibility = .hidden
+                        }
+                        isSearchAppear = false
+                        isDetailDisappear = false
+                    }
+                    .onDisappear {
+                        isDetailDisappear = true
+                    }
+                
             } label: {
                 let url = URL(string: ImageURL.tmdb(image: movie.poster).urlString)
                 PosterImage(
@@ -183,6 +204,17 @@ struct SearchView: View {
         ForEach(viewModel.output.popularPeople, id: \.id) { person in
             NavigationLink {
                 LazyView(PersonDetailFactory.makeView(personId: person._id))
+                    .onAppear {
+                        if visibility == .visible {
+                            visibility = .hidden
+                        }
+                        isSearchAppear = false
+                        isDetailDisappear = false
+                    }
+                    .onDisappear {
+                        isDetailDisappear = true
+                    }
+                
             } label: {
                 VStack {
                     let url = URL(string: ImageURL.tmdb(image: person.profilePath).urlString)
@@ -200,6 +232,7 @@ struct SearchView: View {
                         .foregroundStyle(.appText)
                         .frame(width: 90)
                 }
+                .frame(maxHeight: .infinity, alignment: .top)
                 .padding(.horizontal, 4)
             }
         }

@@ -14,10 +14,10 @@ final class SearchViewModel: BaseObject, ViewModelType {
     
     private var loadData: [String : Bool] = [:]
     
-    @Published var output = Output()
-    
-    var input = Input()
-    var cancellable = Set<AnyCancellable>()
+    @Published private(set) var output = Output()
+
+    private(set) var input = Input()
+    private(set) var cancellable = Set<AnyCancellable>()
     
     init(
         searchSerivce: SearchService,
@@ -34,6 +34,7 @@ extension SearchViewModel {
     struct Input {
         let viewOnTask = PassthroughSubject<Void, Never>()
         let refresh = PassthroughSubject<Void, Never>()
+        let onDismissAlert = PassthroughSubject<Void, Never>()
     }
     
     struct Output {
@@ -45,17 +46,21 @@ extension SearchViewModel {
     
     func transform() {
         input.viewOnTask
-            .sink { [weak self] in
-                guard let self else { return }
-                fetchData()
+            .sink(with: self) { owner, _ in
+                owner.fetchData()
             }
             .store(in: &cancellable)
         
         input.refresh
-            .sink { [weak self] in
-                guard let self else { return }
-                loadData = [:]
-                fetchData()
+            .sink(with: self) { owner, _ in
+                owner.loadData = [:]
+                owner.fetchData()
+            }
+            .store(in: &cancellable)
+        
+        input.onDismissAlert
+            .sink(with: self) { owner, _ in
+                owner.output.isShowAlert = false
             }
             .store(in: &cancellable)
     }
@@ -65,6 +70,7 @@ extension SearchViewModel {
     enum Action {
         case viewOnTask
         case refresh
+        case onDismissAlert
     }
     
     func action(_ action: Action) {
@@ -73,6 +79,8 @@ extension SearchViewModel {
             input.viewOnTask.send(())
         case .refresh:
             input.refresh.send(())
+        case .onDismissAlert:
+            input.onDismissAlert.send(())
         }
     }
 }
@@ -96,15 +104,14 @@ extension SearchViewModel {
         let publisher = searchSerivce.fetchTrendingMovie(query: query)
         publisher
             .receive(on: DispatchQueue.main)
-            .sink { [weak self] result in
-                guard let self else { return }
+            .sink(with: self) { owner, result in
                 switch result {
                 case .success(let movie):
-                    output.trendingMovie = movie
-                    dataLoad(for: #function)
+                    owner.output.trendingMovie = movie
+                    owner.dataLoad(for: #function)
                 case .failure(let error):
+                    owner.errorHandling()
                     print(error)
-                    errorHandling()
                 }
             }
             .store(in: &cancellable)
@@ -115,15 +122,14 @@ extension SearchViewModel {
         let publisher = searchSerivce.fetchPopularPeople(query: query)
         publisher
             .receive(on: DispatchQueue.main)
-            .sink { [weak self] result in
-                guard let self else { return }
+            .sink(with: self) { owner, result in
                 switch result {
                 case .success(let people):
-                    output.popularPeople = people
-                    dataLoad(for: #function)
+                    owner.output.popularPeople = people
+                    owner.dataLoad(for: #function)
                 case .failure(let error):
+                    owner.errorHandling()
                     print(error)
-                    errorHandling()
                 }
             }
             .store(in: &cancellable)
@@ -132,9 +138,7 @@ extension SearchViewModel {
 
 extension SearchViewModel {
     private func errorHandling() {
-        if !output.isShowAlert {
-            output.isShowAlert = true
-        }
+        if !output.isShowAlert { output.isShowAlert = true }
     }
     
     private func dataLoad(for key: String) {

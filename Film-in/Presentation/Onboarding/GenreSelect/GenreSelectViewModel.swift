@@ -12,10 +12,10 @@ final class GenreSelectViewModel: BaseObject, ViewModelType {
     private let genreSelectService: GenreSelectService
     private let networkMonitor: NetworkMonitor
     
-    @Published var output = Output()
+    @Published private(set) var output = Output()
     
-    var cancellable = Set<AnyCancellable>()
-    var input = Input()
+    private(set) var cancellable = Set<AnyCancellable>()
+    private(set) var input = Input()
     
     init(
         genreSelectService: GenreSelectService,
@@ -31,6 +31,7 @@ final class GenreSelectViewModel: BaseObject, ViewModelType {
 extension GenreSelectViewModel {
     struct Input {
         let viewOnTask = PassthroughSubject<Void, Never>()
+        let onDismissAlert = PassthroughSubject<Void, Never>()
         let changedGenres = PassthroughSubject<Void, Never>()
         let addGenre = PassthroughSubject<MovieGenre, Never>()
         let removeGenre = PassthroughSubject<MovieGenre, Never>()
@@ -47,17 +48,21 @@ extension GenreSelectViewModel {
     
     func transform() {
         input.viewOnTask
-            .sink { [weak self] in
-                guard let self else { return }
-                fetchGenres()
+            .sink(with: self) { owner, _ in
+                owner.fetchGenres()
+            }
+            .store(in: &cancellable)
+        
+        input.onDismissAlert
+            .sink(with: self) { owner, _ in
+                owner.output.isShowAlert = false
             }
             .store(in: &cancellable)
         
         input.changedGenres
-            .sink { [weak self] in
-                guard let self else { return }
-                output.selectedGenreRows = GenreHandler.getRows(
-                    genres: output.selectedGenres,
+            .sink(with: self) { owner, _ in
+                owner.output.selectedGenreRows = GenreHandler.getRows(
+                    genres: owner.output.selectedGenres,
                     spacing: 40,
                     fontSize: 16,
                     windowWidth: GenreHandler.windowWidth)
@@ -65,28 +70,24 @@ extension GenreSelectViewModel {
             .store(in: &cancellable)
         
         input.addGenre
-            .sink { [weak self] genre in
-                guard let self else { return }
-                
-                if output.selectedGenres.contains(genre) {
-                    output.selectedGenres.remove(genre)
+            .sink(with: self) { owner, genre in
+                if owner.output.selectedGenres.contains(genre) {
+                    owner.output.selectedGenres.remove(genre)
                 } else {
-                    output.selectedGenres.insert(genre)
+                    owner.output.selectedGenres.insert(genre)
                 }
             }
             .store(in: &cancellable)
         
         input.removeGenre
-            .sink { [weak self] genre in
-                guard let self else { return }
-                output.selectedGenres.remove(genre)
+            .sink(with: self) { owner, genre in
+                owner.output.selectedGenres.remove(genre)
             }
             .store(in: &cancellable)
         
         input.createUser
-            .sink { [weak self] _ in
-                guard let self else { return }
-                genreSelectService.createUser(genres: output.selectedGenres)
+            .sink(with: self) { owner, _ in
+                owner.genreSelectService.createUser(genres: owner.output.selectedGenres)
             }
             .store(in: &cancellable)
     }
@@ -101,13 +102,13 @@ extension GenreSelectViewModel {
         let publisher = genreSelectService.fetchGenres(query: query)
         publisher
             .receive(on: DispatchQueue.main)
-            .sink { [weak self] result in
-                guard let self else { return }
+            .sink(with: self) { owner, result in
                 switch result {
                 case .success(let genres):
-                    output.genres = genres
-                case .failure(_):
-                    output.isShowAlert = true
+                    owner.output.genres = genres
+                case .failure(let error):
+                    owner.output.isShowAlert = true
+                    print(#function, error)
                 }
             }
             .store(in: &cancellable)
@@ -118,6 +119,7 @@ extension GenreSelectViewModel {
     enum Action {
         case viewOnTask
         case refresh
+        case onDismissAlert
         case changedGenres
         case addGenre(_ genre: MovieGenre)
         case removeGenre(_ genre: MovieGenre)
@@ -130,6 +132,8 @@ extension GenreSelectViewModel {
             input.viewOnTask.send(())
         case .refresh:
             input.viewOnTask.send(())
+        case .onDismissAlert:
+            input.onDismissAlert.send(())
         case .changedGenres:
             input.changedGenres.send(())
         case .addGenre(let genre):

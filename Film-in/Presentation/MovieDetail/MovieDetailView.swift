@@ -45,11 +45,9 @@ struct MovieDetailView: View {
                 infoSection()
             }
         }
-        .task {
-            viewModel.action(.viewOnTask)
-        }
+        .task { viewModel.action(.viewOnTask) }
         .ignoresSafeArea(.all, edges: .bottom)
-        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
         .background(.background)
         .toolbar(.hidden, for: .tabBar)
         .valueChanged(value: dateSetupType) { newValue in
@@ -58,7 +56,18 @@ struct MovieDetailView: View {
         .sheet(isPresented: $isDateSetup){
             dateSetupSheet()
         }
-        .apiRequestErrorAlert(isPresented: $viewModel.output.isShowAlert) {
+        .popupAlert(
+            isPresented: Binding(
+                get: { viewModel.output.isShowAlert },
+                set: { _ in viewModel.action(.onDismissAlert) }
+            ),
+            contentModel: .init(
+                systemImage: "wifi.exclamationmark",
+                phrase: "apiRequestError",
+                normal: "refresh"
+            ),
+            heightType: .middle
+        ) {
             viewModel.action(.refresh)
         }
     }
@@ -245,21 +254,7 @@ struct MovieDetailView: View {
     
     @ViewBuilder
     private func similarSection() -> some View {
-        HStack(alignment: .lastTextBaseline) {
-            InfoHeader(titleKey: "simliar")
-            
-            Spacer()
-            
-            NavigationLink {
-                LazyView(SeeMoreView(usedTo: .similar(viewModel.movieId)))
-            } label: {
-                Text("more")
-                    .font(.ibmPlexMonoSemiBold(size: 16))
-                    .underline()
-                    .foregroundStyle(.app)
-            }
-        }
-        .padding(.horizontal)
+        MoreHeader(usedTo: .similar(viewModel.movieId))
         
         ScrollView(.horizontal) {
             LazyHStack {

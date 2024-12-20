@@ -50,42 +50,37 @@ extension DateSetupViewModel {
     
     func transform() {
         input.done
-            .sink { [weak self] _ in
-                guard let self else { return }
-                output.isDone = true
+            .sink(with: self) { owner, _ in
+                owner.output.isDone = true
             }
             .store(in: &cancellable)
         
         input.requestPermission
-            .sink { [weak self] _ in
-                guard let self else { return }
-                let publisher = dateSetupService.requestPermission()
+            .sink(with: self) { owner, _ in
+                let publisher = owner.dateSetupService.requestPermission()
                 publisher
                     .receive(on: DispatchQueue.main)
-                    .sink { [weak self] result in
-                        guard let self else { return }
+                    .sink(with: self) { owner, result in
                         switch result {
                         case .success():
                             break
                         case .failure(_):
-                            output.isError = true
+                            owner.output.isError = true
                         }
                     }
-                    .store(in: &cancellable)
+                    .store(in: &owner.cancellable)
             }
             .store(in: &cancellable)
         
         input.wantOrWatched
-            .sink { [weak self] _ in
-                guard let self else { return }
-                saveMovie()
+            .sink(with: self) { owner, _ in
+                owner.saveMovie()
             }
             .store(in: &cancellable)
         
         input.moveToSetting
-            .sink { [weak self] _ in
-                guard let self else { return }
-                dateSetupService.goToSetting()
+            .sink(with: self) { owner, _ in
+                owner.dateSetupService.goToSetting()
             }
             .store(in: &cancellable)
     }
@@ -136,14 +131,13 @@ extension DateSetupViewModel {
                 )
                 publisher
                     .receive(on: DispatchQueue.main)
-                    .sink { [weak self] result in
-                        guard let self else { return }
+                    .sink(with: self) { owner, result in
                         switch result {
                         case .success():
-                            output.isSuccess = true
+                            owner.output.isSuccess = true
                         case .failure(_):
-                            output.isSuccess = false
-                            output.isError = true
+                            owner.output.isSuccess = false
+                            owner.output.isError = true
                         }
                     }
                     .store(in: &cancellable)

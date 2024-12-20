@@ -7,13 +7,15 @@
 
 import SwiftUI
 
-struct WaveTransitionTextView: View {
-    @State private var isVisible: Bool = false
-    private let text: String = "Film-in"
+struct LaunchScreenView: View {
+    @State private var isVisible = false
+    @Binding var isWave: Bool
+    
+    private let title = "Film-in"
 
     var body: some View {
         HStack(spacing: 0) {
-            ForEach(Array(text.enumerated()), id: \.offset) { index, letter in
+            ForEach(Array(title.enumerated()), id: \.offset) { index, letter in
                 Text(verbatim: String(letter))
                     .font(.ibmPlexMonoSemiBold(size: 60))
                     .foregroundStyle(.app)
@@ -24,14 +26,14 @@ struct WaveTransitionTextView: View {
                             .delay(0.1 * Double(index)),
                         value: isVisible
                     )
+                    .task {
+                        try? await Task.sleep(nanoseconds: 1_500_000_000)
+                        withAnimation { isWave = true }
+                    }
             }
         }
-        .onAppear {
-            isVisible = true
-        }
+        .onAppear { isVisible = true }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .background(.background)
     }
-}
-
-#Preview {
-    WaveTransitionTextView()
 }

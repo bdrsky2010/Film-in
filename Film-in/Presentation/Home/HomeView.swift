@@ -9,11 +9,17 @@ import SwiftUI
 
 struct HomeView: View {
     @StateObject private var viewModel: HomeViewModel
-    @Namespace var namespace
+    
+    @State private var visibility: Visibility = .visible
+    @State private var isHomeAppear = true
+    @State private var isDetailDisappear = false
     @State private var index = 0
     @State private var showDetailView = false
     @State private var movie: MovieData?
+    @State private var cellSize: CGSize = .zero
     @State private var posterSize: CGSize = .zero
+    
+    @Namespace private var namespace
     
     init(viewModel: HomeViewModel) {
         self._viewModel = StateObject(wrappedValue: viewModel)
@@ -35,29 +41,50 @@ struct HomeView: View {
                             upcomingSection()
                             recommendSection()
                         }
+                        .scrollIndicators(.hidden)
                         .refreshable {
                             viewModel.action(.refresh)
                         }
                     }
                     .task {
-                        posterSize = CGSize(width: proxy.size.width * 0.7, height: proxy.size.width * 0.7 * 1.5)
+                        if posterSize == .zero {
+                            posterSize = CGSize(
+                                width: proxy.size.width * 0.7,
+                                height: proxy.size.width * 0.7 * 1.5
+                            )
+                        }
+                        
+                        if cellSize == .zero {
+                            cellSize = CGSize(
+                                width: posterSize.width * 0.5,
+                                height: posterSize.height * 0.5
+                            )
+                        }
                     }
                 }
                 .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
-                .overlay {
-                    if let movie, showDetailView {
-                        detailView(by: movie)
-                    }
-                }
-                .task {
-                    withAnimation {
-                        viewModel.action(.viewOnTask)
-                    }
-                }
-                .apiRequestErrorAlert(isPresented: $viewModel.output.isShowAlert) {
+                .task { viewModel.action(.viewOnTask) }
+                .onAppear { isHomeAppear = true }
+                .popupAlert(
+                    isPresented: Binding(
+                        get: { viewModel.output.isShowAlert },
+                        set: { _ in viewModel.action(.onDismissAlert) }
+                    ),
+                    contentModel: .init(
+                        systemImage: "wifi.exclamationmark",
+                        phrase: "apiRequestError",
+                        normal: "refresh"
+                    ),
+                    heightType: .middle
+                ) {
                     viewModel.action(.refresh)
                 }
             }
+        }
+        .toolbar(visibility, for: .tabBar)
+        .animation(.easeInOut, value: visibility)
+        .valueChanged(value: isDetailDisappear) { _ in
+            if isHomeAppear && isDetailDisappear { visibility = .visible }
         }
     }
     
@@ -72,18 +99,27 @@ struct HomeView: View {
     }
     
     @ViewBuilder
-    private func trendingSection() -> some View {
-        SnapCarousel(spacing: 28, trailingSpace: 120, index: $index, items: viewModel.output.trendingMovies.movies) { movie in
-            
-            let url = URL(string: ImageURL.tmdb(image: movie.poster).urlString)
-            PosterImage(url: url, size: posterSize, title: movie.title, isDownsampling: true)
-                .matchedGeometryEffect(id: movie.id, in: namespace, properties: .frame, isSource: !showDetailView)
-                .onTapGesture {
-                    withAnimation(.easeInOut) {
-                        self.movie = movie
-                        showDetailView = true
-                    }
+    private func trendingSection() -> some View {        
+        PagingView(currentIndex: $index, items: viewModel.output.trendingMovies.movies) { movie in
+            ZStack {
+                NavigationLink {
+                    LazyView(MovieDetailFactory.makeView(movie: movie, posterSize: posterSize))
+                        .onAppear {
+                            if visibility == .visible {
+                                visibility = .hidden
+                            }
+                            isHomeAppear = false
+                            isDetailDisappear = false
+                        }
+                        .onDisappear {
+                            isDetailDisappear = true
+                        }
+                } label: {
+                    let url = URL(string: ImageURL.tmdb(image: movie.poster).urlString)
+                    PosterImage(url: url, size: posterSize, title: movie.title, isDownsampling: true)
                 }
+                .buttonStyle(.plain)
+            }
         }
         .frame(height: posterSize.height)
         .padding(.bottom, 20)
@@ -91,71 +127,83 @@ struct HomeView: View {
     
     @ViewBuilder
     private func nowPlayingSection() -> some View {
-        ListHeader(localizedTitle: "nowPlaying", usedTo: .nowPlaying)
+        MoreHeader(usedTo: .nowPlaying)
         
-        ScrollView(.horizontal, showsIndicators: false) {
-            LazyHStack {
+        ScrollView(.horizontal) {
+            LazyHStack(spacing: 8) {
                 ForEach(viewModel.output.nowPlayingMovies.movies, id: \.id) { movie in
-                    let url = URL(string: ImageURL.tmdb(image: movie.poster).urlString)
-                    PosterImage(url: url, size: CGSize(width: posterSize.width * 0.5, height: posterSize.height * 0.5), title: movie.title, isDownsampling: true)
-                        .padding(.bottom, 4)
-                        .padding(.horizontal, 8)
-                        .matchedGeometryEffect(id: movie.id, in: namespace, properties: .frame, isSource: !showDetailView)
-                        .onTapGesture {
-                            withAnimation(.easeInOut) {
-                                self.movie = movie
-                                showDetailView = true
+                    NavigationLink {
+                        LazyView(MovieDetailFactory.makeView(movie: movie, posterSize: posterSize))
+                            .onAppear {
+                                if visibility == .visible { visibility = .hidden }
                             }
-                        }
+                        
+                    } label: {
+                        let url = URL(string: ImageURL.tmdb(image: movie.poster).urlString)
+                        PosterImage(url: url, size: cellSize, title: movie.title, isDownsampling: true)
+                            .padding(.bottom, 4)
+                            .padding(.horizontal, 8)
+                    }
+                    .buttonStyle(.plain)
                 }
             }
+            .padding(.horizontal)
         }
+        .scrollIndicators(.hidden)
     }
     
     @ViewBuilder
     private func upcomingSection() -> some View {
-        ListHeader(localizedTitle: "upcoming", usedTo: .upcoming)
+        MoreHeader(usedTo: .upcoming)
         
-        ScrollView(.horizontal, showsIndicators: false) {
-            LazyHStack {
+        ScrollView(.horizontal) {
+            LazyHStack(spacing: 8) {
                 ForEach(viewModel.output.upcomingMovies.movies, id: \.id) { movie in
-                    let url = URL(string: ImageURL.tmdb(image: movie.poster).urlString)
-                    PosterImage(url: url, size: CGSize(width: posterSize.width * 0.5, height: posterSize.height * 0.5), title: movie.title, isDownsampling: true)
-                        .padding(.bottom, 4)
-                        .padding(.horizontal, 8)
-                        .matchedGeometryEffect(id: movie.id, in: namespace, properties: .frame, isSource: !showDetailView)
-                        .onTapGesture {
-                            withAnimation(.easeInOut) {
-                                self.movie = movie
-                                showDetailView = true
+                    NavigationLink {
+                        LazyView(MovieDetailFactory.makeView(movie: movie, posterSize: posterSize))
+                            .onAppear {
+                                if visibility == .visible { visibility = .hidden }
                             }
-                        }
+                        
+                    } label: {
+                        let url = URL(string: ImageURL.tmdb(image: movie.poster).urlString)
+                        PosterImage(url: url, size: cellSize, title: movie.title, isDownsampling: true)
+                            .padding(.bottom, 4)
+                            .padding(.horizontal, 8)
+                    }
+                    .buttonStyle(.plain)
                 }
             }
+            .padding(.horizontal)
         }
+        .scrollIndicators(.hidden)
     }
     
     @ViewBuilder
     private func recommendSection() -> some View {
-        ListHeader(localizedTitle: "recommend", usedTo: .recommend)
+        MoreHeader(usedTo: .recommend)
         
-        ScrollView(.horizontal, showsIndicators: false) {
-            LazyHStack {
+        ScrollView(.horizontal) {
+            LazyHStack(spacing: 8) {
                 ForEach(viewModel.output.recommendMovies.movies, id: \.id) { movie in
-                    let url = URL(string: ImageURL.tmdb(image: movie.poster).urlString)
-                    PosterImage(url: url, size: CGSize(width: posterSize.width * 0.5, height: posterSize.height * 0.5), title: movie.title, isDownsampling: true)
-                        .padding(.bottom, 4)
-                        .padding(.horizontal, 8)
-                        .matchedGeometryEffect(id: movie.id, in: namespace, properties: .frame, isSource: !showDetailView)
-                        .onTapGesture {
-                            withAnimation(.easeInOut) {
-                                self.movie = movie
-                                showDetailView = true
+                    NavigationLink {
+                        LazyView(MovieDetailFactory.makeView(movie: movie, posterSize: posterSize))
+                            .onAppear {
+                                if visibility == .visible { visibility = .hidden }
                             }
-                        }
+                        
+                    } label: {
+                        let url = URL(string: ImageURL.tmdb(image: movie.poster).urlString)
+                        PosterImage(url: url, size: cellSize, title: movie.title, isDownsampling: true)
+                            .padding(.bottom, 4)
+                            .padding(.horizontal, 8)
+                    }
+                    .buttonStyle(.plain)
                 }
             }
+            .padding(.horizontal)
         }
+        .scrollIndicators(.hidden)
     }
     
     @ViewBuilder
@@ -166,31 +214,5 @@ struct HomeView: View {
             namespace: namespace,
             posterSize: posterSize
         )
-    }
-}
-
-fileprivate struct ListHeader: View {
-    let localizedTitle: LocalizedStringKey
-    let usedTo: UsedTo
-    
-    var body: some View {
-        HStack(alignment: .lastTextBaseline) {
-            Text(localizedTitle)
-                .font(.ibmPlexMonoSemiBold(size: 24))
-                .foregroundStyle(.appText)
-                .frame(maxWidth: .infinity, alignment: .leading)
-            
-            Spacer()
-            
-            NavigationLink {
-                SeeMoreView(usedTo: usedTo)
-            } label: {
-                Text("more")
-                    .font(.ibmPlexMonoSemiBold(size: 16))
-                    .underline()
-                    .foregroundStyle(.app)
-            }
-        }
-        .padding(.horizontal, 20)
     }
 }

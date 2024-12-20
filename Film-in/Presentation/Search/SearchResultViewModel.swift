@@ -72,9 +72,9 @@ extension SearchResultViewModel {
                         switch result {
                         case .success(let multiSearch):
                             owner.output.multiSearchList = multiSearch
-                        case .failure(let failure):
-                            print(failure)
+                        case .failure(let error):
                             owner.errorHandling()
+                            print(error)
                         }
                     }
                     .store(in: &owner.cancellable)
@@ -136,8 +136,6 @@ extension SearchResultViewModel {
 
 extension SearchResultViewModel {
     private func errorHandling() {
-        if !output.isShowAlert {
-            output.isShowAlert = true
-        }
+        if !output.isShowAlert { output.isShowAlert = true }
     }
 }

@@ -23,7 +23,15 @@ struct SeeMoreView: View {
             isShowAlert: $isShowAlert,
             isRefresh: $isRefresh
         )
-        .apiRequestErrorAlert(isPresented: $isShowAlert) {
+        .popupAlert(
+            isPresented: $isShowAlert,
+            contentModel: .init(
+                systemImage: "wifi.exclamationmark",
+                phrase: "apiRequestError",
+                normal: "refresh"
+            ),
+            heightType: .middle
+        ){
             isRefresh = true
         }
         .toolbar(.hidden, for: .tabBar)

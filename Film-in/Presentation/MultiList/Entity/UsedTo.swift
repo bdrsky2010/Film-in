@@ -5,7 +5,7 @@
 //  Created by Minjae Kim on 12/13/24.
 //
 
-import Foundation
+import SwiftUI
 
 enum UsedTo {
     case nowPlaying
@@ -15,12 +15,12 @@ enum UsedTo {
     case searchMovie(_ query: String)
     case searchPerson(_ query: String)
     
-    var title: String {
+    var title: LocalizedStringKey {
         switch self {
-        case .nowPlaying: return "nowPlaying".localized
-        case .upcoming: return "upcoming".localized
-        case .recommend: return "recommend".localized
-        case .similar: return "simliar".localized
+        case .nowPlaying: return "nowPlaying"
+        case .upcoming: return "upcoming"
+        case .recommend: return "recommend"
+        case .similar: return "similar"
         case .searchMovie: return ""
         case .searchPerson: return ""
         }

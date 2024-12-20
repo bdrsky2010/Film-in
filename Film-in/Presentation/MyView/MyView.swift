@@ -11,14 +11,25 @@ import PopupView
 
 struct MyView: View {
     @ObservedResults(UserTable.self) var user
+    
     @StateObject private var viewModel: MyViewModel
+    
+    @State private var visibility: Visibility
+    @State private var isMyAppear: Bool
+    @State private var isDetailDisappear: Bool
     @State private var posterSize: CGSize
     
     init(
         viewModel: MyViewModel,
+        visibility: Visibility = .visible,
+        isMyAppear: Bool = true,
+        isDetailDisappear: Bool = false,
         posterSize: CGSize = .zero
     ) {
         self._viewModel = StateObject(wrappedValue: viewModel)
+        self._visibility = State(initialValue: visibility)
+        self._isMyAppear = State(initialValue: isMyAppear)
+        self._isDetailDisappear = State(initialValue: isDetailDisappear)
         self._posterSize = State(wrappedValue: posterSize)
     }
     
@@ -28,8 +39,11 @@ struct MyView: View {
                 calendarSection()
                 contentSection()
             }
+            .onAppear { isMyAppear = true }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
+        .toolbar(visibility, for: .tabBar)
+        .animation(.easeInOut, value: visibility)
         .popupAlert(
             isPresented: $viewModel.output.isRequestDelete,
             contentModel: PopupAlertModel(
@@ -40,6 +54,9 @@ struct MyView: View {
             heightType: .normal
         ) {
             viewModel.action(.realDelete(movieId: viewModel.output.deleteMovieId))
+        }
+        .valueChanged(value: isDetailDisappear) { _ in
+            if isMyAppear && isDetailDisappear { visibility = .visible }
         }
     }
     
@@ -100,6 +117,17 @@ struct MyView: View {
                 
                 NavigationLink {
                     LazyView(MovieDetailFactory.makeView(movie: convertToMovieData(by: movie), posterSize: posterSize))
+                        .onAppear {
+                            if visibility == .visible {
+                                visibility = .hidden
+                            }
+                            isMyAppear = false
+                            isDetailDisappear = false
+                        }
+                        .onDisappear {
+                            isDetailDisappear = true
+                        }
+                    
                 } label: {
                     EmptyView()
                 }
@@ -149,6 +177,17 @@ struct MyView: View {
                 
                 NavigationLink {
                     LazyView(MovieDetailFactory.makeView(movie: convertToMovieData(by: movie), posterSize: posterSize))
+                        .onAppear {
+                            if visibility == .visible {
+                                visibility = .hidden
+                            }
+                            isMyAppear = false
+                            isDetailDisappear = false
+                        }
+                        .onDisappear {
+                            isDetailDisappear = true
+                        }
+                    
                 } label: {
                     EmptyView()
                 }
