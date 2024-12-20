@@ -11,14 +11,25 @@ import PopupView
 
 struct MyView: View {
     @ObservedResults(UserTable.self) var user
+    
     @StateObject private var viewModel: MyViewModel
+    
+    @State private var visibility: Visibility
+    @State private var isMyAppear: Bool
+    @State private var isDetailDisappear: Bool
     @State private var posterSize: CGSize
     
     init(
         viewModel: MyViewModel,
+        visibility: Visibility = .visible,
+        isMyAppear: Bool = true,
+        isDetailDisappear: Bool = false,
         posterSize: CGSize = .zero
     ) {
         self._viewModel = StateObject(wrappedValue: viewModel)
+        self._visibility = State(initialValue: visibility)
+        self._isMyAppear = State(initialValue: isMyAppear)
+        self._isDetailDisappear = State(initialValue: isDetailDisappear)
         self._posterSize = State(wrappedValue: posterSize)
     }
     
@@ -28,8 +39,11 @@ struct MyView: View {
                 calendarSection()
                 contentSection()
             }
+            .onAppear { isMyAppear = true }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
+        .toolbar(visibility, for: .tabBar)
+        .animation(.easeInOut, value: visibility)
         .popupAlert(
             isPresented: $viewModel.output.isRequestDelete,
             contentModel: PopupAlertModel(
@@ -40,6 +54,9 @@ struct MyView: View {
             heightType: .normal
         ) {
             viewModel.action(.realDelete(movieId: viewModel.output.deleteMovieId))
+        }
+        .valueChanged(value: isDetailDisappear) { _ in
+            if isMyAppear && isDetailDisappear { visibility = .visible }
         }
     }
     
@@ -66,7 +83,7 @@ struct MyView: View {
     
     @ViewBuilder
     private func wantSection(proxy: GeometryProxy) -> some View {
-        Text("WANT")
+        Text(verbatim: "WANT")
             .font(.ibmPlexMonoSemiBold(size: 24))
             .foregroundStyle(.appText)
             .frame(maxWidth: proxy.size.width, alignment: .leading)
@@ -81,7 +98,8 @@ struct MyView: View {
                         width: proxy.size.width - 40,
                         height: (proxy.size.width - 40) * 0.56
                     ),
-                    title: movie.title
+                    title: movie.title,
+                    isDownsampling: true
                 )
                 .overlay(alignment: .bottom) {
                     Rectangle()
@@ -89,7 +107,7 @@ struct MyView: View {
                         .frame(height: proxy.size.width * 0.56 * 0.2)
                 }
                 .overlay(alignment: .bottomLeading) {
-                    Text(movie.title)
+                    Text(verbatim: movie.title)
                         .foregroundStyle(.app)
                         .font(.ibmPlexMonoRegular(size: 16))
                         .lineLimit(2)
@@ -99,6 +117,17 @@ struct MyView: View {
                 
                 NavigationLink {
                     LazyView(MovieDetailFactory.makeView(movie: convertToMovieData(by: movie), posterSize: posterSize))
+                        .onAppear {
+                            if visibility == .visible {
+                                visibility = .hidden
+                            }
+                            isMyAppear = false
+                            isDetailDisappear = false
+                        }
+                        .onDisappear {
+                            isDetailDisappear = true
+                        }
+                    
                 } label: {
                     EmptyView()
                 }
@@ -114,7 +143,7 @@ struct MyView: View {
     
     @ViewBuilder
     private func watchedSection(proxy: GeometryProxy) -> some View {
-        Text("WATCHED")
+        Text(verbatim: "WATCHED")
             .font(.ibmPlexMonoSemiBold(size: 24))
             .foregroundStyle(.appText)
             .frame(maxWidth: proxy.size.width, alignment: .leading)
@@ -129,7 +158,8 @@ struct MyView: View {
                         width: proxy.size.width - 40,
                         height: (proxy.size.width - 40) * 0.56
                     ),
-                    title: movie.title
+                    title: movie.title,
+                    isDownsampling: true
                 )
                 .overlay(alignment: .bottom) {
                     Rectangle()
@@ -137,7 +167,7 @@ struct MyView: View {
                         .frame(height: proxy.size.width * 0.56 * 0.2)
                 }
                 .overlay(alignment: .bottomLeading) {
-                    Text(movie.title)
+                    Text(verbatim: movie.title)
                         .foregroundStyle(.app)
                         .font(.ibmPlexMonoRegular(size: 16))
                         .lineLimit(2)
@@ -147,6 +177,17 @@ struct MyView: View {
                 
                 NavigationLink {
                     LazyView(MovieDetailFactory.makeView(movie: convertToMovieData(by: movie), posterSize: posterSize))
+                        .onAppear {
+                            if visibility == .visible {
+                                visibility = .hidden
+                            }
+                            isMyAppear = false
+                            isDetailDisappear = false
+                        }
+                        .onDisappear {
+                            isDetailDisappear = true
+                        }
+                    
                 } label: {
                     EmptyView()
                 }

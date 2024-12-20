@@ -83,7 +83,7 @@ struct CalendarView: View {
         VStack {
             HStack {
                 ForEach(weekDays, id: \.self) { day in
-                    Text(day)
+                    Text(verbatim: "\(day)")
                         .font(.ibmPlexMonoMedium(size: 17))
                         .frame(maxWidth: .infinity)
                         .padding(.vertical, 8)
@@ -111,14 +111,14 @@ struct CalendarView: View {
             if viewModel.output.isEnglish {
                 Picker("", selection: $viewModel.output.selectMonth) {
                     ForEach(1...12, id: \.self) { month in
-                        Text(viewModel.output.localizedMonths[month] ?? "").tag(month)
+                        Text(verbatim: viewModel.output.localizedMonths[month] ?? "").tag(month)
                     }
                 }
                 .pickerStyle(.wheel)
                 
                 Picker("", selection: $viewModel.output.selectYear) {
                     ForEach(pastYear...futureYear, id: \.self) { year in
-                        Text(viewModel.output.localizedYears[year] ?? "").tag(year)
+                        Text(verbatim: viewModel.output.localizedYears[year] ?? "").tag(year)
                     }
                 }
                 .pickerStyle(.wheel)
@@ -126,14 +126,14 @@ struct CalendarView: View {
             } else {
                 Picker("", selection: $viewModel.output.selectYear) {
                     ForEach(pastYear...futureYear, id: \.self) { year in
-                        Text(viewModel.output.localizedYears[year] ?? "").tag(year)
+                        Text(verbatim: viewModel.output.localizedYears[year] ?? "").tag(year)
                     }
                 }
                 .pickerStyle(.wheel)
                 
                 Picker("", selection: $viewModel.output.selectMonth) {
                     ForEach(1...12, id: \.self) { month in
-                        Text(viewModel.output.localizedMonths[month] ?? "").tag(month)
+                        Text(verbatim: viewModel.output.localizedMonths[month] ?? "").tag(month)
                     }
                 }
                 .pickerStyle(.wheel)
@@ -179,7 +179,7 @@ struct DayView: View {
                     }
                 }
                 
-                Text("\(date.day ?? 0)")
+                Text(verbatim: "\(date.day ?? 0)")
                     .font(.ibmPlexMonoMedium(size: 17))
                     .padding(.vertical, 8)
                 if value.isData {
@@ -190,7 +190,7 @@ struct DayView: View {
             .foregroundStyle(isSelect ? .white : .appText)
             
         } else {
-            Text("")
+            Text(verbatim: "")
                 .font(.headline)
                 .padding(.vertical, 8)
         }

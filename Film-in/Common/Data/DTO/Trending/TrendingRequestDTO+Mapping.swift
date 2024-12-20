@@ -7,12 +7,6 @@
 
 import Foundation
 
-struct TrendingRequestDTO: Encodable {
+struct TrendingRequestDTO: Encodable, RequestParametable {
     let language: String
-}
-
-extension TrendingRequestDTO {
-    var asParameters: [String: Any] {
-        return JSONEncoder.toDictionary(self)
-    }
 }

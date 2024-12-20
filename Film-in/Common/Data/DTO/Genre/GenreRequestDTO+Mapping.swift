@@ -7,12 +7,6 @@
 
 import Foundation
 
-struct GenreRequestDTO: Encodable {
+struct GenreRequestDTO: Encodable, RequestParametable {
     let language: String
-}
-
-extension GenreRequestDTO {
-    var asParameters: [String: Any] {
-        return JSONEncoder.toDictionary(self)
-    }
 }

@@ -8,13 +8,13 @@
 import Foundation
 
 struct TMDBMovieResponseDTO: Decodable {
-    let backdropPath: String // upcoming에서 없을 수 있음
+    let backdropPath: String
     let id: Int
     let title: String
     let originTitle: String
     let overview: String
     let posterPath: String
-    let mediaType: String? // nowPlaying에서 없을 수 있음
+    let mediaType: String
     let adult: Bool
     let originLanguage: String
     let genreIds: [Int]
@@ -50,7 +50,7 @@ struct TMDBMovieResponseDTO: Decodable {
         self.originTitle = try container.decodeIfPresent(String.self, forKey: .originTitle) ?? ""
         self.overview = try container.decode(String.self, forKey: .overview)
         self.posterPath = try container.decodeIfPresent(String.self, forKey: .posterPath) ?? ""
-        self.mediaType = try container.decodeIfPresent(String.self, forKey: .mediaType)
+        self.mediaType = try container.decodeIfPresent(String.self, forKey: .mediaType) ?? ""
         self.adult = try container.decode(Bool.self, forKey: .adult)
         self.originLanguage = try container.decode(String.self, forKey: .originLanguage)
         self.genreIds = try container.decode([Int].self, forKey: .genreIds)

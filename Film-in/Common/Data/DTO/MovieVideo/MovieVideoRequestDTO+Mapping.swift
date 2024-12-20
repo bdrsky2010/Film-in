@@ -7,12 +7,6 @@
 
 import Foundation
 
-struct MovieVideoRequestDTO: Encodable {
+struct MovieVideoRequestDTO: Encodable, RequestParametable {
     let language: String
-}
-
-extension MovieVideoRequestDTO {
-    var asParameters: [String: Any] {
-        return JSONEncoder.toDictionary(self)
-    }
 }

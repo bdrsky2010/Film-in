@@ -9,11 +9,11 @@ import Foundation
 import Combine
 
 protocol MovieDetailService: AnyObject {
-    func fetchMovieDetail(query: MovieDetailQuery) -> Future<Result<MovieInfo, TMDBError>, Never>
-    func fetchMovieCredit(query: MovieCreditQuery) -> Future<Result<[CreditInfo], TMDBError>, Never>
-    func fetchMovieSimilar(query: MovieSimilarQuery) -> Future<Result<MovieSimilar, TMDBError>, Never>
-    func fetchMovieImages(query: MovieImagesQuery) -> Future<Result<MovieImages, TMDBError>, Never>
-    func fetchMovieVideos(query: MovieVideosQuery) -> Future<Result<[MovieVideo], TMDBError>, Never>
+    func fetchMovieDetail(query: MovieDetailQuery) -> AnyPublisher<Result<MovieInfo, TMDBError>, Never>
+    func fetchMovieCredit(query: MovieCreditQuery) -> AnyPublisher<Result<[CreditInfo], TMDBError>, Never>
+    func fetchMovieSimilar(query: MovieSimilarQuery) -> AnyPublisher<Result<MovieSimilar, TMDBError>, Never>
+    func fetchMovieImages(query: MovieImagesQuery) -> AnyPublisher<Result<MovieImages, TMDBError>, Never>
+    func fetchMovieVideos(query: MovieVideosQuery) -> AnyPublisher<Result<[MovieVideo], TMDBError>, Never>
 }
 
 final class DefaultMovieDetailService: BaseObject, MovieDetailService {
@@ -30,7 +30,7 @@ final class DefaultMovieDetailService: BaseObject, MovieDetailService {
 }
 
 extension DefaultMovieDetailService {
-    func fetchMovieDetail(query: MovieDetailQuery) -> Future<Result<MovieInfo, TMDBError>, Never> {
+    func fetchMovieDetail(query: MovieDetailQuery) -> AnyPublisher<Result<MovieInfo, TMDBError>, Never> {
         return Future { promise in
             Task { [weak self] in
                 guard let self else { return }
@@ -43,9 +43,10 @@ extension DefaultMovieDetailService {
                 }
             }
         }
+        .eraseToAnyPublisher()
     }
     
-    func fetchMovieCredit(query: MovieCreditQuery) -> Future<Result<[CreditInfo], TMDBError>, Never> {
+    func fetchMovieCredit(query: MovieCreditQuery) -> AnyPublisher<Result<[CreditInfo], TMDBError>, Never> {
         return Future { promise in
             Task { [weak self] in
                 guard let self else { return }
@@ -58,9 +59,10 @@ extension DefaultMovieDetailService {
                 }
             }
         }
+        .eraseToAnyPublisher()
     }
     
-    func fetchMovieSimilar(query: MovieSimilarQuery) -> Future<Result<MovieSimilar, TMDBError>, Never> {
+    func fetchMovieSimilar(query: MovieSimilarQuery) -> AnyPublisher<Result<MovieSimilar, TMDBError>, Never> {
         return Future { promise in
             Task { [weak self] in
                 guard let self else { return }
@@ -73,9 +75,10 @@ extension DefaultMovieDetailService {
                 }
             }
         }
+        .eraseToAnyPublisher()
     }
     
-    func fetchMovieImages(query: MovieImagesQuery) -> Future<Result<MovieImages, TMDBError>, Never> {
+    func fetchMovieImages(query: MovieImagesQuery) -> AnyPublisher<Result<MovieImages, TMDBError>, Never> {
         return Future { promise in
             Task { [weak self] in
                 guard let self else { return }
@@ -88,9 +91,10 @@ extension DefaultMovieDetailService {
                 }
             }
         }
+        .eraseToAnyPublisher()
     }
     
-    func fetchMovieVideos(query: MovieVideosQuery) -> Future<Result<[MovieVideo], TMDBError>, Never> {
+    func fetchMovieVideos(query: MovieVideosQuery) -> AnyPublisher<Result<[MovieVideo], TMDBError>, Never> {
         return Future { promise in
             Task { [weak self] in
                 guard let self else { return }
@@ -103,5 +107,6 @@ extension DefaultMovieDetailService {
                 }
             }
         }
+        .eraseToAnyPublisher()
     }
 }

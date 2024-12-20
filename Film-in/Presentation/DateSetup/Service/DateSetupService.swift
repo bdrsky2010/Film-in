@@ -13,8 +13,8 @@ enum NotificationError: Error {
 }
 
 protocol DateSetupService: AnyObject {
-    func requestPermission() -> Future<Result<Void, NotificationError>, Never>
-    func registPushAlarm(movie: (id: Int, title: String), date: Date) -> Future<Result<Void, NotificationError>, Never>
+    func requestPermission() -> AnyPublisher<Result<Void, NotificationError>, Never>
+    func registPushAlarm(movie: (id: Int, title: String), date: Date) -> AnyPublisher<Result<Void, NotificationError>, Never>
     func goToSetting()
     func saveWantOrWatchedMovie(query: WantWatchedMovieQuery)
 }
@@ -33,7 +33,7 @@ final class DefaultDateSetupService: BaseObject {
 }
 
 extension DefaultDateSetupService: DateSetupService {
-    func requestPermission() -> Future<Result<Void, NotificationError>, Never> {
+    func requestPermission() -> AnyPublisher<Result<Void, NotificationError>, Never> {
         return Future { promise in
             Task { [weak self] in
                 guard let self else { return }
@@ -45,9 +45,10 @@ extension DefaultDateSetupService: DateSetupService {
                 }
             }
         }
+        .eraseToAnyPublisher()
     }
     
-    func registPushAlarm(movie: (id: Int, title: String), date: Date) -> Future<Result<Void, NotificationError>, Never> {
+    func registPushAlarm(movie: (id: Int, title: String), date: Date) -> AnyPublisher<Result<Void, NotificationError>, Never> {
         return Future { promise in
             Task { [weak self] in
                 guard let self else { return }
@@ -59,6 +60,7 @@ extension DefaultDateSetupService: DateSetupService {
                 }
             }
         }
+        .eraseToAnyPublisher()
     }
     
     func goToSetting() {

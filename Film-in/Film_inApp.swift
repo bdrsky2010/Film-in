@@ -29,14 +29,20 @@ class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCenterDele
 struct Film_inApp: App {
     @UIApplicationDelegateAdaptor(AppDelegate.self) var delegate
     @AppStorage("onboarding") private var isOnboarding = false
+    @State private var isLaunch = false
     
     var body: some Scene {
         WindowGroup {
             if isOnboarding {
-                MainTabView()
+                if !isLaunch {
+                    LaunchScreenView(isWave: $isLaunch)
+                } else {
+                    MainTabView()
+                }
             } else {
                 GenreSelectFactory.makeView()
             }
+//            CustomPagingView()
         }
     }
 }

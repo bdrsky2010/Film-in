@@ -18,12 +18,20 @@ struct SeeMoreView: View {
     }
     
     var body: some View {
-        MovieListFactory.makeView(
+        MultiListFactory.makeView(
             to: usedTo,
             isShowAlert: $isShowAlert,
             isRefresh: $isRefresh
         )
-        .apiRequestErrorAlert(isPresented: $isShowAlert) {
+        .popupAlert(
+            isPresented: $isShowAlert,
+            contentModel: .init(
+                systemImage: "wifi.exclamationmark",
+                phrase: "apiRequestError",
+                normal: "refresh"
+            ),
+            heightType: .middle
+        ){
             isRefresh = true
         }
         .toolbar(.hidden, for: .tabBar)

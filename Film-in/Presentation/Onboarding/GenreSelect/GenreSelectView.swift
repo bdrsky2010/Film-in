@@ -25,10 +25,19 @@ struct GenreSelectView: View {
             SelectedGenreSheetView(viewModel: viewModel)
         }
         .frame(maxWidth: .infinity)
-        .task {
-            viewModel.action(.viewOnTask)
-        }
-        .apiRequestErrorAlert(isPresented: $viewModel.output.isShowAlert) {
+        .task { viewModel.action(.viewOnTask) }
+        .popupAlert(
+            isPresented: Binding(
+                get: { viewModel.output.isShowAlert },
+                set: { _ in viewModel.action(.onDismissAlert) }
+            ),
+            contentModel: .init(
+                systemImage: "wifi.exclamationmark",
+                phrase: "apiRequestError",
+                normal: "refresh"
+            ),
+            heightType: .middle
+        ) {
             viewModel.action(.refresh)
         }
     }
@@ -51,7 +60,7 @@ struct GenreSelectView: View {
                         .fill(viewModel.output.selectedGenres.contains(genre) ? Color(.app) : Color(.app).opacity(0.3))
                         .frame(width: 100, height: 100)
                         .overlay(
-                            Text(genre.name)
+                            Text(verbatim: genre.name)
                                 .foregroundStyle(viewModel.output.selectedGenres.contains(genre) ? .white : Color(uiColor: .app))
                                 .multilineTextAlignment(.center)
                                 .padding(8)
@@ -127,7 +136,7 @@ fileprivate struct GenreView: View {
     let genre: MovieGenre
     
     var body: some View {
-        Text(genre.name)
+        Text(verbatim: genre.name)
             .font(.system(size: 16))
             .padding(.vertical, 8)
             .padding(.horizontal, 12)

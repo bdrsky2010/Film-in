@@ -62,124 +62,111 @@ extension MyViewModel {
     
     func transform() {
         input.generateDays
-            .sink { [weak self] _ in
-                guard let self else { return }
-                output.currentYearMonthString = myViewService.currentMonthYearString(for: output.currentYearMonth) // 설정된 날짜의 년, 월 문자열로 생성
+            .sink(with: self) { owner, _ in
+                let currentYearMonthString = owner.myViewService.currentMonthYearString(for: owner.output.currentYearMonth) // 설정된 날짜의 년, 월 문자열로 생성
+                owner.output.currentYearMonthString = currentYearMonthString
                 
-                let days = myViewService.generateDays(for: output.currentYearMonth) // 설정된 달에 대한 날짜 생성
-                output.selectMonthDays = days
+                let days = owner.myViewService.generateDays(for: owner.output.currentYearMonth) // 설정된 달에 대한 날짜 생성
+                owner.output.selectMonthDays = days
             }
             .store(in: &cancellable)
         
         input.selectDay
-            .sink { [weak self] value in
-                guard let self else { return }
-                output.selectDate = value
+            .sink(with: self) { owner, value in
+                owner.output.selectDate = value
             }
             .store(in: &cancellable)
         
         input.changeMonth
-            .sink { [weak self] value in
-                guard let self else { return }
-                let date = myViewService.changeMonth(by: value, for: output.currentYearMonth)
-                output.currentYearMonth = date
+            .sink(with: self) { owner, value in
+                let date = owner.myViewService.changeMonth(by: value, for: owner.output.currentYearMonth)
+                owner.output.currentYearMonth = date
                 
-                output.currentYearMonthString = myViewService.currentMonthYearString(for: date)
+                owner.output.currentYearMonthString = owner.myViewService.currentMonthYearString(for: date)
                 
-                let days = myViewService.generateDays(for: output.currentYearMonth)
-                output.selectMonthDays = days
+                let days = owner.myViewService.generateDays(for: owner.output.currentYearMonth)
+                owner.output.selectMonthDays = days
             }
             .store(in: &cancellable)
         
         input.isPickerPresentToggle
-            .sink { [weak self] _ in
-                guard let self else { return }
-                output.isPickerPresent.toggle()
+            .sink(with: self) { owner, _ in
+                owner.output.isPickerPresent.toggle()
             }
             .store(in: &cancellable)
         
         input.isEnglishJudge
-            .sink { [weak self] _ in
-                guard let self else { return }
-                output.isEnglish = myViewService.judgedIsEnglish()
+            .sink(with: self) { owner, _ in
+                owner.output.isEnglish = owner.myViewService.judgedIsEnglish()
             }
             .store(in: &cancellable)
         
         input.setupLocalizedYears
-            .sink { [weak self] (past, future) in
-                guard let self else { return }
-                myViewService.generateLocalizedYears(from: past, to: future)
+            .sink(with: self) { owner, value in
+                owner.myViewService.generateLocalizedYears(from: value.past, to: value.future)
                     .receive(on: DispatchQueue.main)
-                    .sink { [weak self] localizedYears in
-                        guard let self else { return }
-                        output.localizedYears = localizedYears
+                    .sink(with: owner) { owner, localizedYears in
+                        owner.output.localizedYears = localizedYears
                     }
-                    .store(in: &cancellable)
+                    .store(in: &owner.cancellable)
             }
             .store(in: &cancellable)
         
         input.setupLocalizedMonths
-            .sink { [weak self] _ in
-                guard let self else { return }
-                let localizedMonths = myViewService.generateLocalizedMonths()
-                output.localizedMonths = localizedMonths
+            .sink(with: self) { owner, _ in
+                let localizedMonths = owner.myViewService.generateLocalizedMonths()
+                owner.output.localizedMonths = localizedMonths
             }
             .store(in: &cancellable)
         
         input.setupSelectYearMonth
-            .sink { [weak self] _ in
-                guard let self else { return }
-                let currentDate = output.currentYearMonth
+            .sink(with: self) { owner, _ in
+                let currentDate = owner.output.currentYearMonth
                 let currentYearMonth = Calendar.current.dateComponents([.year, .month], from: currentDate)
                 
                 if let year = currentYearMonth.year,
                    let month = currentYearMonth.month {
-                    
-                    output.selectYear = year
-                    output.selectMonth = month
+                    owner.output.selectYear = year
+                    owner.output.selectMonth = month
                 }
             }
             .store(in: &cancellable)
         
         input.changeYearMonth
-            .sink { [weak self] value in
-                guard let self else { return }
-                let date = myViewService.changeYearMonth(by: value, for: output.currentYearMonth)
-                output.currentYearMonth = date
+            .sink(with: self) { owner, value in
+                let date = owner.myViewService.changeYearMonth(by: value, for: owner.output.currentYearMonth)
+                owner.output.currentYearMonth = date
                 
-                output.currentYearMonthString = myViewService.currentMonthYearString(for: date)
+                let currentYearMonthString = owner.myViewService.currentMonthYearString(for: date)
+                owner.output.currentYearMonthString = currentYearMonthString
             }
             .store(in: &cancellable)
         
         input.disappearPicker
-            .sink { [weak self] _ in
-                guard let self else { return }
-                let days = myViewService.generateDays(for: output.currentYearMonth)
-                output.selectMonthDays = days
-                output.localizedYears = [:]
-                output.localizedMonths = [:]
+            .sink(with: self) { owner, _ in
+                let days = owner.myViewService.generateDays(for: owner.output.currentYearMonth)
+                owner.output.selectMonthDays = days
+                owner.output.localizedYears = [:]
+                owner.output.localizedMonths = [:]
             }
             .store(in: &cancellable)
         
         input.deleteGesture
-            .sink { [weak self] movieId in
-                guard let self else { return }
-                output.isRequestDelete = true
-                output.deleteMovieId = movieId
+            .sink(with: self) { owner, movieId in
+                owner.output.isRequestDelete = true
+                owner.output.deleteMovieId = movieId
             }
             .store(in: &cancellable)
         
         input.realDeleteMovie
-            .sink { [weak self] movieId in
-                guard let self else { return }
-                myViewService.requestDeleteMovie(movieId: movieId) // 저장된 영화 삭제
+            .sink(with: self) { owner, movieId in
+                owner.myViewService.requestDeleteMovie(movieId: movieId) // 저장된 영화 삭제
                     .receive(on: DispatchQueue.main)
-                    .sink { [weak self]_ in
-                        guard let self else { return }
-                        let days = myViewService.generateDays(for: output.currentYearMonth)
-                        output.selectMonthDays = days // 날짜 데이터 reload
+                    .sink(with: self) { owner, _ in
+                        let days = owner.myViewService.generateDays(for: owner.output.currentYearMonth)
+                        owner.output.selectMonthDays = days // 날짜 데이터 reload
                     }
-                    .store(in: &cancellable)
+                    .store(in: &owner.cancellable)
             }
             .store(in: &cancellable)
     }

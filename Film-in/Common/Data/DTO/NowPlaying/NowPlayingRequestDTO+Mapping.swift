@@ -7,14 +7,8 @@
 
 import Foundation
 
-struct NowPlayingRequestDTO: Encodable {
+struct NowPlayingRequestDTO: Encodable, RequestParametable {
     let language: String
     let page: Int
     let region: String
-}
-
-extension NowPlayingRequestDTO {
-    var asParameters: [String: Any] {
-        return JSONEncoder.toDictionary(self)
-    }
 }

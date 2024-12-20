@@ -34,6 +34,8 @@ final class PersonDetailViewModel: BaseObject, ViewModelType {
 extension PersonDetailViewModel {
     struct Input {
         var viewOnTask = PassthroughSubject<Void, Never>()
+        var onRefresh = PassthroughSubject<Void, Never>()
+        var onDismissAlert = PassthroughSubject<Void, Never>()
     }
     
     struct Output {
@@ -45,9 +47,20 @@ extension PersonDetailViewModel {
     
     func transform() {
         input.viewOnTask
-            .sink { [weak self] in
-                guard let self else { return }
-                fetchPersonInfo()
+            .sink(with: self) { owner, _ in
+                owner.fetchPersonInfo()
+            }
+            .store(in: &cancellable)
+        
+        input.onRefresh
+            .sink(with: self) { owner, _ in
+                owner.fetchPersonInfo()
+            }
+            .store(in: &cancellable)
+        
+        input.onDismissAlert
+            .sink(with: self) { owner, _ in
+                owner.output.isShowAlert = false
             }
             .store(in: &cancellable)
     }
@@ -57,6 +70,7 @@ extension PersonDetailViewModel {
     enum Action {
         case viewOnTask
         case refresh
+        case onDismissAlert
     }
     
     func action(_ action: Action) {
@@ -65,6 +79,8 @@ extension PersonDetailViewModel {
             input.viewOnTask.send(())
         case .refresh:
             input.viewOnTask.send(())
+        case .onDismissAlert:
+            input.onDismissAlert.send(())
         }
     }
 }
@@ -86,13 +102,13 @@ extension PersonDetailViewModel {
         let publisher = personDetailService.fetchPersonDetail(query: query)
         publisher
             .receive(on: DispatchQueue.main)
-            .sink { [weak self] result in
-                guard let self else { return }
+            .sink(with: self) { owner, result in
                 switch result {
                 case .success(let personDetail):
-                    output.personDetail = personDetail
-                case .failure(_):
-                    if !output.isShowAlert { output.isShowAlert = true }
+                    owner.output.personDetail = personDetail
+                case .failure(let error):
+                    owner.errorHandling()
+                    print(error)
                 }
             }
             .store(in: &cancellable)
@@ -103,15 +119,21 @@ extension PersonDetailViewModel {
         let publisher = personDetailService.fetchPersonMovie(query: query)
         publisher
             .receive(on: DispatchQueue.main)
-            .sink { [weak self] result in
-                guard let self else { return }
+            .sink(with: self) { owner, result in
                 switch result {
                 case .success(let personMovie):
-                    output.personMovie = personMovie
-                case .failure(_):
-                    if !output.isShowAlert { output.isShowAlert = true }
+                    owner.output.personMovie = personMovie
+                case .failure(let error):
+                    owner.errorHandling()
+                    print(error)
                 }
             }
             .store(in: &cancellable)
+    }
+}
+
+extension PersonDetailViewModel {
+    private func errorHandling() {
+        if !output.isShowAlert { output.isShowAlert = true }
     }
 }

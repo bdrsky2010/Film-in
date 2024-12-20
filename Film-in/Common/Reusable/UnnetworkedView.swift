@@ -16,13 +16,17 @@ struct UnnetworkedView: View {
     
     var body: some View {
         VStack {
+            Image(systemName: "wifi.slash")
+                .resizable()
+                .frame(width: 100, height: 100)
+                .foregroundStyle(.app)
+            
             Text("notConnectInternet")
                 .font(.ibmPlexMonoSemiBold(size: 20))
                 .foregroundStyle(.appText)
+            
             Button {
-                withAnimation {
-                    refreshAction()
-                }
+                withAnimation { refreshAction() }
             } label: {
                 Text("refresh")
                     .font(.ibmPlexMonoMedium(size: 20))
