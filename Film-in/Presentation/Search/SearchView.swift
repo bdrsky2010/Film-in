@@ -19,6 +19,8 @@ struct SearchView: View {
     @FocusState private var focusedField: FocusField?
     
     @State private var visibility: Visibility = .visible
+    @State private var isSearchAppear = true
+    @State private var isDetailDisappear = false
     @State private var cellSize: CGSize = .zero
     @State private var posterSize: CGSize = .zero
     @State private var isShowSearch = false
@@ -43,6 +45,23 @@ struct SearchView: View {
         .toolbar(visibility, for: .tabBar)
         .animation(.easeInOut, value: visibility)
         .task { viewModel.action(.viewOnTask) }
+        .popupAlert(
+            isPresented: Binding(
+                get: { viewModel.output.isShowAlert },
+                set: { _ in viewModel.action(.onDismissAlert) }
+            ),
+            contentModel: .init(
+                systemImage: "wifi.exclamationmark",
+                phrase: "apiRequestError",
+                normal: "refresh"
+            ),
+            heightType: .middle
+        ) {
+            viewModel.action(.refresh)
+        }
+        .valueChanged(value: isDetailDisappear) { _ in
+            if isSearchAppear && isDetailDisappear { visibility = .visible }
+        }
     }
     
     @ViewBuilder
@@ -62,9 +81,7 @@ struct SearchView: View {
                 }
             }
         }
-        .onAppear {
-            if visibility == .hidden { visibility = .visible }
-        }
+        .onAppear { isSearchAppear = true }
         .valueChanged(value: focusedField) { _ in
             if focusedField == .cover {
                 withAnimation {
@@ -72,20 +89,6 @@ struct SearchView: View {
                     focusedField = .search
                 }
             }
-        }
-        .popupAlert(
-            isPresented: Binding(
-                get: { viewModel.output.isShowAlert },
-                set: { _ in viewModel.action(.onDismissAlert) }
-            ),
-            contentModel: .init(
-                systemImage: "wifi.exclamationmark",
-                phrase: "apiRequestError",
-                normal: "refresh"
-            ),
-            heightType: .middle
-        ) {
-            viewModel.action(.refresh)
         }
     }
     
@@ -174,7 +177,14 @@ struct SearchView: View {
             NavigationLink {
                 LazyView(MovieDetailFactory.makeView(movie: movie, posterSize: posterSize))
                     .onAppear {
-                        if visibility == .visible { visibility = .hidden }
+                        if visibility == .visible {
+                            visibility = .hidden
+                        }
+                        isSearchAppear = false
+                        isDetailDisappear = false
+                    }
+                    .onDisappear {
+                        isDetailDisappear = true
                     }
                 
             } label: {
@@ -195,7 +205,14 @@ struct SearchView: View {
             NavigationLink {
                 LazyView(PersonDetailFactory.makeView(personId: person._id))
                     .onAppear {
-                        if visibility == .visible { visibility = .hidden }
+                        if visibility == .visible {
+                            visibility = .hidden
+                        }
+                        isSearchAppear = false
+                        isDetailDisappear = false
+                    }
+                    .onDisappear {
+                        isDetailDisappear = true
                     }
                 
             } label: {

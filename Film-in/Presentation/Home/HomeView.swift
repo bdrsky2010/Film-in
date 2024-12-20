@@ -11,6 +11,8 @@ struct HomeView: View {
     @StateObject private var viewModel: HomeViewModel
     
     @State private var visibility: Visibility = .visible
+    @State private var isHomeAppear = true
+    @State private var isDetailDisappear = false
     @State private var index = 0
     @State private var showDetailView = false
     @State private var movie: MovieData?
@@ -62,7 +64,7 @@ struct HomeView: View {
                 }
                 .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
                 .task { viewModel.action(.viewOnTask) }
-                .onAppear { if visibility == .hidden { visibility = .visible } }
+                .onAppear { isHomeAppear = true }
                 .popupAlert(
                     isPresented: Binding(
                         get: { viewModel.output.isShowAlert },
@@ -81,6 +83,9 @@ struct HomeView: View {
         }
         .toolbar(visibility, for: .tabBar)
         .animation(.easeInOut, value: visibility)
+        .valueChanged(value: isDetailDisappear) { _ in
+            if isHomeAppear && isDetailDisappear { visibility = .visible }
+        }
     }
     
     @ViewBuilder
@@ -100,7 +105,14 @@ struct HomeView: View {
                 NavigationLink {
                     LazyView(MovieDetailFactory.makeView(movie: movie, posterSize: posterSize))
                         .onAppear {
-                            if visibility == .visible { visibility = .hidden }
+                            if visibility == .visible {
+                                visibility = .hidden
+                            }
+                            isHomeAppear = false
+                            isDetailDisappear = false
+                        }
+                        .onDisappear {
+                            isDetailDisappear = true
                         }
                 } label: {
                     let url = URL(string: ImageURL.tmdb(image: movie.poster).urlString)
