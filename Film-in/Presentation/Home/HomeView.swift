@@ -87,7 +87,9 @@ struct HomeView: View {
             if isHomeAppear && isDetailDisappear { visibility = .visible }
         }
     }
-    
+}
+
+extension HomeView {
     @ViewBuilder
     private func appTitleSection() -> some View {
         Text(verbatim: "Film-in")
@@ -99,21 +101,13 @@ struct HomeView: View {
     }
     
     @ViewBuilder
-    private func trendingSection() -> some View {        
+    private func trendingSection() -> some View {
         PagingView(currentIndex: $index, items: viewModel.output.trendingMovies.movies) { movie in
             ZStack {
                 NavigationLink {
                     LazyView(MovieDetailFactory.makeView(movie: movie, posterSize: posterSize))
-                        .onAppear {
-                            if visibility == .visible {
-                                visibility = .hidden
-                            }
-                            isHomeAppear = false
-                            isDetailDisappear = false
-                        }
-                        .onDisappear {
-                            isDetailDisappear = true
-                        }
+                        .onAppear(perform: detailAppear)
+                        .onDisappear(perform: detailDisappear)
                 } label: {
                     let url = URL(string: ImageURL.tmdb(image: movie.poster).urlString)
                     PosterImage(url: url, size: posterSize, title: movie.title, isDownsampling: true)
@@ -134,10 +128,8 @@ struct HomeView: View {
                 ForEach(viewModel.output.nowPlayingMovies.movies, id: \.id) { movie in
                     NavigationLink {
                         LazyView(MovieDetailFactory.makeView(movie: movie, posterSize: posterSize))
-                            .onAppear {
-                                if visibility == .visible { visibility = .hidden }
-                            }
-                        
+                            .onAppear(perform: detailAppear)
+                            .onDisappear(perform: detailDisappear)
                     } label: {
                         let url = URL(string: ImageURL.tmdb(image: movie.poster).urlString)
                         PosterImage(url: url, size: cellSize, title: movie.title, isDownsampling: true)
@@ -161,10 +153,8 @@ struct HomeView: View {
                 ForEach(viewModel.output.upcomingMovies.movies, id: \.id) { movie in
                     NavigationLink {
                         LazyView(MovieDetailFactory.makeView(movie: movie, posterSize: posterSize))
-                            .onAppear {
-                                if visibility == .visible { visibility = .hidden }
-                            }
-                        
+                            .onAppear(perform: detailAppear)
+                            .onDisappear(perform: detailDisappear)
                     } label: {
                         let url = URL(string: ImageURL.tmdb(image: movie.poster).urlString)
                         PosterImage(url: url, size: cellSize, title: movie.title, isDownsampling: true)
@@ -188,10 +178,8 @@ struct HomeView: View {
                 ForEach(viewModel.output.recommendMovies.movies, id: \.id) { movie in
                     NavigationLink {
                         LazyView(MovieDetailFactory.makeView(movie: movie, posterSize: posterSize))
-                            .onAppear {
-                                if visibility == .visible { visibility = .hidden }
-                            }
-                        
+                            .onAppear(perform: detailAppear)
+                            .onDisappear(perform: detailDisappear)
                     } label: {
                         let url = URL(string: ImageURL.tmdb(image: movie.poster).urlString)
                         PosterImage(url: url, size: cellSize, title: movie.title, isDownsampling: true)
@@ -214,5 +202,19 @@ struct HomeView: View {
             namespace: namespace,
             posterSize: posterSize
         )
+    }
+}
+
+extension HomeView {
+    private func detailAppear() {
+        if visibility == .visible {
+            visibility = .hidden
+        }
+        isHomeAppear = false
+        isDetailDisappear = false
+    }
+    
+    private func detailDisappear() {
+        isDetailDisappear = true
     }
 }
