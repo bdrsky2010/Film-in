@@ -128,10 +128,8 @@ extension HomeView {
                 ForEach(viewModel.output.nowPlayingMovies.movies, id: \.id) { movie in
                     NavigationLink {
                         LazyView(MovieDetailFactory.makeView(movie: movie, posterSize: posterSize))
-                            .onAppear {
-                                if visibility == .visible { visibility = .hidden }
-                            }
-                        
+                            .onAppear(perform: detailAppear)
+                            .onDisappear(perform: detailDisappear)
                     } label: {
                         let url = URL(string: ImageURL.tmdb(image: movie.poster).urlString)
                         PosterImage(url: url, size: cellSize, title: movie.title, isDownsampling: true)
@@ -155,10 +153,8 @@ extension HomeView {
                 ForEach(viewModel.output.upcomingMovies.movies, id: \.id) { movie in
                     NavigationLink {
                         LazyView(MovieDetailFactory.makeView(movie: movie, posterSize: posterSize))
-                            .onAppear {
-                                if visibility == .visible { visibility = .hidden }
-                            }
-                        
+                            .onAppear(perform: detailAppear)
+                            .onDisappear(perform: detailDisappear)
                     } label: {
                         let url = URL(string: ImageURL.tmdb(image: movie.poster).urlString)
                         PosterImage(url: url, size: cellSize, title: movie.title, isDownsampling: true)
@@ -182,10 +178,8 @@ extension HomeView {
                 ForEach(viewModel.output.recommendMovies.movies, id: \.id) { movie in
                     NavigationLink {
                         LazyView(MovieDetailFactory.makeView(movie: movie, posterSize: posterSize))
-                            .onAppear {
-                                if visibility == .visible { visibility = .hidden }
-                            }
-                        
+                            .onAppear(perform: detailAppear)
+                            .onDisappear(perform: detailDisappear)
                     } label: {
                         let url = URL(string: ImageURL.tmdb(image: movie.poster).urlString)
                         PosterImage(url: url, size: cellSize, title: movie.title, isDownsampling: true)
