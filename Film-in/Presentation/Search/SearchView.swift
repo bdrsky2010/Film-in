@@ -63,7 +63,9 @@ struct SearchView: View {
             if isSearchAppear && isDetailDisappear { visibility = .visible }
         }
     }
-    
+}
+
+extension SearchView {
     @ViewBuilder
     private func contentSection() -> some View {
         VStack {
@@ -125,7 +127,7 @@ struct SearchView: View {
         GeometryReader { proxy in
             ScrollView(.vertical) {
                 ForEach(SearchType.allCases, id: \.self) { tab in
-                    VStack { 
+                    VStack {
                         HStack {
                             Text(verbatim: tab.description)
                                 .font(.ibmPlexMonoSemiBold(size: 20))
@@ -176,17 +178,8 @@ struct SearchView: View {
         ForEach(viewModel.output.trendingMovie, id: \.id) { movie in
             NavigationLink {
                 LazyView(MovieDetailFactory.makeView(movie: movie, posterSize: posterSize))
-                    .onAppear {
-                        if visibility == .visible {
-                            visibility = .hidden
-                        }
-                        isSearchAppear = false
-                        isDetailDisappear = false
-                    }
-                    .onDisappear {
-                        isDetailDisappear = true
-                    }
-                
+                    .onAppear(perform: detailAppear)
+                    .onDisappear(perform: detailDisappear)
             } label: {
                 let url = URL(string: ImageURL.tmdb(image: movie.poster).urlString)
                 PosterImage(
@@ -204,17 +197,8 @@ struct SearchView: View {
         ForEach(viewModel.output.popularPeople, id: \.id) { person in
             NavigationLink {
                 LazyView(PersonDetailFactory.makeView(personId: person._id))
-                    .onAppear {
-                        if visibility == .visible {
-                            visibility = .hidden
-                        }
-                        isSearchAppear = false
-                        isDetailDisappear = false
-                    }
-                    .onDisappear {
-                        isDetailDisappear = true
-                    }
-                
+                    .onAppear(perform: detailAppear)
+                    .onDisappear(perform: detailDisappear)
             } label: {
                 VStack {
                     let url = URL(string: ImageURL.tmdb(image: person.profilePath).urlString)
@@ -236,5 +220,19 @@ struct SearchView: View {
                 .padding(.horizontal, 4)
             }
         }
+    }
+}
+
+extension SearchView {
+    private func detailAppear() {
+        if visibility == .visible {
+            visibility = .hidden
+        }
+        isSearchAppear = false
+        isDetailDisappear = false
+    }
+    
+    private func detailDisappear() {
+        isDetailDisappear = true
     }
 }

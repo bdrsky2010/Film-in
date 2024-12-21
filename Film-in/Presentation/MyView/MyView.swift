@@ -59,7 +59,9 @@ struct MyView: View {
             if isMyAppear && isDetailDisappear { visibility = .visible }
         }
     }
-    
+}
+
+extension MyView {
     @ViewBuilder
     private func calendarSection() -> some View {
         CalendarView(viewModel: viewModel)
@@ -117,17 +119,8 @@ struct MyView: View {
                 
                 NavigationLink {
                     LazyView(MovieDetailFactory.makeView(movie: convertToMovieData(by: movie), posterSize: posterSize))
-                        .onAppear {
-                            if visibility == .visible {
-                                visibility = .hidden
-                            }
-                            isMyAppear = false
-                            isDetailDisappear = false
-                        }
-                        .onDisappear {
-                            isDetailDisappear = true
-                        }
-                    
+                        .onAppear(perform: detailAppear)
+                        .onDisappear(perform: detailDisappear)
                 } label: {
                     EmptyView()
                 }
@@ -177,17 +170,8 @@ struct MyView: View {
                 
                 NavigationLink {
                     LazyView(MovieDetailFactory.makeView(movie: convertToMovieData(by: movie), posterSize: posterSize))
-                        .onAppear {
-                            if visibility == .visible {
-                                visibility = .hidden
-                            }
-                            isMyAppear = false
-                            isDetailDisappear = false
-                        }
-                        .onDisappear {
-                            isDetailDisappear = true
-                        }
-                    
+                        .onAppear(perform: detailAppear)
+                        .onDisappear(perform: detailDisappear)
                 } label: {
                     EmptyView()
                 }
@@ -210,5 +194,19 @@ extension MyView {
             poster: movieTable.poster,
             backdrop: movieTable.backdrop
         )
+    }
+}
+
+extension MyView {
+    private func detailAppear() {
+        if visibility == .visible {
+            visibility = .hidden
+        }
+        isMyAppear = false
+        isDetailDisappear = false
+    }
+    
+    private func detailDisappear() {
+        isDetailDisappear = true
     }
 }
