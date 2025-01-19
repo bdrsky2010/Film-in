@@ -25,7 +25,7 @@ final class DefaultLocalNotificationManager {
     
     private let center: UNUserNotificationCenter
     
-    private init(
+    init(
         center: UNUserNotificationCenter = UNUserNotificationCenter.current()
     ) {
         self.center = center

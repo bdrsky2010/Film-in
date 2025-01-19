@@ -32,7 +32,7 @@ final class DefaultTMDBRepository: TMDBRepository {
     
     private let networkManager: NetworkManager
     
-    private init(networkManager: NetworkManager = DefaultNetworkManager.shared) {
+    init(networkManager: NetworkManager = DefaultNetworkManager.shared) {
         self.networkManager = networkManager
     }
     

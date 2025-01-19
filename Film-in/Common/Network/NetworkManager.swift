@@ -35,8 +35,6 @@ final class DefaultNetworkManager: NetworkManager {
     
     private let provider = MoyaProvider<TMDBRouter>()
     
-    private init() { }
-    
     func request<T: Decodable>(_ target: TMDBRouter, of type: T.Type) async -> Result<T, TMDBError> {
         let result = await provider.request(target)
         switch result {
