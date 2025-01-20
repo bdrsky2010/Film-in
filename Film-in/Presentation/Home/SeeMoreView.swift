@@ -15,6 +15,7 @@ struct SeeMoreView: View {
     init(usedTo: UsedTo) {
         self.usedTo = usedTo
     }
+    let usedTo: UsedTo
     
     var body: some View {
         MultiListFactory.makeView(
