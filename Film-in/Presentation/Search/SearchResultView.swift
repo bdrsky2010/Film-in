@@ -6,19 +6,6 @@
 //
 
 import SwiftUI
-import Combine
-
-fileprivate extension SearchType {
-    @ViewBuilder
-    func makeView(query: String, isShowAlert: Binding<Bool>, isRefresh: Binding<Bool>) -> some View {
-        switch self {
-        case .movie:
-            MultiListFactory.makeView(to: .searchMovie(query), isShowAlert: isShowAlert, isRefresh: isRefresh)
-        case .person:
-            MultiListFactory.makeView(to: .searchPerson(query), isShowAlert: isShowAlert, isRefresh: isRefresh)
-        }
-    }
-}
 
 struct SearchResultView: View {
     @EnvironmentObject var diContainer: DefaultDIContainer
