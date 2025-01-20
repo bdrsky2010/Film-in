@@ -15,7 +15,9 @@ enum DateSetupType {
 
 struct DateSetupView: View {
     @StateObject private var viewModel: DateSetupViewModel
+    
     @State private var displayedComponents: DatePicker<Label>.Components = [.date]
+    
     @Binding var isPresented: Bool
     
     init(
