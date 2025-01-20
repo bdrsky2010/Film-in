@@ -24,19 +24,19 @@ struct MovieDetailView: View {
     let size: CGSize
     
     init(
-        movie: MovieData,
-        size: CGSize,
         viewModel: MovieDetailViewModel,
         isFullOverview: Bool = false,
         isDateSetup: Bool = false,
-        dateSetupType: DateSetupType = .want
+        dateSetupType: DateSetupType = .want,
+        movie: MovieData,
+        size: CGSize
     ) {
-        self.movie = movie
-        self.size = size
         self._viewModel = StateObject(wrappedValue: viewModel)
         self._isFullOverview = State(wrappedValue: isFullOverview)
         self._isDateSetup = State(wrappedValue: isDateSetup)
         self._dateSetupType = State(wrappedValue: dateSetupType)
+        self.movie = movie
+        self.size = size
     }
     
     var body: some View {
