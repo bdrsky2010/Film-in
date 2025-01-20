@@ -23,6 +23,7 @@ struct SearchView: View {
     @State private var visibility: Visibility = .visible
     @State private var isSearchAppear = true
     @State private var isDetailDisappear = false
+    @State private var isResultDisappear = false
     @State private var cellSize: CGSize = .zero
     @State private var posterSize: CGSize = .zero
     @State private var isShowSearch = false
@@ -64,6 +65,9 @@ struct SearchView: View {
         .valueChanged(value: isDetailDisappear) { _ in
             if isSearchAppear && isDetailDisappear { visibility = .visible }
         }
+        .valueChanged(value: isResultDisappear) { _ in
+            if isSearchAppear && isResultDisappear { visibility = .visible }
+        }
     }
 }
 
@@ -78,14 +82,16 @@ extension SearchView {
                     focusedField: $focusedField,
                     namespace: namespace
                 )
+                .onAppear(perform: resultAppear)
+                .onDisappear(perform: resultDisappear)
             } else {
                 VStack {
                     textFieldSection()
                     trendingContentSection()
                 }
+                .onAppear { isSearchAppear = true }
             }
         }
-        .onAppear { isSearchAppear = true }
         .valueChanged(value: focusedField) { _ in
             if focusedField == .cover {
                 withAnimation {
@@ -246,5 +252,17 @@ extension SearchView {
     
     private func detailDisappear() {
         isDetailDisappear = true
+    }
+    
+    private func resultAppear() {
+        if visibility == .visible {
+            visibility = .hidden
+        }
+        isSearchAppear = false
+        isResultDisappear = false
+    }
+    
+    private func resultDisappear() {
+        isResultDisappear = true
     }
 }
