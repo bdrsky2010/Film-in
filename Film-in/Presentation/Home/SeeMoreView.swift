@@ -8,18 +8,16 @@
 import SwiftUI
 
 struct SeeMoreView: View {
+    @EnvironmentObject var diConatiner: DefaultDIContainer
     
     @State private var isShowAlert = false
     @State private var isRefresh = false
     
-    init(usedTo: UsedTo) {
-        self.usedTo = usedTo
-    }
     let usedTo: UsedTo
     
     var body: some View {
-        MultiListFactory.makeView(
-            to: usedTo,
+        MultiListView(
+            viewModel: diConatiner.makeMultiListViewModel(usedTo: usedTo),
             isShowAlert: $isShowAlert,
             isRefresh: $isRefresh
         )
