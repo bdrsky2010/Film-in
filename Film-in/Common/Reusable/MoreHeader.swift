@@ -20,7 +20,9 @@ struct MoreHeader: View {
             Spacer()
             
             NavigationLink {
-                LazyView(SeeMoreView(usedTo: usedTo))
+                LazyView(
+                    SeeMoreView(usedTo: usedTo)
+                )
             } label: {
                 Text("more")
                     .font(.ibmPlexMonoSemiBold(size: 16))
