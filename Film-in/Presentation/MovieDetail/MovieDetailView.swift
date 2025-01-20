@@ -12,6 +12,8 @@ import YouTubePlayerKit
 struct MovieDetailView: View {
     @Environment(\.colorScheme) var colorScheme
     
+    @EnvironmentObject var diContainer: DefaultDIContainer
+    
     @StateObject private var viewModel: MovieDetailViewModel
     
     @State private var isFullOverview: Bool
@@ -196,7 +198,11 @@ struct MovieDetailView: View {
             LazyHStack {
                 ForEach(viewModel.output.creditInfo, id: \.id) { person in
                     NavigationLink {
-                        LazyView(PersonDetailFactory.makeView(personId: person._id))
+                        LazyView(
+                            PersonDetailView(
+                                viewModel: diContainer.makePersonDetailViewModel(personID: person._id)
+                            )
+                        )
                     } label: {
                         VStack {
                             let url = URL(string: ImageURL.tmdb(image: person.profilePath).urlString)
@@ -260,23 +266,17 @@ struct MovieDetailView: View {
             LazyHStack {
                 ForEach(viewModel.output.movieSimilars) { similar in
                     NavigationLink {
+                        let movie = MovieData(
+                            _id: similar.id,
+                            title: similar.title,
+                            poster: similar.poster,
+                            backdrop: similar.backdrop
+                        )
                         LazyView(
                             MovieDetailView(
-                                movie: .init(
-                                    _id: similar.id,
-                                    title: similar.title,
-                                    poster: similar.poster,
-                                    backdrop: similar.backdrop
-                                ),
-                                size: size,
-                                viewModel: MovieDetailViewModel(
-                                    movieDetailService: DefaultMovieDetailService(
-                                        tmdbRepository: DefaultTMDBRepository.shared,
-                                        databaseRepository: RealmRepository.shared
-                                    ),
-                                    networkMonitor: NetworkMonitor.shared,
-                                    movieId: similar.id
-                                )
+                                viewModel: diContainer.makeMovieDetailViewModel(movieID: movie._id),
+                                movie: movie,
+                                size: size
                             )
                         )
                     } label: {
@@ -379,7 +379,13 @@ struct MovieDetailView: View {
     
     @ViewBuilder
     private func dateSetupSheet() -> some View {
-        DateSetupFactory.makeView(movie: movie, type: dateSetupType, isPresented: $isDateSetup)
+        DateSetupView(
+            viewModel: diContainer.makeDateSetupViewModel(
+                movie: movie,
+                type: dateSetupType
+            ),
+            isPresented: $isDateSetup
+        )
     }
 }
 

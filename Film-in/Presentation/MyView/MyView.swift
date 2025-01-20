@@ -12,6 +12,8 @@ import PopupView
 struct MyView: View {
     @ObservedResults(UserTable.self) var user
     
+    @EnvironmentObject var diContainer: DefaultDIContainer
+    
     @StateObject private var viewModel: MyViewModel
     
     @State private var visibility: Visibility
@@ -118,9 +120,15 @@ extension MyView {
                 }
                 
                 NavigationLink {
-                    LazyView(MovieDetailFactory.makeView(movie: convertToMovieData(by: movie), posterSize: posterSize))
-                        .onAppear(perform: detailAppear)
-                        .onDisappear(perform: detailDisappear)
+                    LazyView(
+                        MovieDetailView(
+                            viewModel: diContainer.makeMovieDetailViewModel(movieID: movie.id),
+                            movie: convertToMovieData(by: movie),
+                            size: posterSize
+                        )
+                    )
+                    .onAppear(perform: detailAppear)
+                    .onDisappear(perform: detailDisappear)
                 } label: {
                     EmptyView()
                 }
@@ -169,9 +177,15 @@ extension MyView {
                 }
                 
                 NavigationLink {
-                    LazyView(MovieDetailFactory.makeView(movie: convertToMovieData(by: movie), posterSize: posterSize))
-                        .onAppear(perform: detailAppear)
-                        .onDisappear(perform: detailDisappear)
+                    LazyView(
+                        MovieDetailView(
+                            viewModel: diContainer.makeMovieDetailViewModel(movieID: movie.id),
+                            movie: convertToMovieData(by: movie),
+                            size: posterSize
+                        )
+                    )
+                    .onAppear(perform: detailAppear)
+                    .onDisappear(perform: detailDisappear)
                 } label: {
                     EmptyView()
                 }

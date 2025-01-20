@@ -10,6 +10,8 @@ import SwiftUI
 struct MultiListView: View {
     @Environment(\.colorScheme) var colorScheme
     
+    @EnvironmentObject var diContainer: DefaultDIContainer
+    
     @StateObject private var viewModel: MultiListViewModel
     
     @State private var cellSize: CGSize = .zero
@@ -84,7 +86,13 @@ struct MultiListView: View {
         LazyVGrid(columns: gridItemLayout) {
             ForEach(viewModel.output.movies.movies, id: \.id) { movie in
                 NavigationLink {
-                    LazyView(MovieDetailFactory.makeView(movie: movie, posterSize: posterSize))
+                    LazyView(
+                        MovieDetailView(
+                            viewModel: diContainer.makeMovieDetailViewModel(movieID: movie._id),
+                            movie: movie,
+                            size: posterSize
+                        )
+                    )
                 } label: {
                     let url = URL(string: ImageURL.tmdb(image: movie.poster).urlString)
                     PosterImage(
@@ -109,7 +117,11 @@ struct MultiListView: View {
         LazyVGrid(columns: gridItemLayout) {
             ForEach(viewModel.output.people.people, id: \.id) { person in
                 NavigationLink {
-                    LazyView(PersonDetailFactory.makeView(personId: person._id))
+                    LazyView(
+                        PersonDetailView(
+                            viewModel: diContainer.makePersonDetailViewModel(personID: person._id)
+                        )
+                    )
                 } label: {
                     VStack {
                         let url = URL(string: ImageURL.tmdb(image: person.profile).urlString)

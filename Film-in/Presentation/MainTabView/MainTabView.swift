@@ -8,24 +8,23 @@
 import SwiftUI
 
 struct MainTabView: View {
+    @EnvironmentObject var diContainer: DefaultDIContainer
+    
     var body: some View {
         TabView {
-            HomeFactory
-                .makeView()
+            HomeView(viewModel: diContainer.makeHomeViewModel())
                 .tabItem {
                     Image("home")
                     Text(verbatim: "HOME")
                 }
             
-            SearchFactory
-                .makeView()
+            SearchView(viewModel: diContainer.makeSearchViewModel())
                 .tabItem {
                     Image("search")
                     Text(verbatim: "SEARCH")
                 }
             
-            MyFactory
-                .makeView()
+            MyView(viewModel: diContainer.makeMyViewModel())
                 .tabItem {
                     Image("movie")
                     Text(verbatim: "MY")

@@ -21,6 +21,8 @@ fileprivate extension SearchType {
 }
 
 struct SearchResultView: View {
+    @EnvironmentObject var diContainer: DefaultDIContainer
+    
     @StateObject private var viewModel: SearchResultViewModel
     
     @AppStorage("recentQuery") private var recentQuery: [String : Date] = [:]
@@ -275,14 +277,26 @@ extension SearchResultView {
             .padding(.horizontal, 20)
             
             TabView(selection: $selection) {
-                ForEach(SearchType.allCases, id: \.self) { tab in
-                    LazyView(tab.makeView(
-                        query: searchQuery,
-                        isShowAlert: $isShowAlert,
-                        isRefresh: $isRefresh
-                    ))
+                ForEach(SearchType.allCases, id: \.self) { type in
+                    switch type {
+                    case .movie:
+                        MultiListView(
+                            viewModel: diContainer.makeMultiListViewModel(usedTo: .searchMovie(searchQuery)),
+                            isShowAlert: $isShowAlert,
+                            isRefresh: $isRefresh
+                        )
                         .tabItem { }
-                        .tag(tab)
+                        .tag(type)
+                        
+                    case .person:
+                        MultiListView(
+                            viewModel: diContainer.makeMultiListViewModel(usedTo: .searchPerson(searchQuery)),
+                            isShowAlert: $isShowAlert,
+                            isRefresh: $isRefresh
+                        )
+                        .tabItem { }
+                        .tag(type)
+                    }
                 }
             }
             .tabViewStyle(.page(indexDisplayMode: .never))

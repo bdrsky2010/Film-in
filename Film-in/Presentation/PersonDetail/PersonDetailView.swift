@@ -10,6 +10,8 @@ import SwiftUI
 struct PersonDetailView: View {
     @Environment(\.colorScheme) var colorScheme
     
+    @EnvironmentObject var diContainer: DefaultDIContainer
+    
     @StateObject private var viewModel: PersonDetailViewModel
     
     @State private var posterSize: CGSize = .zero
@@ -113,7 +115,13 @@ struct PersonDetailView: View {
         LazyVGrid(columns: gridItemLayout) {
             ForEach(viewModel.output.personMovie.movies, id: \.id) { movie in
                 NavigationLink {
-                    LazyView(MovieDetailFactory.makeView(movie: movie, posterSize: posterSize))
+                    LazyView(
+                        MovieDetailView(
+                            viewModel: diContainer.makeMovieDetailViewModel(movieID: movie._id),
+                            movie: movie,
+                            size: posterSize
+                        )
+                    )
                 } label: {
                     let url = URL(string: ImageURL.tmdb(image: movie.poster).urlString)
                     PosterImage(

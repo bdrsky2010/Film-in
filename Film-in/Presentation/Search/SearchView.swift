@@ -14,6 +14,8 @@ enum FocusField {
 struct SearchView: View {
     @Environment(\.colorScheme) var colorScheme
     
+    @EnvironmentObject var diContainer: DefaultDIContainer
+    
     @StateObject private var viewModel: SearchViewModel
     
     @FocusState private var focusedField: FocusField?
@@ -70,12 +72,12 @@ extension SearchView {
     private func contentSection() -> some View {
         VStack {
             if isShowSearch {
-                SearchFactory
-                    .makeView(
-                        isShowSearch: $isShowSearch,
-                        focusedField: $focusedField,
-                        namespace: namespace
-                    )
+                SearchResultView(
+                    viewModel: diContainer.makeSearchResultViewModel(),
+                    isShowSearch: $isShowSearch,
+                    focusedField: $focusedField,
+                    namespace: namespace
+                )
             } else {
                 VStack {
                     textFieldSection()
@@ -177,9 +179,15 @@ extension SearchView {
     private func trendingMovieSection() -> some View {
         ForEach(viewModel.output.trendingMovie, id: \.id) { movie in
             NavigationLink {
-                LazyView(MovieDetailFactory.makeView(movie: movie, posterSize: posterSize))
-                    .onAppear(perform: detailAppear)
-                    .onDisappear(perform: detailDisappear)
+                LazyView(
+                    MovieDetailView(
+                        viewModel: diContainer.makeMovieDetailViewModel(movieID: movie._id),
+                        movie: movie,
+                        size: posterSize
+                    )
+                )
+                .onAppear(perform: detailAppear)
+                .onDisappear(perform: detailDisappear)
             } label: {
                 let url = URL(string: ImageURL.tmdb(image: movie.poster).urlString)
                 PosterImage(
@@ -196,9 +204,13 @@ extension SearchView {
     private func popularPeopleSection() -> some View {
         ForEach(viewModel.output.popularPeople, id: \.id) { person in
             NavigationLink {
-                LazyView(PersonDetailFactory.makeView(personId: person._id))
-                    .onAppear(perform: detailAppear)
-                    .onDisappear(perform: detailDisappear)
+                LazyView(
+                    PersonDetailView(
+                        viewModel: diContainer.makePersonDetailViewModel(personID: person._id)
+                    )
+                )
+                .onAppear(perform: detailAppear)
+                .onDisappear(perform: detailDisappear)
             } label: {
                 VStack {
                     let url = URL(string: ImageURL.tmdb(image: person.profilePath).urlString)
