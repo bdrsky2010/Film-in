@@ -16,17 +16,13 @@ struct HomeView: View {
     @State private var isHomeAppear = true
     @State private var isDetailDisappear = false
     @State private var index = 0
-    @State private var showDetailView = false
-    @State private var movie: MovieData?
     @State private var cellSize: CGSize = .zero
     @State private var posterSize: CGSize = .zero
-    
-    @Namespace private var namespace
     
     init(viewModel: HomeViewModel) {
         self._viewModel = StateObject(wrappedValue: viewModel)
     }
-    
+
     // poster size 1 x 1.5
     var body: some View {
         NavigationStack {
@@ -218,16 +214,6 @@ extension HomeView {
             .padding(.horizontal)
         }
         .scrollIndicators(.hidden)
-    }
-    
-    @ViewBuilder
-    private func detailView(by movie: MovieData) -> some View {
-        MovieDetailFactory.makeView(
-            movie: movie,
-            showDetailView: $showDetailView,
-            namespace: namespace,
-            posterSize: posterSize
-        )
     }
 }
 
