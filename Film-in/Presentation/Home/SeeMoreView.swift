@@ -8,7 +8,6 @@
 import SwiftUI
 
 struct SeeMoreView: View {
-    private let usedTo: UsedTo
     
     @State private var isShowAlert = false
     @State private var isRefresh = false

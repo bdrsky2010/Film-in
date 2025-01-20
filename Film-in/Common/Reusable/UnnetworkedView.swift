@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct UnnetworkedView: View {
-    private let refreshAction: () -> Void
+    let refreshAction: () -> Void
     
     init(refreshAction: @autoclosure @escaping () -> Void) {
         self.refreshAction = refreshAction

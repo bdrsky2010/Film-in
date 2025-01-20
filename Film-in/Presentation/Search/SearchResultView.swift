@@ -31,11 +31,11 @@ struct SearchResultView: View {
     @State private var isShowAlert = false
     @State private var isRefresh = false
     
-    @Binding private var isShowSearch: Bool
+    @Binding var isShowSearch: Bool
     
-    private var focusedField: FocusState<FocusField?>.Binding
+    var focusedField: FocusState<FocusField?>.Binding
     
-    private let namespace: Namespace.ID
+    let namespace: Namespace.ID
     
     init(
         viewModel: SearchResultViewModel,

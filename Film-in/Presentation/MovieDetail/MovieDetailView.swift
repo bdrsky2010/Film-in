@@ -10,9 +10,6 @@ import Kingfisher
 import YouTubePlayerKit
 
 struct MovieDetailView: View {
-    private let movie: MovieData
-    private let size: CGSize
-    
     @Environment(\.colorScheme) var colorScheme
     
     @StateObject private var viewModel: MovieDetailViewModel
@@ -20,6 +17,9 @@ struct MovieDetailView: View {
     @State private var isFullOverview: Bool
     @State private var isDateSetup: Bool
     @State private var dateSetupType: DateSetupType
+    
+    let movie: MovieData
+    let size: CGSize
     
     init(
         movie: MovieData,
