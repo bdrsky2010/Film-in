@@ -7,17 +7,17 @@
 
 import SwiftUI
 
-enum AppRoute {
+enum AppRoute: Hashable {
     case home
     case search
-    case movieDetail
-    case personDetail
+    case movieDetail(_ movieID: Int)
+    case personDetail(_ personID: Int)
     case myView
-    case seeMore
+    case seeMore(_ usedTo: UsedTo)
 }
 
 enum Sheet {
-    case dateSetup
+    case dateSetup(_ movie: MovieData, _ type: DateSetupType)
 }
 
 protocol CoordinatorProtocol: AnyObject {
