@@ -9,22 +9,28 @@ import SwiftUI
 
 struct MainTabView: View {
     @EnvironmentObject var diContainer: DefaultDIContainer
+    @StateObject private var homeCoordinator = Coordinator()
+    @StateObject private var searchCoordinator = Coordinator()
+    @StateObject private var myViewCoordinator = Coordinator()
     
     var body: some View {
         TabView {
             HomeView(viewModel: diContainer.makeHomeViewModel())
+                .environmentObject(homeCoordinator)
                 .tabItem {
                     Image("home")
                     Text(verbatim: "HOME")
                 }
             
             SearchView(viewModel: diContainer.makeSearchViewModel())
+                .environmentObject(searchCoordinator)
                 .tabItem {
                     Image("search")
                     Text(verbatim: "SEARCH")
                 }
             
             MyView(viewModel: diContainer.makeMyViewModel())
+                .environmentObject(myViewCoordinator)
                 .tabItem {
                     Image("movie")
                     Text(verbatim: "MY")
