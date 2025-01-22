@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-enum UsedTo {
+enum UsedTo: Hashable {
     case nowPlaying
     case upcoming
     case recommend
