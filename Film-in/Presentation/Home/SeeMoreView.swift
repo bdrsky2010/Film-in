@@ -12,12 +12,11 @@ struct SeeMoreView: View {
     
     @State private var isShowAlert = false
     @State private var isRefresh = false
-    
-    let usedTo: UsedTo
+    let viewModel: MultiListViewModel
     
     var body: some View {
         MultiListView(
-            viewModel: diConatiner.makeMultiListViewModel(usedTo: usedTo),
+            viewModel: viewModel,
             isShowAlert: $isShowAlert,
             isRefresh: $isRefresh
         )
