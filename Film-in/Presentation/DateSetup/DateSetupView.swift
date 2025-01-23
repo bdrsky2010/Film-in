@@ -14,18 +14,16 @@ enum DateSetupType {
 }
 
 struct DateSetupView: View {
+    @Environment(\.dismiss) private var dismiss
+    
     @StateObject private var viewModel: DateSetupViewModel
     
     @State private var displayedComponents: DatePicker<Label>.Components = [.date]
     
-    @Binding var isPresented: Bool
-    
     init(
-        viewModel: DateSetupViewModel,
-        isPresented: Binding<Bool>
+        viewModel: DateSetupViewModel
     ) {
         self._viewModel = StateObject(wrappedValue: viewModel)
-        self._isPresented = isPresented
     }
     
     var body: some View {
@@ -80,7 +78,8 @@ struct DateSetupView: View {
         }
         .valueChanged(value: viewModel.output.isSuccess) { newValue in
             if newValue {
-                isPresented.toggle()
+//                isPresented.toggle()
+                dismiss()
             }
         }
         .popupAlert(
