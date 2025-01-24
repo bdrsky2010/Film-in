@@ -26,7 +26,7 @@ struct HomeView: View {
 
     // poster size 1 x 1.5
     var body: some View {
-        NavigationStack {
+        VStack {
             if !viewModel.output.networkConnect {
                 UnnetworkedView(refreshAction: viewModel.action(.refresh))
             } else {
