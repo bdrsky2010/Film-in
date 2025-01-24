@@ -103,16 +103,23 @@ extension HomeView {
     private func trendingSection() -> some View {
         PagingView(currentIndex: $index, items: viewModel.output.trendingMovies.movies) { movie in
             ZStack {
-                NavigationLink {
-                    LazyView(
-                        MovieDetailView(
-                            viewModel: diContainer.makeMovieDetailViewModel(movieID: movie._id),
-                            movie: movie,
-                            size: posterSize
-                        )
-                    )
-                    .onAppear(perform: detailAppear)
-                    .onDisappear(perform: detailDisappear)
+//                NavigationLink {
+//                    LazyView(
+//                        MovieDetailView(
+//                            viewModel: diContainer.makeMovieDetailViewModel(movieID: movie._id),
+//                            movie: movie,
+//                            size: posterSize
+//                        )
+//                    )
+//                    .onAppear(perform: detailAppear)
+//                    .onDisappear(perform: detailDisappear)
+//                } label: {
+//                    let url = URL(string: ImageURL.tmdb(image: movie.poster).urlString)
+//                    PosterImage(url: url, size: posterSize, title: movie.title, isDownsampling: true)
+//                }
+//                .buttonStyle(.plain)
+                Button {
+                    coordinator.push(.movieDetail(movie, posterSize))
                 } label: {
                     let url = URL(string: ImageURL.tmdb(image: movie.poster).urlString)
                     PosterImage(url: url, size: posterSize, title: movie.title, isDownsampling: true)
