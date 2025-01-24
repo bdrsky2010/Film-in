@@ -16,7 +16,9 @@ enum AppRoute: Hashable {
     case seeMore(_ usedTo: UsedTo)
 }
 
-enum Sheet {
+enum Sheet: Identifiable {
+    var id: UUID { UUID() }
+    
     case dateSetup(_ movie: MovieData, _ type: DateSetupType)
 }
 
