@@ -15,8 +15,7 @@ struct MainTabView: View {
     
     var body: some View {
         TabView {
-            HomeView(viewModel: diContainer.makeHomeViewModel())
-                .environmentObject(homeCoordinator)
+            CoordinatorView(destination: .home)
                 .tabItem {
                     Image("home")
                     Text(verbatim: "HOME")
