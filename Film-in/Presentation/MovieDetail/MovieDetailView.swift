@@ -383,8 +383,7 @@ struct MovieDetailView: View {
             viewModel: diContainer.makeDateSetupViewModel(
                 movie: movie,
                 type: dateSetupType
-            ),
-            isPresented: $isDateSetup
+            )
         )
     }
 }
