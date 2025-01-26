@@ -14,6 +14,8 @@ struct CoordinatorView: View {
     
     @StateObject private var coordinator = Coordinator()
     
+    @State private var visibility: Visibility = .visible
+    
     let destination: Destination
     
     var body: some View {
@@ -21,7 +23,11 @@ struct CoordinatorView: View {
             path: Binding { coordinator.navigationPath }
             set: { _ in coordinator.pop() }
         ) {
-            routeSection(destination)
+            rootView(destination)
+                .onAppear { visibility = .visible }
+                .onDisappear { visibility = .hidden }
+                .setToolbarVisibility(visibility, for: .tabBar)
+                .animation(.easeInOut, value: visibility)
                 .navigationDestination(for: AppRoute.self) { route in
                     coordinator.bulid(route)
                 }
@@ -36,7 +42,7 @@ struct CoordinatorView: View {
     }
     
     @ViewBuilder
-    func routeSection(_ destination: Destination) -> some View {
+    func rootView(_ destination: Destination) -> some View {
         switch destination {
         case .home:
             coordinator.bulid(.home)
