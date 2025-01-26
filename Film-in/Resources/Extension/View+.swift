@@ -21,3 +21,17 @@ extension View {
         }
     }
 }
+
+extension View {
+    @ViewBuilder
+    func setToolbarVisibility(
+        _ visibility: Visibility,
+        for bar: ToolbarPlacement
+    ) -> some View {
+        if #available(iOS 18.0, *) {
+            self.toolbarVisibility(visibility, for: bar)
+        } else {
+            self.toolbar(visibility, for: bar)
+        }
+    }
+}
