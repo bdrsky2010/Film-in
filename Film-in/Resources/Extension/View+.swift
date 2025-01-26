@@ -8,7 +8,8 @@
 import SwiftUI
 
 extension View {
-    @ViewBuilder func valueChanged<T: Equatable>(value: T, onChange: @escaping (T) -> Void) -> some View {
+    @ViewBuilder
+    func valueChanged<T: Equatable>(value: T, onChange: @escaping (T) -> Void) -> some View {
         if #available(iOS 17.0, *) {
             self.onChange(of: value) {
                 onChange(value)
