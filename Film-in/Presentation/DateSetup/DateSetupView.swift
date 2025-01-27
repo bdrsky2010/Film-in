@@ -14,7 +14,7 @@ enum DateSetupType {
 }
 
 struct DateSetupView: View {
-    @Environment(\.dismiss) private var dismiss
+    @EnvironmentObject var coordinator: Coordinator
     
     @StateObject private var viewModel: DateSetupViewModel
     
@@ -78,8 +78,7 @@ struct DateSetupView: View {
         }
         .valueChanged(value: viewModel.output.isSuccess) { newValue in
             if newValue {
-//                isPresented.toggle()
-                dismiss()
+                coordinator.dismissSheet()
             }
         }
         .popupAlert(
