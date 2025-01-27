@@ -31,10 +31,7 @@ struct CoordinatorView: View {
                 .navigationDestination(for: AppRoute.self) { route in
                     coordinator.bulid(route)
                 }
-                .sheet(
-                    item: Binding(get: { coordinator.sheet },
-                                  set: { _ in coordinator.dismissSheet() })
-                ) { sheet in
+                .sheet(item: Binding(get: { coordinator.sheet }, set: { _ in })) { sheet in
                     coordinator.buildSheet(sheet)
                 }
         }
