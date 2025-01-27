@@ -11,7 +11,7 @@ import YouTubePlayerKit
 
 struct MovieDetailView: View {
     @Environment(\.colorScheme) var colorScheme
-    
+    @EnvironmentObject var coordinator: Coordinator
     @EnvironmentObject var diContainer: DefaultDIContainer
     
     @StateObject private var viewModel: MovieDetailViewModel
@@ -54,9 +54,6 @@ struct MovieDetailView: View {
         .toolbar(.hidden, for: .tabBar)
         .valueChanged(value: dateSetupType) { newValue in
             // dateSetupType의 변화를 확인하지 않으면 속성 값이 바뀌지 않음.
-        }
-        .sheet(isPresented: $isDateSetup){
-            dateSetupSheet()
         }
         .popupAlert(
             isPresented: Binding(
@@ -148,7 +145,7 @@ struct MovieDetailView: View {
         HStack {
             Button {
                 dateSetupType = .want
-                isDateSetup.toggle()
+                coordinator.presentSheet(.dateSetup(movie, dateSetupType))
             } label: {
                 Text(verbatim: "WANT")
                     .appButtonText()
@@ -156,7 +153,7 @@ struct MovieDetailView: View {
             
             Button {
                 dateSetupType = .watched
-                isDateSetup.toggle()
+                coordinator.presentSheet(.dateSetup(movie, dateSetupType))
             } label: {
                 Text(verbatim: "WATHCED")
                     .appButtonText()
