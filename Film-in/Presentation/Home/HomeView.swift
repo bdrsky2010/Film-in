@@ -63,7 +63,6 @@ struct HomeView: View {
                 }
                 .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
                 .task { viewModel.action(.viewOnTask) }
-                .onAppear { isHomeAppear = true }
                 .popupAlert(
                     isPresented: Binding(
                         get: { viewModel.output.isShowAlert },
@@ -79,11 +78,6 @@ struct HomeView: View {
                     viewModel.action(.refresh)
                 }
             }
-        }
-        .toolbar(visibility, for: .tabBar)
-        .animation(.easeInOut, value: visibility)
-        .valueChanged(value: isDetailDisappear) { _ in
-            if isHomeAppear && isDetailDisappear { visibility = .visible }
         }
     }
 }
