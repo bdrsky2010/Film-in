@@ -96,13 +96,7 @@ extension HomeView {
     @ViewBuilder
     private func trendingSection() -> some View {
         PagingView(currentIndex: $index, items: viewModel.output.trendingMovies.movies) { movie in
-            Button {
-                coordinator.push(.movieDetail(movie, posterSize))
-            } label: {
-                let url = URL(string: ImageURL.tmdb(image: movie.poster).urlString)
-                PosterImage(url: url, size: posterSize, title: movie.title, isDownsampling: true)
-            }
-            .buttonStyle(.plain)
+            posterButton(movie: movie, size: posterSize)
         }
         .frame(height: posterSize.height)
         .padding(.bottom, 20)
@@ -115,15 +109,7 @@ extension HomeView {
         ScrollView(.horizontal) {
             LazyHStack(spacing: 8) {
                 ForEach(viewModel.output.nowPlayingMovies.movies, id: \.id) { movie in
-                    Button {
-                        coordinator.push(.movieDetail(movie, posterSize))
-                    } label: {
-                        let url = URL(string: ImageURL.tmdb(image: movie.poster).urlString)
-                        PosterImage(url: url, size: cellSize, title: movie.title, isDownsampling: true)
-                            .padding(.bottom, 4)
-                            .padding(.horizontal, 8)
-                    }
-                    .buttonStyle(.plain)
+                    posterButton(movie: movie, size: cellSize)
                 }
             }
             .padding(.horizontal)
@@ -138,15 +124,7 @@ extension HomeView {
         ScrollView(.horizontal) {
             LazyHStack(spacing: 8) {
                 ForEach(viewModel.output.upcomingMovies.movies, id: \.id) { movie in
-                    Button {
-                        coordinator.push(.movieDetail(movie, posterSize))
-                    } label: {
-                        let url = URL(string: ImageURL.tmdb(image: movie.poster).urlString)
-                        PosterImage(url: url, size: cellSize, title: movie.title, isDownsampling: true)
-                            .padding(.bottom, 4)
-                            .padding(.horizontal, 8)
-                    }
-                    .buttonStyle(.plain)
+                    posterButton(movie: movie, size: cellSize)
                 }
             }
             .padding(.horizontal)
@@ -161,15 +139,7 @@ extension HomeView {
         ScrollView(.horizontal) {
             LazyHStack(spacing: 8) {
                 ForEach(viewModel.output.recommendMovies.movies, id: \.id) { movie in
-                    Button {
-                        coordinator.push(.movieDetail(movie, posterSize))
-                    } label: {
-                        let url = URL(string: ImageURL.tmdb(image: movie.poster).urlString)
-                        PosterImage(url: url, size: cellSize, title: movie.title, isDownsampling: true)
-                            .padding(.bottom, 4)
-                            .padding(.horizontal, 8)
-                    }
-                    .buttonStyle(.plain)
+                    posterButton(movie: movie, size: cellSize)
                 }
             }
             .padding(.horizontal)
@@ -179,15 +149,31 @@ extension HomeView {
 }
 
 extension HomeView {
-    private func detailAppear() {
-        if visibility == .visible {
-            visibility = .hidden
+    @ViewBuilder
+    private func posterButton(movie: MovieData, size: CGSize) -> some View {
+        
+        Button {
+            buttonTapped(movie: movie)
+        } label: {
+            buttonLabel(movie: movie, size: size)
         }
-        isHomeAppear = false
-        isDetailDisappear = false
+        .buttonStyle(.plain)
     }
     
-    private func detailDisappear() {
-        isDetailDisappear = true
+    private func buttonTapped(movie: MovieData) {
+        coordinator.push(.movieDetail(movie, posterSize))
+    }
+    
+    @ViewBuilder
+    private func buttonLabel(movie: MovieData, size: CGSize) -> some View {
+        if size == cellSize {
+            let url = URL(string: ImageURL.tmdb(image: movie.poster).urlString)
+            PosterImage(url: url, size: size, title: movie.title, isDownsampling: true)
+                .padding(.bottom, 4)
+                .padding(.horizontal, 8)
+        } else {
+            let url = URL(string: ImageURL.tmdb(image: movie.poster).urlString)
+            PosterImage(url: url, size: size, title: movie.title, isDownsampling: true)
+        }
     }
 }
