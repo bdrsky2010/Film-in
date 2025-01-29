@@ -8,14 +8,10 @@
 import SwiftUI
 
 struct HomeView: View {
-    @EnvironmentObject var diContainer: DefaultDIContainer
     @EnvironmentObject var coordinator: Coordinator
     
     @StateObject private var viewModel: HomeViewModel
     
-    @State private var visibility: Visibility = .visible
-    @State private var isHomeAppear = true
-    @State private var isDetailDisappear = false
     @State private var index = 0
     @State private var cellSize: CGSize = .zero
     @State private var posterSize: CGSize = .zero
