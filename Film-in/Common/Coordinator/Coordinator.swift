@@ -36,7 +36,7 @@ protocol CoordinatorProtocol: AnyObject {
 final class Coordinator: ObservableObject {
     @Published private(set) var navigationPath = NavigationPath()
     @Published private(set) var sheet: Sheet?
-    @Published private var diContainer = DefaultDIContainer()
+    @Published private(set) var diContainer = DefaultDIContainer()
 }
 
 extension Coordinator: CoordinatorProtocol {
