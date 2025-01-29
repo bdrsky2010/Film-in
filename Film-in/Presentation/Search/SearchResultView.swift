@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct SearchResultView: View {
-    @EnvironmentObject var diContainer: DefaultDIContainer
+    @EnvironmentObject var coordinator: Coordinator
     
     @StateObject private var viewModel: SearchResultViewModel
     
@@ -268,7 +268,7 @@ extension SearchResultView {
                     switch type {
                     case .movie:
                         MultiListView(
-                            viewModel: diContainer.makeMultiListViewModel(usedTo: .searchMovie(searchQuery)),
+                            viewModel: coordinator.diContainer.makeMultiListViewModel(usedTo: .searchMovie(searchQuery)),
                             isShowAlert: $isShowAlert,
                             isRefresh: $isRefresh
                         )
@@ -277,7 +277,7 @@ extension SearchResultView {
                         
                     case .person:
                         MultiListView(
-                            viewModel: diContainer.makeMultiListViewModel(usedTo: .searchPerson(searchQuery)),
+                            viewModel: coordinator.diContainer.makeMultiListViewModel(usedTo: .searchPerson(searchQuery)),
                             isShowAlert: $isShowAlert,
                             isRefresh: $isRefresh
                         )
