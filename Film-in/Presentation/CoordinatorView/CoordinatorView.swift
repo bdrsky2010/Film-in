@@ -15,6 +15,7 @@ struct CoordinatorView: View {
     @StateObject private var coordinator = Coordinator()
     
     @State private var visibility: Visibility = .visible
+    @State private var isRootAppear: Bool = true
     
     let destination: Destination
     
@@ -24,12 +25,13 @@ struct CoordinatorView: View {
             set: { _ in coordinator.pop() }
         ) {
             rootView(destination)
-                .onAppear { visibility = .visible }
-                .onDisappear { visibility = .hidden }
+                .onAppear(perform: rootAppear)
                 .setToolbarVisibility(visibility, for: .tabBar)
                 .animation(.easeInOut, value: visibility)
                 .navigationDestination(for: AppRoute.self) { route in
                     coordinator.bulid(route)
+                        .onAppear(perform: childAppear)
+                        .onDisappear(perform: childDisappear)
                 }
                 .sheet(item: Binding(get: { coordinator.sheet }, set: { _ in })) { sheet in
                     coordinator.buildSheet(sheet)
@@ -48,5 +50,22 @@ struct CoordinatorView: View {
         case .My:
             coordinator.bulid(.myView)
         }
+    }
+}
+
+extension CoordinatorView {
+    private func rootAppear() {
+        isRootAppear = true
+    }
+    
+    private func childAppear() {
+        if visibility == .visible {
+            visibility = .hidden
+        }
+        isRootAppear = false
+    }
+    
+    private func childDisappear() {
+        if isRootAppear { visibility = .visible }
     }
 }
