@@ -6,13 +6,11 @@
 //
 
 import SwiftUI
-import Kingfisher
 import YouTubePlayerKit
 
 struct MovieDetailView: View {
     @Environment(\.colorScheme) var colorScheme
     @EnvironmentObject var coordinator: Coordinator
-    @EnvironmentObject var diContainer: DefaultDIContainer
     
     @StateObject private var viewModel: MovieDetailViewModel
     
@@ -193,36 +191,8 @@ struct MovieDetailView: View {
             .padding(.horizontal)
         ScrollView(.horizontal) {
             LazyHStack {
-                ForEach(viewModel.output.creditInfo, id: \.id) { person in
-                    NavigationLink {
-                        LazyView(
-                            PersonDetailView(
-                                viewModel: diContainer.makePersonDetailViewModel(personID: person._id)
-                            )
-                        )
-                    } label: {
-                        VStack {
-                            let url = URL(string: ImageURL.tmdb(image: person.profilePath).urlString)
-                            PosterImage(
-                                url: url,
-                                size: CGSize(width: 90, height: 90),
-                                title: person.name.replacingOccurrences(of: " ", with: "\n"),
-                                isDownsampling: true
-                            )
-                            .clipShape(Circle())
-                            .grayscale(colorScheme == .dark ? 1 : 0)
-                            
-                            Text(verbatim: "\(person.role.replacingOccurrences(of: " ", with: "\n"))")
-                                .font(.ibmPlexMonoRegular(size: 14))
-                                .foregroundStyle(.appText)
-                                .frame(width: 90)
-                            Text(verbatim: "\(person.name)")
-                                .font(.ibmPlexMonoRegular(size: 14))
-                                .foregroundStyle(.appText)
-                                .frame(width: 90)
-                        }
-                        .frame(maxHeight: .infinity, alignment: .top)
-                    }
+                ForEach(viewModel.output.creditInfo, id: \.id) { credit in
+                    creditButton(credit: credit, size: CGSize(width: 90, height: 90))
                 }
             }
             .padding(.horizontal)
@@ -262,32 +232,16 @@ struct MovieDetailView: View {
         ScrollView(.horizontal) {
             LazyHStack {
                 ForEach(viewModel.output.movieSimilars) { similar in
-                    NavigationLink {
-                        let movie = MovieData(
-                            _id: similar.id,
-                            title: similar.title,
-                            poster: similar.poster,
-                            backdrop: similar.backdrop
-                        )
-                        LazyView(
-                            MovieDetailView(
-                                viewModel: diContainer.makeMovieDetailViewModel(movieID: movie._id),
-                                movie: movie,
-                                size: size
-                            )
-                        )
-                    } label: {
-                        let url = URL(string: ImageURL.tmdb(image: similar.poster).urlString)
-                        PosterImage(
-                            url: url,
-                            size: CGSize(
+                    posterButton(
+                        movie: similar,
+                        size: (
+                            poster: size,
+                            cell: CGSize(
                                 width: size.width * 0.5,
                                 height: size.height * 0.5
-                            ),
-                            title: similar.title,
-                            isDownsampling: true
+                            )
                         )
-                    }
+                    )
                 }
             }
             .padding(.horizontal)
@@ -373,15 +327,73 @@ struct MovieDetailView: View {
             .padding(.horizontal)
         }
     }
+}
+
+// MARK: Movie Poster Cell
+extension MovieDetailView {
+    @ViewBuilder
+    private func posterButton(movie: MovieData, size: (poster: CGSize, cell: CGSize)) -> some View {
+        Button {
+            posterTapped(movie: movie, size: size.poster)
+        } label: {
+            posterLabel(movie: movie, size: size.cell)
+        }
+    }
+    
+    private func posterTapped(movie: MovieData, size: CGSize) {
+        coordinator.push(.movieDetail(movie, size))
+    }
     
     @ViewBuilder
-    private func dateSetupSheet() -> some View {
-        DateSetupView(
-            viewModel: diContainer.makeDateSetupViewModel(
-                movie: movie,
-                type: dateSetupType
-            )
+    private func posterLabel(movie: MovieData, size: CGSize) -> some View {
+        let url = URL(string: ImageURL.tmdb(image: movie.poster).urlString)
+        PosterImage(
+            url: url,
+            size: size,
+            title: movie.title,
+            isDownsampling: true
         )
+    }
+}
+
+// MARK: Cast & Crew Cell
+extension MovieDetailView {
+    @ViewBuilder
+    private func creditButton(credit: CreditInfo, size: CGSize) -> some View {
+        Button {
+            creditTapped(credit: credit)
+        } label: {
+            creditLabel(credit: credit, size: size)
+        }
+    }
+    
+    private func creditTapped(credit: CreditInfo) {
+        coordinator.push(.personDetail(credit._id))
+    }
+    
+    @ViewBuilder
+    private func creditLabel(credit: CreditInfo, size: CGSize) -> some View {
+        VStack {
+            let url = URL(string: ImageURL.tmdb(image: credit.profilePath).urlString)
+            PosterImage(
+                url: url,
+                size: CGSize(width: 90, height: 90),
+                title: credit.name.replacingOccurrences(of: " ", with: "\n"),
+                isDownsampling: true
+            )
+            .clipShape(Circle())
+            .grayscale(colorScheme == .dark ? 1 : 0)
+            
+            Text(verbatim: "\(credit.role.replacingOccurrences(of: " ", with: "\n"))")
+                .font(.ibmPlexMonoRegular(size: 14))
+                .foregroundStyle(.appText)
+                .frame(width: 90)
+            Text(verbatim: "\(credit.name)")
+                .font(.ibmPlexMonoRegular(size: 14))
+                .foregroundStyle(.appText)
+                .frame(width: 90)
+        }
+        .frame(maxHeight: .infinity, alignment: .top)
     }
 }
 
