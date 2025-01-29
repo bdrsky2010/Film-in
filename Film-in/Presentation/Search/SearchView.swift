@@ -14,16 +14,12 @@ enum FocusField {
 struct SearchView: View {
     @Environment(\.colorScheme) var colorScheme
     
-    @EnvironmentObject var diContainer: DefaultDIContainer
+    @EnvironmentObject var coordinator: Coordinator
     
     @StateObject private var viewModel: SearchViewModel
     
     @FocusState private var focusedField: FocusField?
     
-    @State private var visibility: Visibility = .visible
-    @State private var isSearchAppear = true
-    @State private var isDetailDisappear = false
-    @State private var isResultDisappear = false
     @State private var cellSize: CGSize = .zero
     @State private var posterSize: CGSize = .zero
     @State private var isShowSearch = false
@@ -45,8 +41,6 @@ struct SearchView: View {
                 contentSection()
             }
         }
-        .toolbar(visibility, for: .tabBar)
-        .animation(.easeInOut, value: visibility)
         .task { viewModel.action(.viewOnTask) }
         .popupAlert(
             isPresented: Binding(
@@ -62,12 +56,6 @@ struct SearchView: View {
         ) {
             viewModel.action(.refresh)
         }
-        .valueChanged(value: isDetailDisappear) { _ in
-            if isSearchAppear && isDetailDisappear { visibility = .visible }
-        }
-        .valueChanged(value: isResultDisappear) { _ in
-            if isSearchAppear && isResultDisappear { visibility = .visible }
-        }
     }
 }
 
@@ -77,19 +65,16 @@ extension SearchView {
         VStack {
             if isShowSearch {
                 SearchResultView(
-                    viewModel: diContainer.makeSearchResultViewModel(),
+                    viewModel: coordinator.diContainer.makeSearchResultViewModel(),
                     isShowSearch: $isShowSearch,
                     focusedField: $focusedField,
                     namespace: namespace
                 )
-                .onAppear(perform: resultAppear)
-                .onDisappear(perform: resultDisappear)
             } else {
                 VStack {
                     textFieldSection()
                     trendingContentSection()
                 }
-                .onAppear { isSearchAppear = true }
             }
         }
         .valueChanged(value: focusedField) { _ in
@@ -184,85 +169,77 @@ extension SearchView {
     @ViewBuilder
     private func trendingMovieSection() -> some View {
         ForEach(viewModel.output.trendingMovie, id: \.id) { movie in
-            NavigationLink {
-                LazyView(
-                    MovieDetailView(
-                        viewModel: diContainer.makeMovieDetailViewModel(movieID: movie._id),
-                        movie: movie,
-                        size: posterSize
-                    )
-                )
-                .onAppear(perform: detailAppear)
-                .onDisappear(perform: detailDisappear)
-            } label: {
-                let url = URL(string: ImageURL.tmdb(image: movie.poster).urlString)
-                PosterImage(
-                    url: url,
-                    size: cellSize,
-                    title: movie.title,
-                    isDownsampling: true
-                )
-            }
+            posterButton(movie: movie, size: (poster: posterSize, cell: cellSize))
         }
     }
     
     @ViewBuilder
     private func popularPeopleSection() -> some View {
         ForEach(viewModel.output.popularPeople, id: \.id) { person in
-            NavigationLink {
-                LazyView(
-                    PersonDetailView(
-                        viewModel: diContainer.makePersonDetailViewModel(personID: person._id)
-                    )
-                )
-                .onAppear(perform: detailAppear)
-                .onDisappear(perform: detailDisappear)
-            } label: {
-                VStack {
-                    let url = URL(string: ImageURL.tmdb(image: person.profilePath).urlString)
-                    PosterImage(
-                        url: url,
-                        size: CGSize(width: 90, height: 90),
-                        title: person.name.replacingOccurrences(of: " ", with: "\n"),
-                        isDownsampling: true
-                    )
-                    .clipShape(Circle())
-                    .grayscale(colorScheme == .dark ? 1 : 0)
-                    
-                    Text(verbatim: "\(person.name)")
-                        .font(.ibmPlexMonoRegular(size: 14))
-                        .foregroundStyle(.appText)
-                        .frame(width: 90)
-                }
-                .frame(maxHeight: .infinity, alignment: .top)
-                .padding(.horizontal, 4)
-            }
+            personButton(person: person, size: CGSize(width: 90, height: 90))
         }
     }
 }
 
 extension SearchView {
-    private func detailAppear() {
-        if visibility == .visible {
-            visibility = .hidden
+    @ViewBuilder
+    private func posterButton(movie: MovieData, size: (poster: CGSize, cell: CGSize)) -> some View {
+        Button {
+            posterTapped(movie: movie, size: size.poster)
+        } label: {
+            posterLabel(movie: movie, size: size.cell)
         }
-        isSearchAppear = false
-        isDetailDisappear = false
     }
     
-    private func detailDisappear() {
-        isDetailDisappear = true
+    private func posterTapped(movie: MovieData, size: CGSize) {
+        coordinator.push(.movieDetail(movie, size))
     }
     
-    private func resultAppear() {
-        if visibility == .visible {
-            visibility = .hidden
+    @ViewBuilder
+    private func posterLabel(movie: MovieData, size: CGSize) -> some View {
+        let url = URL(string: ImageURL.tmdb(image: movie.poster).urlString)
+        PosterImage(
+            url: url,
+            size: size,
+            title: movie.title,
+            isDownsampling: true
+        )
+    }
+}
+
+extension SearchView {
+    @ViewBuilder
+    private func personButton(person: PopularPerson, size: CGSize) -> some View {
+        Button {
+            personTapped(person: person)
+        } label: {
+            personLabel(person: person, size: size)
         }
-        isSearchAppear = false
-        isResultDisappear = false
     }
     
-    private func resultDisappear() {
-        isResultDisappear = true
+    private func personTapped(person: PopularPerson) {
+        coordinator.push(.personDetail(person._id))
+    }
+    
+    @ViewBuilder
+    private func personLabel(person: PopularPerson, size: CGSize) -> some View {
+        VStack {
+            let url = URL(string: ImageURL.tmdb(image: person.profilePath).urlString)
+            PosterImage(
+                url: url,
+                size: size,
+                title: person.name.replacingOccurrences(of: " ", with: "\n"),
+                isDownsampling: true
+            )
+            .clipShape(.circle)
+            .grayscale(self.colorScheme == .dark ? 1 : 0)
+            
+            Text(verbatim: "\(person.name)")
+                .font(.ibmPlexMonoRegular(size: 14))
+                .foregroundStyle(.appText)
+                .frame(width: 90)
+        }
+        .frame(maxHeight: .infinity, alignment: .top)
+        .padding(.horizontal, 4)
     }
 }
