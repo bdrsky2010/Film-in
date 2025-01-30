@@ -8,7 +8,8 @@
 import SwiftUI
 
 struct MoreHeader: View {
-    @EnvironmentObject var diContainer: DefaultDIContainer
+    @EnvironmentObject var coordinator: Coordinator
+    
     let usedTo: UsedTo
     
     var body: some View {
@@ -20,10 +21,8 @@ struct MoreHeader: View {
             
             Spacer()
             
-            NavigationLink {
-                LazyView(
-                    SeeMoreView(viewModel: diContainer.makeMultiListViewModel(usedTo: usedTo))
-                )
+            Button {
+                coordinator.push(.seeMore(usedTo))
             } label: {
                 Text("more")
                     .font(.ibmPlexMonoSemiBold(size: 16))
