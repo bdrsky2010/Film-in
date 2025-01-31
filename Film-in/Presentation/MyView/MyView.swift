@@ -12,26 +12,27 @@ import PopupView
 struct MyView: View {
     @ObservedResults(UserTable.self) var user
     
-    @EnvironmentObject var diContainer: DefaultDIContainer
+//    @EnvironmentObject var diContainer: DefaultDIContainer
+    @EnvironmentObject var coordinator: Coordinator
     
     @StateObject private var viewModel: MyViewModel
     
-    @State private var visibility: Visibility
-    @State private var isMyAppear: Bool
-    @State private var isDetailDisappear: Bool
+//    @State private var visibility: Visibility
+//    @State private var isMyAppear: Bool
+//    @State private var isDetailDisappear: Bool
     @State private var posterSize: CGSize
     
     init(
         viewModel: MyViewModel,
-        visibility: Visibility = .visible,
-        isMyAppear: Bool = true,
-        isDetailDisappear: Bool = false,
+//        visibility: Visibility = .visible,
+//        isMyAppear: Bool = true,
+//        isDetailDisappear: Bool = false,
         posterSize: CGSize = .zero
     ) {
         self._viewModel = StateObject(wrappedValue: viewModel)
-        self._visibility = State(initialValue: visibility)
-        self._isMyAppear = State(initialValue: isMyAppear)
-        self._isDetailDisappear = State(initialValue: isDetailDisappear)
+//        self._visibility = State(initialValue: visibility)
+//        self._isMyAppear = State(initialValue: isMyAppear)
+//        self._isDetailDisappear = State(initialValue: isDetailDisappear)
         self._posterSize = State(wrappedValue: posterSize)
     }
     
@@ -41,11 +42,11 @@ struct MyView: View {
                 calendarSection()
                 contentSection()
             }
-            .onAppear { isMyAppear = true }
+//            .onAppear { isMyAppear = true }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
-        .toolbar(visibility, for: .tabBar)
-        .animation(.easeInOut, value: visibility)
+//        .toolbar(visibility, for: .tabBar)
+//        .animation(.easeInOut, value: visibility)
         .popupAlert(
             isPresented: $viewModel.output.isRequestDelete,
             contentModel: PopupAlertModel(
@@ -57,9 +58,9 @@ struct MyView: View {
         ) {
             viewModel.action(.realDelete(movieId: viewModel.output.deleteMovieId))
         }
-        .valueChanged(value: isDetailDisappear) { _ in
-            if isMyAppear && isDetailDisappear { visibility = .visible }
-        }
+//        .valueChanged(value: isDetailDisappear) { _ in
+//            if isMyAppear && isDetailDisappear { visibility = .visible }
+//        }
     }
 }
 
@@ -119,20 +120,27 @@ extension MyView {
                         .padding(.leading, 20)
                 }
                 
-                NavigationLink {
-                    LazyView(
-                        MovieDetailView(
-                            viewModel: diContainer.makeMovieDetailViewModel(movieID: movie.id),
-                            movie: convertToMovieData(by: movie),
-                            size: posterSize
-                        )
-                    )
-                    .onAppear(perform: detailAppear)
-                    .onDisappear(perform: detailDisappear)
+                Button {
+                    coordinator.push(.movieDetail(convertToMovieData(by: movie), posterSize))
                 } label: {
                     EmptyView()
                 }
                 .opacity(0)
+                
+//                NavigationLink {
+//                    LazyView(
+//                        MovieDetailView(
+//                            viewModel: diContainer.makeMovieDetailViewModel(movieID: movie.id),
+//                            movie: convertToMovieData(by: movie),
+//                            size: posterSize
+//                        )
+//                    )
+//                    .onAppear(perform: detailAppear)
+//                    .onDisappear(perform: detailDisappear)
+//                } label: {
+//                    EmptyView()
+//                }
+//                .opacity(0)
             }
         }
         .onDelete { indexSet in
@@ -175,21 +183,26 @@ extension MyView {
                         .frame(height: proxy.size.width * 0.56 * 0.2)
                         .padding(.leading, 20)
                 }
-                
-                NavigationLink {
-                    LazyView(
-                        MovieDetailView(
-                            viewModel: diContainer.makeMovieDetailViewModel(movieID: movie.id),
-                            movie: convertToMovieData(by: movie),
-                            size: posterSize
-                        )
-                    )
-                    .onAppear(perform: detailAppear)
-                    .onDisappear(perform: detailDisappear)
+                Button {
+                    coordinator.push(.movieDetail(convertToMovieData(by: movie), posterSize))
                 } label: {
                     EmptyView()
                 }
                 .opacity(0)
+//                NavigationLink {
+//                    LazyView(
+//                        MovieDetailView(
+//                            viewModel: diContainer.makeMovieDetailViewModel(movieID: movie.id),
+//                            movie: convertToMovieData(by: movie),
+//                            size: posterSize
+//                        )
+//                    )
+//                    .onAppear(perform: detailAppear)
+//                    .onDisappear(perform: detailDisappear)
+//                } label: {
+//                    EmptyView()
+//                }
+//                .opacity(0)
             }
         }
         .onDelete { indexSet in
@@ -211,16 +224,16 @@ extension MyView {
     }
 }
 
-extension MyView {
-    private func detailAppear() {
-        if visibility == .visible {
-            visibility = .hidden
-        }
-        isMyAppear = false
-        isDetailDisappear = false
-    }
-    
-    private func detailDisappear() {
-        isDetailDisappear = true
-    }
-}
+//extension MyView {
+//    private func detailAppear() {
+//        if visibility == .visible {
+//            visibility = .hidden
+//        }
+//        isMyAppear = false
+//        isDetailDisappear = false
+//    }
+//    
+//    private func detailDisappear() {
+//        isDetailDisappear = true
+//    }
+//}
