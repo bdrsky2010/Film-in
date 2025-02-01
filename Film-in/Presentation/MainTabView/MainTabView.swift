@@ -24,7 +24,7 @@ struct MainTabView: View {
                     Text(verbatim: "SEARCH")
                 }
             
-            MyView(viewModel: diContainer.makeMyViewModel())
+            CoordinatorView(destination: .My)
                 .tabItem {
                     Image("movie")
                     Text(verbatim: "MY")
