@@ -7,7 +7,6 @@
 
 import SwiftUI
 import RealmSwift
-import PopupView
 
 struct MyView: View {
     @ObservedResults(UserTable.self) var user
