@@ -9,12 +9,18 @@ import SwiftUI
 import RealmSwift
 
 struct MyView: View {
+    enum Section: CaseIterable {
+        case want, watched
+    }
+    
     @ObservedResults(UserTable.self) var user
     
     @EnvironmentObject var coordinator: Coordinator
     
     @StateObject private var viewModel: MyViewModel
     
+    @State private var wantMovies: [MovieTable]
+    @State private var watchedMovies: [MovieTable]
     @State private var posterSize: CGSize
     
     init(
@@ -22,6 +28,8 @@ struct MyView: View {
         posterSize: CGSize = .zero
     ) {
         self._viewModel = StateObject(wrappedValue: viewModel)
+        self._wantMovies = State(wrappedValue: [])
+        self._watchedMovies = State(wrappedValue: [])
         self._posterSize = State(wrappedValue: posterSize)
     }
     
