@@ -78,38 +78,8 @@ extension MyView {
         
         let wantMovies = user.first?.wantMovies.filter({ Calendar.current.isDate(viewModel.output.selectDate, inSameDayAs: $0.date) }) ?? []
         ForEach(wantMovies, id: \.id) { movie in
-            ZStack {
-                let url = URL(string: ImageURL.tmdb(image: movie.backdrop).urlString)
-                PosterImage(
-                    url: url,
-                    size: CGSize(
-                        width: proxy.size.width - 40,
-                        height: (proxy.size.width - 40) * 0.56
-                    ),
-                    title: movie.title,
-                    isDownsampling: true
-                )
-                .overlay(alignment: .bottom) {
-                    Rectangle()
-                        .foregroundStyle(.black).opacity(0.5)
-                        .frame(height: proxy.size.width * 0.56 * 0.2)
-                }
-                .overlay(alignment: .bottomLeading) {
-                    Text(verbatim: movie.title)
-                        .foregroundStyle(.app)
-                        .font(.ibmPlexMonoRegular(size: 16))
-                        .lineLimit(2)
-                        .frame(height: proxy.size.width * 0.56 * 0.2)
-                        .padding(.leading, 20)
-                }
-                
-                Button {
-                    coordinator.push(.movieDetail(convertToMovieData(by: movie), posterSize))
-                } label: {
-                    EmptyView()
-                }
-                .opacity(0)
-            }
+            let movie = convertToMovieData(by: movie)
+            movieButton(proxy: proxy, movie: movie, size: posterSize)
         }
         .onDelete { indexSet in
             guard let index = indexSet.first else { return }
@@ -127,37 +97,8 @@ extension MyView {
         
         let watchedMovies = user.first?.watchedMovies.filter({ Calendar.current.isDate(viewModel.output.selectDate, inSameDayAs: $0.date) }) ?? []
         ForEach(watchedMovies, id: \.id) { movie in
-            ZStack {
-                let url = URL(string: ImageURL.tmdb(image: movie.backdrop).urlString)
-                PosterImage(
-                    url: url,
-                    size: CGSize(
-                        width: proxy.size.width - 40,
-                        height: (proxy.size.width - 40) * 0.56
-                    ),
-                    title: movie.title,
-                    isDownsampling: true
-                )
-                .overlay(alignment: .bottom) {
-                    Rectangle()
-                        .foregroundStyle(.black).opacity(0.5)
-                        .frame(height: proxy.size.width * 0.56 * 0.2)
-                }
-                .overlay(alignment: .bottomLeading) {
-                    Text(verbatim: movie.title)
-                        .foregroundStyle(.app)
-                        .font(.ibmPlexMonoRegular(size: 16))
-                        .lineLimit(2)
-                        .frame(height: proxy.size.width * 0.56 * 0.2)
-                        .padding(.leading, 20)
-                }
-                Button {
-                    coordinator.push(.movieDetail(convertToMovieData(by: movie), posterSize))
-                } label: {
-                    EmptyView()
-                }
-                .opacity(0)
-            }
+            let movie = convertToMovieData(by: movie)
+            movieButton(proxy: proxy, movie: movie, size: posterSize)
         }
         .onDelete { indexSet in
             guard let index = indexSet.first else { return }
