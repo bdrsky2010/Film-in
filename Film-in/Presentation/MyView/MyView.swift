@@ -168,6 +168,52 @@ extension MyView {
 }
 
 extension MyView {
+    @ViewBuilder
+    private func movieButton(proxy: GeometryProxy, movie: MovieData, size: CGSize) -> some View {
+        ZStack {
+            movieLabel(proxy: proxy, movie: movie)
+            Button {
+                movieTapped(movie: movie, size: size)
+            } label: {
+                EmptyView()
+            }
+            .opacity(0)
+        }
+    }
+    
+    private func movieTapped(movie: MovieData, size: CGSize) {
+        coordinator.push(.movieDetail(movie, size))
+    }
+    
+    @ViewBuilder
+    private func movieLabel(proxy: GeometryProxy, movie: MovieData) -> some View {
+        let url = URL(string: ImageURL.tmdb(image: movie.backdrop).urlString)
+        PosterImage(
+            url: url,
+            size: CGSize(
+                width: proxy.size.width - 40,
+                height: (proxy.size.width - 40) * 0.56
+            ),
+            title: movie.title,
+            isDownsampling: true
+        )
+        .overlay(alignment: .bottom) {
+            Rectangle()
+                .foregroundStyle(.black).opacity(0.5)
+                .frame(height: proxy.size.width * 0.56 * 0.2)
+        }
+        .overlay(alignment: .bottomLeading) {
+            Text(verbatim: movie.title)
+                .foregroundStyle(.app)
+                .font(.ibmPlexMonoRegular(size: 16))
+                .lineLimit(2)
+                .frame(height: proxy.size.width * 0.56 * 0.2)
+                .padding(.leading, 20)
+        }
+    }
+}
+
+extension MyView {
     private func convertToMovieData(by movieTable: MovieTable) -> MovieData {
         return MovieData(
             _id: movieTable.id,
