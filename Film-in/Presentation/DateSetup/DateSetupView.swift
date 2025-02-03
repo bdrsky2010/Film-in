@@ -84,7 +84,7 @@ struct DateSetupView: View {
         .popupAlert(
             isPresented: $viewModel.output.isDone,
             contentModel: PopupAlertModel(
-                phrase: "saveRequestPhrase",
+                phrase: "saveRequest",
                 normal: "save",
                 cancel: "cancel"
             ),
@@ -95,7 +95,7 @@ struct DateSetupView: View {
         .popupAlert(
             isPresented: $viewModel.output.isError,
             contentModel: PopupAlertModel(
-                phrase: "notificationRequestPhrase",
+                phrase: "notificationRequest",
                 normal: "move",
                 cancel: "cancel"
             ),
