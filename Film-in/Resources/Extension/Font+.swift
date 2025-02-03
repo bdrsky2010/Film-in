@@ -9,14 +9,14 @@ import SwiftUI
 
 extension Font {
     static func ibmPlexMonoRegular(size: CGFloat) -> Font {
-        return .custom("IBMPlexMono-Regular", size: size)
+        return .custom(R.CustomFont.ibmPlexMonoRegular, size: size)
     }
     
     static func ibmPlexMonoMedium(size: CGFloat) -> Font {
-        return .custom("IBMPlexMono-Medium", size: size)
+        return .custom(R.CustomFont.ibmPlexMonoMedium, size: size)
     }
     
     static func ibmPlexMonoSemiBold(size: CGFloat) -> Font {
-        return .custom("IBMPlexMono-SemiBold", size: size)
+        return .custom(R.CustomFont.ibmPlexMonoSemiBold, size: size)
     }
 }
