@@ -87,7 +87,6 @@ extension MyView {
             .foregroundStyle(.appText)
             .frame(maxWidth: proxy.size.width, alignment: .leading)
         
-        let wantMovies = user.first?.wantMovies.filter({ Calendar.current.isDate(viewModel.output.selectDate, inSameDayAs: $0.date) }) ?? []
         ForEach(wantMovies, id: \.id) { movie in
             let movie = convertToMovieData(by: movie)
             movieButton(proxy: proxy, movie: movie, size: posterSize)
@@ -106,7 +105,6 @@ extension MyView {
             .foregroundStyle(.appText)
             .frame(maxWidth: proxy.size.width, alignment: .leading)
         
-        let watchedMovies = user.first?.watchedMovies.filter({ Calendar.current.isDate(viewModel.output.selectDate, inSameDayAs: $0.date) }) ?? []
         ForEach(watchedMovies, id: \.id) { movie in
             let movie = convertToMovieData(by: movie)
             movieButton(proxy: proxy, movie: movie, size: posterSize)
