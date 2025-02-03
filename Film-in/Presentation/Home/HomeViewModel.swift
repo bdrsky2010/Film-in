@@ -107,8 +107,7 @@ extension HomeViewModel {
     }
     
     private func fetchTrending() {
-        let query = TrendingQuery(language: "longLanguageCode".localized)
-        let publisher = homeService.fetchTrending(query: query)
+        let publisher = homeService.fetchTrending()
         publisher
             .receive(on: DispatchQueue.main)
             .sink(with: self) { owner, result in
@@ -124,11 +123,7 @@ extension HomeViewModel {
     }
     
     private func fetchNowPlaying() {
-        let query = HomeMovieQuery(
-            language: "longLanguageCode".localized,
-            page: 1,
-            region: "regionCode".localized
-        )
+        let query = HomeMovieQuery(page: 1)
         let publisher = homeService.fetchNowPlaying(query: query)
         publisher
             .receive(on: DispatchQueue.main)
@@ -145,11 +140,7 @@ extension HomeViewModel {
     }
     
     private func fetchUpcoming() {
-        let query = HomeMovieQuery(
-            language: "longLanguageCode".localized,
-            page: 1,
-            region: "regionCode".localized
-        )
+        let query = HomeMovieQuery(page: 1)
         let publisher = homeService.fetchUpcoming(query: query)
         publisher
             .receive(on: DispatchQueue.main)
@@ -169,11 +160,7 @@ extension HomeViewModel {
         isRecommend: Bool,
         recommendTotalPage: Int
     ) {
-        let query = HomeMovieQuery(
-            language: "longLanguageCode".localized,
-            page: isRecommend ? Int.random(in: 1...recommendTotalPage) : 1,
-            region: "regionCode".localized
-        )
+        let query = HomeMovieQuery(page: isRecommend ? Int.random(in: 1...recommendTotalPage) : 1)
         let publisher = homeService.fetchDiscover(query: query)
         publisher
             .receive(on: DispatchQueue.main)

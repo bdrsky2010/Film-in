@@ -97,7 +97,7 @@ extension MovieDetailViewModel {
     }
     
     private func fetchDetail() {
-        let query = MovieDetailQuery(movieId: movieId, language: "longLanguageCode".localized)
+        let query = MovieDetailQuery(movieId: movieId)
         let publisher = movieDetailService.fetchMovieDetail(query: query)
         publisher
             .receive(on: DispatchQueue.main)
@@ -114,7 +114,7 @@ extension MovieDetailViewModel {
     }
     
     private func fetchCredit() {
-        let query = MovieCreditQuery(movieId: movieId, language: "longLanguageCode".localized)
+        let query = MovieCreditQuery(movieId: movieId)
         let publisher = movieDetailService.fetchMovieCredit(query: query)
         publisher
             .receive(on: DispatchQueue.main)
@@ -136,7 +136,6 @@ extension MovieDetailViewModel {
     ) {
         let query = MovieSimilarQuery(
             movieId: movieId,
-            language: "longLanguageCode".localized,
             page: isRandomed ? Int.random(in: 1...totalPage) : 1
         )
         let publisher = movieDetailService.fetchMovieSimilar(query: query)
@@ -162,7 +161,7 @@ extension MovieDetailViewModel {
     }
     
     private func fetchImages() {
-        let query = MovieImagesQuery(movieId: movieId, imageLanguage: "\("shortLanguageCode".localized),en,null")
+        let query = MovieImagesQuery(movieId: movieId, imageLanguage: "\(R.Phrase.shortLanguageCode),en,null")
         let publisher = movieDetailService.fetchMovieImages(query: query)
         publisher
             .receive(on: DispatchQueue.main)
@@ -179,7 +178,7 @@ extension MovieDetailViewModel {
     }
     
     private func fetchVideos(isRetry: Bool) {
-        let query = MovieVideosQuery(movieId: movieId, language: !isRetry ? "longLanguageCode".localized : "en-US")
+        let query = MovieVideosQuery(movieId: movieId)
         let publisher = movieDetailService.fetchMovieVideos(query: query)
         publisher
             .receive(on: DispatchQueue.main)

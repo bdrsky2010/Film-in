@@ -9,7 +9,7 @@ import Foundation
 import Combine
 
 protocol GenreSelectService: AnyObject {
-    func fetchGenres(query: MovieGenreQuery) -> AnyPublisher<Result<[MovieGenre], TMDBError>, Never>
+    func fetchGenres() -> AnyPublisher<Result<[MovieGenre], TMDBError>, Never>
     func createUser(genres: Set<MovieGenre>)
 }
 
@@ -25,11 +25,11 @@ final class DefaultGenreSelectService: BaseObject, GenreSelectService {
         self.databaseRepository = databaseRepository
     }
     
-    func fetchGenres(query: MovieGenreQuery) -> AnyPublisher<Result<[MovieGenre], TMDBError>, Never> {
+    func fetchGenres() -> AnyPublisher<Result<[MovieGenre], TMDBError>, Never> {
         return Future { promise in
             Task { [weak self] in
                 guard let self else { return }
-                let result = await tmdbRepository.movieGenreRequest(query: query)
+                let result = await tmdbRepository.movieGenreRequest()
                 switch result {
                 case .success(let success):
                     promise(.success(.success(success)))

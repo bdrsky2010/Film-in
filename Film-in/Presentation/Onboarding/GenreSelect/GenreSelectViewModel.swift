@@ -98,8 +98,8 @@ extension GenreSelectViewModel {
             return
         }
         output.networkConnect = true
-        let query = MovieGenreQuery(language: "longLanguageCode".localized)
-        let publisher = genreSelectService.fetchGenres(query: query)
+        
+        let publisher = genreSelectService.fetchGenres()
         publisher
             .receive(on: DispatchQueue.main)
             .sink(with: self) { owner, result in

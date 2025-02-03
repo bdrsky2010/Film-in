@@ -9,7 +9,7 @@ import Foundation
 import Combine
 
 protocol HomeService: AnyObject {
-    func fetchTrending(query: TrendingQuery) -> AnyPublisher<Result<HomeMovie, TMDBError>, Never>
+    func fetchTrending() -> AnyPublisher<Result<HomeMovie, TMDBError>, Never>
     func fetchNowPlaying(query: HomeMovieQuery) -> AnyPublisher<Result<HomeMovie, TMDBError>, Never>
     func fetchUpcoming(query: HomeMovieQuery) -> AnyPublisher<Result<HomeMovie, TMDBError>, Never>
     func fetchDiscover(query: HomeMovieQuery) -> AnyPublisher<Result<HomeMovie, TMDBError>, Never>
@@ -26,11 +26,11 @@ final class DefaultHomeService: BaseObject, HomeService {
         self.tmdbRepository = tmdbRepository
         self.databaseRepository = databaseRepository
     }
-    func fetchTrending(query: TrendingQuery) -> AnyPublisher<Result<HomeMovie, TMDBError>, Never> {
+    func fetchTrending() -> AnyPublisher<Result<HomeMovie, TMDBError>, Never> {
         return Future { promise in
             Task { [weak self] in
                 guard let self else { return }
-                let result = await tmdbRepository.trendingMovieRequest(query: query)
+                let result = await tmdbRepository.trendingMovieRequest()
                 switch result {
                 case .success(let success):
                     promise(.success(.success(HomeMovie(movies: success))))

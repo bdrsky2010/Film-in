@@ -98,7 +98,7 @@ extension PersonDetailViewModel {
     }
     
     private func fetchPersonDetail() {
-        let query = PersonQuery(language: "longLanguageCode".localized, personId: personId)
+        let query = PersonQuery(personId: personId)
         let publisher = personDetailService.fetchPersonDetail(query: query)
         publisher
             .receive(on: DispatchQueue.main)
@@ -115,7 +115,7 @@ extension PersonDetailViewModel {
     }
     
     private func fetchPersonMovie() {
-        let query = PersonQuery(language: "longLanguageCode".localized, personId: personId)
+        let query = PersonQuery(personId: personId)
         let publisher = personDetailService.fetchPersonMovie(query: query)
         publisher
             .receive(on: DispatchQueue.main)
