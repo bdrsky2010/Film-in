@@ -172,4 +172,22 @@ extension MyView {
             backdrop: movieTable.backdrop
         )
     }
+    
+    private func updateData(by user: Results<UserTable>, when date: Date) {
+        wantMovies = updateMovieData(by: user, for: .want, when: date)
+        watchedMovies = updateMovieData(by: user, for: .watched, when: date)
+    }
+    
+    private func updateMovieData(
+        by user: Results<UserTable>,
+        for section: Section,
+        when date: Date
+    ) -> [MovieTable] {
+        switch section {
+        case .want:
+            user.first?.wantMovies.filter({ Calendar.current.isDate(viewModel.output.selectDate, inSameDayAs: $0.date) }) ?? []
+        case .watched:
+            user.first?.watchedMovies.filter({ Calendar.current.isDate(viewModel.output.selectDate, inSameDayAs: $0.date) }) ?? []
+        }
+    }
 }
