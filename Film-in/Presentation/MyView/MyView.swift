@@ -69,11 +69,11 @@ extension MyView {
                 wantSection(proxy: proxy)
                 watchedSection(proxy: proxy)
             }
+            .listStyle(.plain)
             .task {
                 posterSize = CGSize(width: proxy.size.width * 0.7, height: proxy.size.width * 0.7 * 1.5)
                 viewModel.action(.viewOnTask)
             }
-            .listStyle(.plain)
         }
     }
     
