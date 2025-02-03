@@ -145,7 +145,7 @@ struct MovieDetailView: View {
                 dateSetupType = .want
                 coordinator.presentSheet(.dateSetup(movie, dateSetupType))
             } label: {
-                Text(verbatim: "WANT")
+                Text("want")
                     .appButtonText()
             }
             
@@ -153,7 +153,7 @@ struct MovieDetailView: View {
                 dateSetupType = .watched
                 coordinator.presentSheet(.dateSetup(movie, dateSetupType))
             } label: {
-                Text(verbatim: "WATHCED")
+                Text("watched")
                     .appButtonText()
             }
         }

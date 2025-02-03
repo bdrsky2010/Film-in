@@ -44,7 +44,7 @@ struct MyView: View {
         .popupAlert(
             isPresented: $viewModel.output.isRequestDelete,
             contentModel: PopupAlertModel(
-                phrase: "deleteRequestPhrase",
+                phrase: "deleteRequest",
                 normal: "delete",
                 cancel: "cancel"
             ),
@@ -87,7 +87,7 @@ extension MyView {
     
     @ViewBuilder
     private func wantSection(proxy: GeometryProxy) -> some View {
-        Text(verbatim: "WANT")
+        Text("want")
             .font(.ibmPlexMonoSemiBold(size: 24))
             .foregroundStyle(.appText)
             .frame(maxWidth: proxy.size.width, alignment: .leading)
@@ -105,7 +105,7 @@ extension MyView {
     
     @ViewBuilder
     private func watchedSection(proxy: GeometryProxy) -> some View {
-        Text(verbatim: "WATCHED")
+        Text("watched")
             .font(.ibmPlexMonoSemiBold(size: 24))
             .foregroundStyle(.appText)
             .frame(maxWidth: proxy.size.width, alignment: .leading)

@@ -184,7 +184,7 @@ extension SearchResultView {
                     .onDelete(perform: deleteRecentQuery)
                 } header: {
                     HStack(alignment: .lastTextBaseline) {
-                        Text(verbatim: "최근 검색어")
+                        Text("recents")
                             .font(.ibmPlexMonoSemiBold(size: 20))
                             .bold()
                             .foregroundStyle(.appText)
@@ -195,7 +195,7 @@ extension SearchResultView {
                         Button {
                             recentQuery.removeAll()
                         } label: {
-                            Text(verbatim: "전체삭제")
+                            Text("removeAll")
                                 .font(.ibmPlexMonoSemiBold(size: 14))
                                 .bold()
                                 .foregroundStyle(.app)
@@ -222,7 +222,7 @@ extension SearchResultView {
                         }
                     }
                 } header: {
-                    Text(verbatim: "연관 검색어")
+                    Text("relatedSearches")
                         .font(.ibmPlexMonoSemiBold(size: 20))
                         .bold()
                         .foregroundStyle(.appText)

@@ -81,7 +81,7 @@ struct HomeView: View {
 extension HomeView {
     @ViewBuilder
     private func appTitleSection() -> some View {
-        Text(verbatim: "Film-in")
+        Text("appTitle")
             .font(.ibmPlexMonoSemiBold(size: 50))
             .foregroundStyle(.app)
             .frame(maxWidth: .infinity, alignment: .leading)
