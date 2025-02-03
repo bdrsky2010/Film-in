@@ -71,12 +71,17 @@ extension MyView {
             }
             .listStyle(.plain)
             .task {
+                updateData(by: user, when: viewModel.output.selectDate)
+                
                 posterSize = CGSize(
                     width: proxy.size.width * 0.7,
                     height: proxy.size.width * 0.7 * 1.5
                 )
                 viewModel.action(.viewOnTask)
             }
+        }
+        .valueChanged(value: user) { _ in
+            updateData(by: user, when: viewModel.output.selectDate)
         }
     }
     
