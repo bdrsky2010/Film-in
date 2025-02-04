@@ -24,7 +24,7 @@ struct MainTabView: View {
                     Text("search")
                 }
             
-            CoordinatorView(destination: .My)
+            CoordinatorView(destination: .my)
                 .tabItem {
                     Image("movie")
                     Text("my")
