@@ -9,7 +9,7 @@ import SwiftUI
 
 struct CoordinatorView: View {
     enum Destination {
-        case home, search, My
+        case home, search, my
     }
     
     @StateObject private var coordinator = Coordinator()
@@ -47,7 +47,7 @@ struct CoordinatorView: View {
             coordinator.bulid(.home)
         case .search:
             coordinator.bulid(.search)
-        case .My:
+        case .my:
             coordinator.bulid(.myView)
         }
     }
