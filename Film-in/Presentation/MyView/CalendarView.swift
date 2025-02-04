@@ -34,7 +34,7 @@ struct CalendarView: View {
                 Text(viewModel.output.currentYearMonthString)
                     .font(.ibmPlexMonoSemiBold(size: 17))
                 
-                Image(systemName: "chevron.right")
+                Image(systemName: R.AssetImage.right)
                     .font(.subheadline)
                     .bold()
                     .foregroundStyle(.app)
@@ -60,7 +60,7 @@ struct CalendarView: View {
                             viewModel.action(.changeMonth(value: -1))
                         }
                     } label: {
-                        Image(systemName: "chevron.left")
+                        Image(systemName: R.AssetImage.left)
                     }
                     
                     Button {
@@ -68,7 +68,7 @@ struct CalendarView: View {
                             viewModel.action(.changeMonth(value: 1))
                         }
                     } label: {
-                        Image(systemName: "chevron.right")
+                        Image(systemName: R.AssetImage.right)
                     }
                 }
                 .font(.title3)

@@ -55,7 +55,7 @@ struct SearchResultView: View {
                     set: { _ in viewModel.action(.onDismissAlert) }
                 ),
                 contentModel: .init(
-                    systemImage: "wifi.exclamationmark",
+                    systemImage: R.AssetImage.wifi,
                     phrase: "apiRequestError",
                     normal: "refresh"
                 ),
@@ -66,7 +66,7 @@ struct SearchResultView: View {
             .popupAlert(
                 isPresented: $isShowAlert,
                 contentModel: .init(
-                    systemImage: "wifi.exclamationmark",
+                    systemImage: R.AssetImage.wifi,
                     phrase: "apiRequestError",
                     normal: "refresh"
                 ),
@@ -101,7 +101,7 @@ extension SearchResultView {
                         isShowSearch = false
                     }
                 } label: {
-                    Image(systemName: "chevron.backward")
+                    Image(systemName: R.AssetImage.back)
                         .tint(.app)
                         .font(.title.bold())
                         .padding(.trailing, 8)
@@ -129,7 +129,7 @@ extension SearchResultView {
                     Button {
                         searchQuery = ""
                     } label: {
-                        Image(systemName: "xmark.app.fill")
+                        Image(systemName: R.AssetImage.xmark)
                             .resizable()
                             .frame(width: 30, height: 30)
                             .foregroundStyle(.app)
@@ -208,7 +208,7 @@ extension SearchResultView {
                 Section {
                     ForEach(viewModel.output.multiSearchList, id: \.self) { item in
                         HStack{
-                            Image(systemName: item.type == .movie ? "movieclapper.fill" : "person.fill")
+                            Image(systemName: item.type == .movie ? R.AssetImage.movie : R.AssetImage.actor)
                                 .resizable()
                                 .frame(width: 20, height: 20)
                             Text(verbatim: item.keyword)

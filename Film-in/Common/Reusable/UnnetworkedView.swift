@@ -16,7 +16,7 @@ struct UnnetworkedView: View {
     
     var body: some View {
         VStack {
-            Image(systemName: "wifi.slash")
+            Image(systemName: R.AssetImage.noWifi)
                 .resizable()
                 .frame(width: 100, height: 100)
                 .foregroundStyle(.app)

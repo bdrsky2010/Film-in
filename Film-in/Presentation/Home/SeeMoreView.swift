@@ -23,7 +23,7 @@ struct SeeMoreView: View {
         .popupAlert(
             isPresented: $isShowAlert,
             contentModel: .init(
-                systemImage: "wifi.exclamationmark",
+                systemImage: R.AssetImage.wifi,
                 phrase: "apiRequestError",
                 normal: "refresh"
             ),

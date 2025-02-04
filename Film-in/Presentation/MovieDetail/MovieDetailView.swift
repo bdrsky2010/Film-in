@@ -59,7 +59,7 @@ struct MovieDetailView: View {
                 set: { _ in viewModel.action(.onDismissAlert) }
             ),
             contentModel: .init(
-                systemImage: "wifi.exclamationmark",
+                systemImage: R.AssetImage.wifi,
                 phrase: "apiRequestError",
                 normal: "refresh"
             ),
@@ -116,7 +116,7 @@ struct MovieDetailView: View {
                     .font(.ibmPlexMonoSemiBold(size: 26))
                     .foregroundStyle(.appText)
                 Spacer()
-                Image(systemName: "star.fill")
+                Image(systemName: R.AssetImage.star)
                     .resizable()
                     .frame(width: 30, height: 30)
                     .foregroundStyle(.yellow)
@@ -175,7 +175,7 @@ struct MovieDetailView: View {
             Button {
                 isFullOverview.toggle()
             } label: {
-                Image(systemName: isFullOverview ? "chevron.up" : "chevron.down")
+                Image(systemName: isFullOverview ? R.AssetImage.up : R.AssetImage.down)
                     .resizable()
                     .frame(width: 20, height: 12)
                     .foregroundStyle(.app)

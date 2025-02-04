@@ -65,7 +65,7 @@ struct HomeView: View {
                         set: { _ in viewModel.action(.onDismissAlert) }
                     ),
                     contentModel: .init(
-                        systemImage: "wifi.exclamationmark",
+                        systemImage: R.AssetImage.wifi,
                         phrase: "apiRequestError",
                         normal: "refresh"
                     ),
