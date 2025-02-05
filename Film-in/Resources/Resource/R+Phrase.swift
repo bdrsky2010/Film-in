@@ -56,6 +56,7 @@ extension R.Phrase {
     static let searchPlaceholder: LocalizedStringKey = "searchPlaceholder"
     static let recents: LocalizedStringKey = "recents"
     static let removeAll: LocalizedStringKey = "removeAll"
+    static let relatedSearches: LocalizedStringKey = "relatedSearches"
     
     static let inquiry: LocalizedStringKey = "inquiry"
     static let version: LocalizedStringKey = "version"
