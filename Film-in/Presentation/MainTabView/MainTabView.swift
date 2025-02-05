@@ -15,19 +15,19 @@ struct MainTabView: View {
             CoordinatorView(destination: .home)
                 .tabItem {
                     Image("home")
-                    Text("home")
+                    Text(R.Phrase.home)
                 }
             
             CoordinatorView(destination: .search)
                 .tabItem {
                     Image("search")
-                    Text("search")
+                    Text(R.Phrase.search)
                 }
             
             CoordinatorView(destination: .my)
                 .tabItem {
                     Image("movie")
-                    Text("my")
+                    Text(R.Phrase.my)
                 }
         }
         .tint(.app)

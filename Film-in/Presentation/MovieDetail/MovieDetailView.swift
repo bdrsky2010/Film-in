@@ -60,8 +60,8 @@ struct MovieDetailView: View {
             ),
             contentModel: .init(
                 systemImage: R.AssetImage.wifi,
-                phrase: "apiRequestError",
-                normal: "refresh"
+                phrase: R.Phrase.apiRequestError,
+                normal: R.Phrase.refresh
             ),
             heightType: .middle
         ) {
@@ -145,7 +145,7 @@ struct MovieDetailView: View {
                 dateSetupType = .want
                 coordinator.presentSheet(.dateSetup(movie, dateSetupType))
             } label: {
-                Text("want")
+                Text(R.Phrase.want)
                     .appButtonText()
             }
             
@@ -153,7 +153,7 @@ struct MovieDetailView: View {
                 dateSetupType = .watched
                 coordinator.presentSheet(.dateSetup(movie, dateSetupType))
             } label: {
-                Text("watched")
+                Text(R.Phrase.watched)
                     .appButtonText()
             }
         }
@@ -163,7 +163,7 @@ struct MovieDetailView: View {
     @ViewBuilder
     private func overviewSection() -> some View {
         VStack {
-            InfoHeader(titleKey: "overview")
+            InfoHeader(titleKey: R.Phrase.overview)
                 .padding(.top, 4)
             Text(viewModel.output.movieDetail.overview)
                 .font(.ibmPlexMonoMedium(size: 18))
@@ -187,7 +187,7 @@ struct MovieDetailView: View {
     
     @ViewBuilder
     private func castcrewSection() -> some View {
-        InfoHeader(titleKey: "castcrew")
+        InfoHeader(titleKey: R.Phrase.castcrew)
             .padding(.horizontal)
         ScrollView(.horizontal) {
             LazyHStack {
@@ -203,7 +203,7 @@ struct MovieDetailView: View {
     @ViewBuilder
     private func genreSection() -> some View {
         VStack {
-            InfoHeader(titleKey: "genre")
+            InfoHeader(titleKey: R.Phrase.genre)
                 .padding(.horizontal)
             ScrollView(.horizontal) {
                 LazyHStack(spacing: 12) {
@@ -251,7 +251,7 @@ struct MovieDetailView: View {
     
     @ViewBuilder
     private func backdropSection() -> some View {
-        InfoHeader(titleKey: "backdrop")
+        InfoHeader(titleKey: R.Phrase.backdrop)
             .padding(.horizontal)
         
         ScrollView(.horizontal) {
@@ -276,7 +276,7 @@ struct MovieDetailView: View {
     
     @ViewBuilder
     private func posterSection() -> some View {
-        InfoHeader(titleKey: "poster")
+        InfoHeader(titleKey: R.Phrase.poster)
             .padding(.horizontal)
         
         ScrollView(.horizontal) {
@@ -301,7 +301,7 @@ struct MovieDetailView: View {
     
     @ViewBuilder
     private func videoSection() -> some View {
-        InfoHeader(titleKey: "video")
+        InfoHeader(titleKey: R.Phrase.video)
             .padding(.horizontal)
         
         ScrollView(.horizontal) {

@@ -49,8 +49,8 @@ struct SearchView: View {
             ),
             contentModel: .init(
                 systemImage: R.AssetImage.wifi,
-                phrase: "apiRequestError",
-                normal: "refresh"
+                phrase: R.Phrase.apiRequestError,
+                normal: R.Phrase.refresh
             ),
             heightType: .middle
         ) {
@@ -90,7 +90,7 @@ extension SearchView {
     @ViewBuilder
     private func textFieldSection() -> some View {
         HStack {
-            TextField("searchPlaceholder", text: $searchQuery)
+            TextField(R.Phrase.searchPlaceholder, text: $searchQuery)
                 .focused($focusedField, equals: .cover)
                 .padding()
                 .font(.ibmPlexMonoSemiBold(size: 16))

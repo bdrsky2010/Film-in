@@ -56,8 +56,8 @@ struct SearchResultView: View {
                 ),
                 contentModel: .init(
                     systemImage: R.AssetImage.wifi,
-                    phrase: "apiRequestError",
-                    normal: "refresh"
+                    phrase: R.Phrase.apiRequestError,
+                    normal: R.Phrase.refresh
                 ),
                 heightType: .middle
             ) {
@@ -67,8 +67,8 @@ struct SearchResultView: View {
                 isPresented: $isShowAlert,
                 contentModel: .init(
                     systemImage: R.AssetImage.wifi,
-                    phrase: "apiRequestError",
-                    normal: "refresh"
+                    phrase: R.Phrase.apiRequestError,
+                    normal: R.Phrase.refresh
                 ),
                 heightType: .middle
             ) {
@@ -109,7 +109,7 @@ extension SearchResultView {
             }
             
             HStack {
-                TextField("searchPlaceholder", text: $searchQuery)
+                TextField(R.Phrase.searchPlaceholder, text: $searchQuery)
                     .focused(focusedField, equals: .search)
                     .autocorrectionDisabled()
                     .submitLabel(.search)
@@ -155,7 +155,7 @@ extension SearchResultView {
                         }
                     }
                 } label: {
-                    Text("cancel")
+                    Text(R.Phrase.cancel)
                         .tint(.app)
                         .font(.ibmPlexMonoSemiBold(size: 20))
                         .padding(.leading, 8)
@@ -184,7 +184,7 @@ extension SearchResultView {
                     .onDelete(perform: deleteRecentQuery)
                 } header: {
                     HStack(alignment: .lastTextBaseline) {
-                        Text("recents")
+                        Text(R.Phrase.recents)
                             .font(.ibmPlexMonoSemiBold(size: 20))
                             .bold()
                             .foregroundStyle(.appText)
@@ -195,7 +195,7 @@ extension SearchResultView {
                         Button {
                             recentQuery.removeAll()
                         } label: {
-                            Text("removeAll")
+                            Text(R.Phrase.removeAll)
                                 .font(.ibmPlexMonoSemiBold(size: 14))
                                 .bold()
                                 .foregroundStyle(.app)
@@ -222,7 +222,7 @@ extension SearchResultView {
                         }
                     }
                 } header: {
-                    Text("relatedSearches")
+                    Text(R.Phrase.relatedSearches)
                         .font(.ibmPlexMonoSemiBold(size: 20))
                         .bold()
                         .foregroundStyle(.appText)

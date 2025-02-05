@@ -56,7 +56,7 @@ struct DateSetupView: View {
             Button {
                 viewModel.action(.done)
             } label: {
-                Text("done")
+                Text(R.Phrase.done)
                     .font(.ibmPlexMonoSemiBold(size: 20))
                     .frame(maxWidth: .infinity)
                     .padding(.horizontal, 20)
@@ -84,9 +84,9 @@ struct DateSetupView: View {
         .popupAlert(
             isPresented: $viewModel.output.isDone,
             contentModel: PopupAlertModel(
-                phrase: "saveRequest",
-                normal: "save",
-                cancel: "cancel"
+                phrase: R.Phrase.saveRequest,
+                normal: R.Phrase.save,
+                cancel: R.Phrase.cancel
             ),
             heightType: .normal
         ) {
@@ -95,9 +95,9 @@ struct DateSetupView: View {
         .popupAlert(
             isPresented: $viewModel.output.isError,
             contentModel: PopupAlertModel(
-                phrase: "notificationRequest",
-                normal: "move",
-                cancel: "cancel"
+                phrase: R.Phrase.notificationRequest,
+                normal: R.Phrase.move,
+                cancel: R.Phrase.cancel
             ),
             heightType: .middle
         ) {

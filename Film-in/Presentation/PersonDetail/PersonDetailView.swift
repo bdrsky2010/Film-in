@@ -55,8 +55,8 @@ struct PersonDetailView: View {
             ),
             contentModel: .init(
                 systemImage: R.AssetImage.wifi,
-                phrase: "apiRequestError",
-                normal: "refresh"
+                phrase: R.Phrase.apiRequestError,
+                normal: R.Phrase.refresh
             ),
             heightType: .middle
         ) {
@@ -110,7 +110,7 @@ struct PersonDetailView: View {
     
     @ViewBuilder
     private func filmographySection(size: CGSize) -> some View {
-        InfoHeader(titleKey: "filmography")
+        InfoHeader(titleKey: R.Phrase.filmography)
             .padding(.vertical)
         LazyVGrid(columns: gridItemLayout) {
             ForEach(viewModel.output.personMovie.movies, id: \.id) { movie in

@@ -66,8 +66,8 @@ struct HomeView: View {
                     ),
                     contentModel: .init(
                         systemImage: R.AssetImage.wifi,
-                        phrase: "apiRequestError",
-                        normal: "refresh"
+                        phrase: R.Phrase.apiRequestError,
+                        normal: R.Phrase.refresh
                     ),
                     heightType: .middle
                 ) {
@@ -81,7 +81,7 @@ struct HomeView: View {
 extension HomeView {
     @ViewBuilder
     private func appTitleSection() -> some View {
-        Text("appTitle")
+        Text(R.Phrase.appTitle)
             .font(.ibmPlexMonoSemiBold(size: 50))
             .foregroundStyle(.app)
             .frame(maxWidth: .infinity, alignment: .leading)

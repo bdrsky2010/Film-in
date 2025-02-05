@@ -24,8 +24,8 @@ struct SeeMoreView: View {
             isPresented: $isShowAlert,
             contentModel: .init(
                 systemImage: R.AssetImage.wifi,
-                phrase: "apiRequestError",
-                normal: "refresh"
+                phrase: R.Phrase.apiRequestError,
+                normal: R.Phrase.refresh
             ),
             heightType: .middle
         ){
