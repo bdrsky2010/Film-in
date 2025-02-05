@@ -10,6 +10,8 @@ import SwiftUI
 struct MultiListView: View {
     @Environment(\.colorScheme) var colorScheme
     
+    @EnvironmentObject var coordinator: Coordinator
+    
     @StateObject private var viewModel: MultiListViewModel
     
     @State private var cellSize: CGSize = .zero
@@ -83,23 +85,13 @@ struct MultiListView: View {
     private func movieListSection() -> some View {
         LazyVGrid(columns: gridItemLayout) {
             ForEach(viewModel.output.movies.movies, id: \.id) { movie in
-                NavigationLink {
-                    LazyView(MovieDetailFactory.makeView(movie: movie, posterSize: posterSize))
-                } label: {
-                    let url = URL(string: ImageURL.tmdb(image: movie.poster).urlString)
-                    PosterImage(
-                        url: url,
-                        size: cellSize,
-                        title: movie.title,
-                        isDownsampling: true
-                    )
-                }
-                .task {
-                    if let last = viewModel.output.movies.movies.last,
-                       last.id == movie.id {
-                        viewModel.action(.lastElement)
+                posterButton(movie: movie, size: (poster: posterSize, cell: cellSize))
+                    .task {
+                        if let last = viewModel.output.movies.movies.last,
+                           last.id == movie.id {
+                            viewModel.action(.lastElement)
+                        }
                     }
-                }
             }
         }
     }
@@ -108,33 +100,75 @@ struct MultiListView: View {
     private func peopleListSection() -> some View {
         LazyVGrid(columns: gridItemLayout) {
             ForEach(viewModel.output.people.people, id: \.id) { person in
-                NavigationLink {
-                    LazyView(PersonDetailFactory.makeView(personId: person._id))
-                } label: {
-                    VStack {
-                        let url = URL(string: ImageURL.tmdb(image: person.profile).urlString)
-                        PosterImage(
-                            url: url,
-                            size: CGSize(width: 90, height: 90),
-                            title: person.name,
-                            isDownsampling: true
-                        )
-                        .clipShape(Circle())
-                        .grayscale(colorScheme == .dark ? 1 : 0)
-                        
-                        Text(verbatim: "\(person.name)")
-                            .font(.ibmPlexMonoRegular(size: 14))
-                            .foregroundStyle(.appText)
-                            .frame(width: 90)
+                personButton(person: person, size: CGSize(width: 90, height: 90))
+                    .task {
+                        if let last = viewModel.output.people.people.last,
+                           last.id == person.id {
+                            viewModel.action(.lastElement)
+                        }
                     }
-                }
-                .task {
-                    if let last = viewModel.output.people.people.last,
-                       last.id == person.id {
-                        viewModel.action(.lastElement)
-                    }
-                }
             }
+        }
+    }
+}
+
+extension MultiListView {
+    @ViewBuilder
+    private func posterButton(movie: MovieData, size: (poster: CGSize, cell: CGSize)) -> some View {
+        Button {
+            posterTapped(movie: movie, size: size.poster)
+        } label: {
+            posterLabel(movie: movie, size: size.cell)
+        }
+    }
+    
+    private func posterTapped(movie: MovieData, size: CGSize) {
+        coordinator.push(.movieDetail(movie, size))
+    }
+    
+    @ViewBuilder
+    private func posterLabel(movie: MovieData, size: CGSize) -> some View {
+        let url = URL(string: ImageURL.tmdb(image: movie.poster).urlString)
+        PosterImage(
+            url: url,
+            size: size,
+            title: movie.title,
+            isDownsampling: true
+        )
+    }
+}
+
+extension MultiListView {
+    @ViewBuilder
+    private func personButton(person: PersonData, size: CGSize) -> some View {
+        Button {
+            coordinator.push(.personDetail(person._id))
+        } label: {
+            
+        }
+    }
+    
+    private func personTapped(person: PersonData) {
+        coordinator.push(.personDetail(person._id))
+    }
+    
+    @ViewBuilder
+    private func personLabel(person: PersonData, size: CGSize) -> some View {
+        VStack {
+            let url = URL(string: ImageURL.tmdb(image: person.profile).urlString)
+            PosterImage(
+                url: url,
+                size: size,
+                title: person.name,
+                isDownsampling: true
+            )
+            .clipShape(.circle)
+            .grayscale(colorScheme == .dark ? 1 : 0)
+            
+            Text(verbatim: "\(person.name)")
+                .font(.ibmPlexMonoRegular(size: 14))
+                .foregroundStyle(.appText)
+                .frame(width: 90)
         }
     }
 }

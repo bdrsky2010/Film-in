@@ -26,8 +26,8 @@ extension MovieSimilarResponseDTO {
             totalPage: self.totalPages,
             movies: self.results
                 .map {
-                    MovieSimilar.Movie(
-                        id: $0.id,
+                    MovieData(
+                        _id: $0.id,
                         title: $0.title,
                         poster: $0.posterPath,
                         backdrop: $0.backdropPath

@@ -21,7 +21,7 @@ final class NetworkMonitor: ObservableObject {
     
     @Published var networkType: NetworkType = .notConnect
     
-    private init() {
+    init() {
         monitor.start(queue: .global())
         monitor.pathUpdateHandler = { path in
             DispatchQueue.main.async { [weak self] in

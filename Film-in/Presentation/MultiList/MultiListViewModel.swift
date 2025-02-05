@@ -140,11 +140,7 @@ extension MultiListViewModel {
     }
     
     private func fetchNowPlaying(page: Int) {
-        let query = HomeMovieQuery(
-            language: "longLanguageCode".localized,
-            page: page,
-            region: "regionCode".localized
-        )
+        let query = HomeMovieQuery(page: page)
         let publisher = multiListService.fetchNowPlaying(query: query)
         
         publisher
@@ -156,11 +152,7 @@ extension MultiListViewModel {
     }
     
     private func fetchUpcoming(page: Int) {
-        let query = HomeMovieQuery(
-            language: "longLanguageCode".localized,
-            page: page,
-            region: "regionCode".localized
-        )
+        let query = HomeMovieQuery(page: page)
         let publisher = multiListService.fetchUpcoming(query: query)
         
         publisher
@@ -172,11 +164,7 @@ extension MultiListViewModel {
     }
     
     private func fetchRecommend(page: Int) {
-        let query = HomeMovieQuery(
-            language: "longLanguageCode".localized,
-            page: page,
-            region: "regionCode".localized
-        )
+        let query = HomeMovieQuery(page: page)
         let publisher = multiListService.fetchDiscover(query: query)
         
         publisher
@@ -188,11 +176,7 @@ extension MultiListViewModel {
     }
     
     private func fetchSimilar(movieId: Int, page: Int) {
-        let query = MovieSimilarQuery(
-            movieId: movieId,
-            language: "longLanguageCode".localized,
-            page: page
-        )
+        let query = MovieSimilarQuery(movieId: movieId,page: page)
         let publisher = multiListService.fetchMovieSimilar(query: query)
         
         publisher
@@ -204,6 +188,7 @@ extension MultiListViewModel {
     }
     
     private func fetchMovieSearch(query: String, page: Int) {
+        guard !query.isEmpty else { return }
         let query = SearchMovieQuery(query: query, page: page)
         let publisher = multiListService.fetchMovieSearch(query: query)
         
@@ -216,6 +201,7 @@ extension MultiListViewModel {
     }
     
     private func fetchPeopleSearch(query: String, page: Int) {
+        guard !query.isEmpty else { return }
         let query = SearchPersonQuery(query: query, page: page)
         let publisher = multiListService.fetchPeopleSearch(query: query)
         

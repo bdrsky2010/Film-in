@@ -6,14 +6,11 @@
 //
 
 import SwiftUI
-import Kingfisher
 import YouTubePlayerKit
 
 struct MovieDetailView: View {
-    private let movie: MovieData
-    private let size: CGSize
-    
     @Environment(\.colorScheme) var colorScheme
+    @EnvironmentObject var coordinator: Coordinator
     
     @StateObject private var viewModel: MovieDetailViewModel
     
@@ -21,20 +18,23 @@ struct MovieDetailView: View {
     @State private var isDateSetup: Bool
     @State private var dateSetupType: DateSetupType
     
+    let movie: MovieData
+    let size: CGSize
+    
     init(
-        movie: MovieData,
-        size: CGSize,
         viewModel: MovieDetailViewModel,
         isFullOverview: Bool = false,
         isDateSetup: Bool = false,
-        dateSetupType: DateSetupType = .want
+        dateSetupType: DateSetupType = .want,
+        movie: MovieData,
+        size: CGSize
     ) {
-        self.movie = movie
-        self.size = size
         self._viewModel = StateObject(wrappedValue: viewModel)
         self._isFullOverview = State(wrappedValue: isFullOverview)
         self._isDateSetup = State(wrappedValue: isDateSetup)
         self._dateSetupType = State(wrappedValue: dateSetupType)
+        self.movie = movie
+        self.size = size
     }
     
     var body: some View {
@@ -53,18 +53,15 @@ struct MovieDetailView: View {
         .valueChanged(value: dateSetupType) { newValue in
             // dateSetupType의 변화를 확인하지 않으면 속성 값이 바뀌지 않음.
         }
-        .sheet(isPresented: $isDateSetup){
-            dateSetupSheet()
-        }
         .popupAlert(
             isPresented: Binding(
                 get: { viewModel.output.isShowAlert },
                 set: { _ in viewModel.action(.onDismissAlert) }
             ),
             contentModel: .init(
-                systemImage: "wifi.exclamationmark",
-                phrase: "apiRequestError",
-                normal: "refresh"
+                systemImage: R.AssetImage.wifi,
+                phrase: R.Phrase.apiRequestError,
+                normal: R.Phrase.refresh
             ),
             heightType: .middle
         ) {
@@ -119,7 +116,7 @@ struct MovieDetailView: View {
                     .font(.ibmPlexMonoSemiBold(size: 26))
                     .foregroundStyle(.appText)
                 Spacer()
-                Image(systemName: "star.fill")
+                Image(systemName: R.AssetImage.star)
                     .resizable()
                     .frame(width: 30, height: 30)
                     .foregroundStyle(.yellow)
@@ -146,17 +143,17 @@ struct MovieDetailView: View {
         HStack {
             Button {
                 dateSetupType = .want
-                isDateSetup.toggle()
+                coordinator.presentSheet(.dateSetup(movie, dateSetupType))
             } label: {
-                Text(verbatim: "WANT")
+                Text(R.Phrase.want)
                     .appButtonText()
             }
             
             Button {
                 dateSetupType = .watched
-                isDateSetup.toggle()
+                coordinator.presentSheet(.dateSetup(movie, dateSetupType))
             } label: {
-                Text(verbatim: "WATHCED")
+                Text(R.Phrase.watched)
                     .appButtonText()
             }
         }
@@ -166,7 +163,7 @@ struct MovieDetailView: View {
     @ViewBuilder
     private func overviewSection() -> some View {
         VStack {
-            InfoHeader(titleKey: "overview")
+            InfoHeader(titleKey: R.Phrase.overview)
                 .padding(.top, 4)
             Text(viewModel.output.movieDetail.overview)
                 .font(.ibmPlexMonoMedium(size: 18))
@@ -178,7 +175,7 @@ struct MovieDetailView: View {
             Button {
                 isFullOverview.toggle()
             } label: {
-                Image(systemName: isFullOverview ? "chevron.up" : "chevron.down")
+                Image(systemName: isFullOverview ? R.AssetImage.up : R.AssetImage.down)
                     .resizable()
                     .frame(width: 20, height: 12)
                     .foregroundStyle(.app)
@@ -190,36 +187,12 @@ struct MovieDetailView: View {
     
     @ViewBuilder
     private func castcrewSection() -> some View {
-        InfoHeader(titleKey: "castcrew")
+        InfoHeader(titleKey: R.Phrase.castcrew)
             .padding(.horizontal)
         ScrollView(.horizontal) {
             LazyHStack {
-                ForEach(viewModel.output.creditInfo, id: \.id) { person in
-                    NavigationLink {
-                        LazyView(PersonDetailFactory.makeView(personId: person._id))
-                    } label: {
-                        VStack {
-                            let url = URL(string: ImageURL.tmdb(image: person.profilePath).urlString)
-                            PosterImage(
-                                url: url,
-                                size: CGSize(width: 90, height: 90),
-                                title: person.name.replacingOccurrences(of: " ", with: "\n"),
-                                isDownsampling: true
-                            )
-                            .clipShape(Circle())
-                            .grayscale(colorScheme == .dark ? 1 : 0)
-                            
-                            Text(verbatim: "\(person.role.replacingOccurrences(of: " ", with: "\n"))")
-                                .font(.ibmPlexMonoRegular(size: 14))
-                                .foregroundStyle(.appText)
-                                .frame(width: 90)
-                            Text(verbatim: "\(person.name)")
-                                .font(.ibmPlexMonoRegular(size: 14))
-                                .foregroundStyle(.appText)
-                                .frame(width: 90)
-                        }
-                        .frame(maxHeight: .infinity, alignment: .top)
-                    }
+                ForEach(viewModel.output.creditInfo, id: \.id) { credit in
+                    creditButton(credit: credit, size: CGSize(width: 90, height: 90))
                 }
             }
             .padding(.horizontal)
@@ -230,7 +203,7 @@ struct MovieDetailView: View {
     @ViewBuilder
     private func genreSection() -> some View {
         VStack {
-            InfoHeader(titleKey: "genre")
+            InfoHeader(titleKey: R.Phrase.genre)
                 .padding(.horizontal)
             ScrollView(.horizontal) {
                 LazyHStack(spacing: 12) {
@@ -259,38 +232,16 @@ struct MovieDetailView: View {
         ScrollView(.horizontal) {
             LazyHStack {
                 ForEach(viewModel.output.movieSimilars) { similar in
-                    NavigationLink {
-                        LazyView(
-                            MovieDetailView(
-                                movie: .init(
-                                    _id: similar.id,
-                                    title: similar.title,
-                                    poster: similar.poster,
-                                    backdrop: similar.backdrop
-                                ),
-                                size: size,
-                                viewModel: MovieDetailViewModel(
-                                    movieDetailService: DefaultMovieDetailService(
-                                        tmdbRepository: DefaultTMDBRepository.shared,
-                                        databaseRepository: RealmRepository.shared
-                                    ),
-                                    networkMonitor: NetworkMonitor.shared,
-                                    movieId: similar.id
-                                )
-                            )
-                        )
-                    } label: {
-                        let url = URL(string: ImageURL.tmdb(image: similar.poster).urlString)
-                        PosterImage(
-                            url: url,
-                            size: CGSize(
+                    posterButton(
+                        movie: similar,
+                        size: (
+                            poster: size,
+                            cell: CGSize(
                                 width: size.width * 0.5,
                                 height: size.height * 0.5
-                            ),
-                            title: similar.title,
-                            isDownsampling: true
+                            )
                         )
-                    }
+                    )
                 }
             }
             .padding(.horizontal)
@@ -300,7 +251,7 @@ struct MovieDetailView: View {
     
     @ViewBuilder
     private func backdropSection() -> some View {
-        InfoHeader(titleKey: "backdrop")
+        InfoHeader(titleKey: R.Phrase.backdrop)
             .padding(.horizontal)
         
         ScrollView(.horizontal) {
@@ -325,7 +276,7 @@ struct MovieDetailView: View {
     
     @ViewBuilder
     private func posterSection() -> some View {
-        InfoHeader(titleKey: "poster")
+        InfoHeader(titleKey: R.Phrase.poster)
             .padding(.horizontal)
         
         ScrollView(.horizontal) {
@@ -350,7 +301,7 @@ struct MovieDetailView: View {
     
     @ViewBuilder
     private func videoSection() -> some View {
-        InfoHeader(titleKey: "video")
+        InfoHeader(titleKey: R.Phrase.video)
             .padding(.horizontal)
         
         ScrollView(.horizontal) {
@@ -376,10 +327,73 @@ struct MovieDetailView: View {
             .padding(.horizontal)
         }
     }
+}
+
+// MARK: Movie Poster Cell
+extension MovieDetailView {
+    @ViewBuilder
+    private func posterButton(movie: MovieData, size: (poster: CGSize, cell: CGSize)) -> some View {
+        Button {
+            posterTapped(movie: movie, size: size.poster)
+        } label: {
+            posterLabel(movie: movie, size: size.cell)
+        }
+    }
+    
+    private func posterTapped(movie: MovieData, size: CGSize) {
+        coordinator.push(.movieDetail(movie, size))
+    }
     
     @ViewBuilder
-    private func dateSetupSheet() -> some View {
-        DateSetupFactory.makeView(movie: movie, type: dateSetupType, isPresented: $isDateSetup)
+    private func posterLabel(movie: MovieData, size: CGSize) -> some View {
+        let url = URL(string: ImageURL.tmdb(image: movie.poster).urlString)
+        PosterImage(
+            url: url,
+            size: size,
+            title: movie.title,
+            isDownsampling: true
+        )
+    }
+}
+
+// MARK: Cast & Crew Cell
+extension MovieDetailView {
+    @ViewBuilder
+    private func creditButton(credit: CreditInfo, size: CGSize) -> some View {
+        Button {
+            creditTapped(credit: credit)
+        } label: {
+            creditLabel(credit: credit, size: size)
+        }
+    }
+    
+    private func creditTapped(credit: CreditInfo) {
+        coordinator.push(.personDetail(credit._id))
+    }
+    
+    @ViewBuilder
+    private func creditLabel(credit: CreditInfo, size: CGSize) -> some View {
+        VStack {
+            let url = URL(string: ImageURL.tmdb(image: credit.profilePath).urlString)
+            PosterImage(
+                url: url,
+                size: CGSize(width: 90, height: 90),
+                title: credit.name.replacingOccurrences(of: " ", with: "\n"),
+                isDownsampling: true
+            )
+            .clipShape(Circle())
+            .grayscale(colorScheme == .dark ? 1 : 0)
+            
+            Text(verbatim: "\(credit.role.replacingOccurrences(of: " ", with: "\n"))")
+                .font(.ibmPlexMonoRegular(size: 14))
+                .foregroundStyle(.appText)
+                .frame(width: 90)
+            Text(verbatim: "\(credit.name)")
+                .font(.ibmPlexMonoRegular(size: 14))
+                .foregroundStyle(.appText)
+                .frame(width: 90)
+        }
+        .frame(maxHeight: .infinity, alignment: .top)
     }
 }
 

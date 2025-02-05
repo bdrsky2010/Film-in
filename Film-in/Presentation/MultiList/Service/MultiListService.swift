@@ -68,9 +68,7 @@ extension DefaultMultiListService {
             Task { [weak self] in
                 guard let self else { return }
                 let _query = HomeMovieQuery(
-                    language: query.language,
                     page: query.page,
-                    region: query.region,
                     withGenres: databaseRepository.user?.selectedGenreIds.map { String($0) }.joined(separator: "|"))
                 let result = await tmdbRepository.discoverRequest(query: _query)
                 switch result {

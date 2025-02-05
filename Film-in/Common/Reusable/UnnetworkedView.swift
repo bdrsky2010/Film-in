@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct UnnetworkedView: View {
-    private let refreshAction: () -> Void
+    let refreshAction: () -> Void
     
     init(refreshAction: @autoclosure @escaping () -> Void) {
         self.refreshAction = refreshAction
@@ -16,19 +16,19 @@ struct UnnetworkedView: View {
     
     var body: some View {
         VStack {
-            Image(systemName: "wifi.slash")
+            Image(systemName: R.AssetImage.noWifi)
                 .resizable()
                 .frame(width: 100, height: 100)
                 .foregroundStyle(.app)
             
-            Text("notConnectInternet")
+            Text(R.Phrase.notConnectInternet)
                 .font(.ibmPlexMonoSemiBold(size: 20))
                 .foregroundStyle(.appText)
             
             Button {
                 withAnimation { refreshAction() }
             } label: {
-                Text("refresh")
+                Text(R.Phrase.refresh)
                     .font(.ibmPlexMonoMedium(size: 20))
                     .underline()
                     .foregroundStyle(.app)

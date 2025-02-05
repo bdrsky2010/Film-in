@@ -8,6 +8,5 @@
 import Foundation
 
 struct PersonQuery {
-    let language: String
     let personId: Int
 }

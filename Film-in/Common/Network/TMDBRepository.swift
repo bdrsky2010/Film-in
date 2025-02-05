@@ -8,8 +8,8 @@
 import Foundation
 // Details, Credits, Similar, Images, Videos
 protocol TMDBRepository: AnyObject {
-    func movieGenreRequest(query: MovieGenreQuery) async -> Result<[MovieGenre], TMDBError>
-    func trendingMovieRequest(query: TrendingQuery) async -> Result<[MovieData], TMDBError>
+    func movieGenreRequest() async -> Result<[MovieGenre], TMDBError>
+    func trendingMovieRequest() async -> Result<[MovieData], TMDBError>
     func nowPlayingRequest(query: HomeMovieQuery) async -> Result<HomeMovie, TMDBError>
     func upcomingRequest(query: HomeMovieQuery) async -> Result<HomeMovie, TMDBError>
     func discoverRequest(query: HomeMovieQuery) async -> Result<HomeMovie, TMDBError>
@@ -22,7 +22,7 @@ protocol TMDBRepository: AnyObject {
     func similarRequest(query: MovieSimilarQuery) async -> Result<HomeMovie, TMDBError>
     func imagesRequest(query: MovieImagesQuery) async -> Result<MovieImages, TMDBError>
     func videosRequest(query: MovieVideosQuery) async -> Result<[MovieVideo], TMDBError>
-    func popularPeopleRequest(query: PopularQuery) async -> Result<[PopularPerson], TMDBError>
+    func popularPeopleRequest() async -> Result<[PopularPerson], TMDBError>
     func personDetailRequest(query: PersonQuery) async -> Result<PersonDetail, TMDBError>
     func personMovieRequest(query: PersonQuery) async -> Result<PersonMovie, TMDBError>
 }
@@ -32,12 +32,12 @@ final class DefaultTMDBRepository: TMDBRepository {
     
     private let networkManager: NetworkManager
     
-    private init(networkManager: NetworkManager = DefaultNetworkManager.shared) {
+    init(networkManager: NetworkManager = DefaultNetworkManager.shared) {
         self.networkManager = networkManager
     }
     
-    func movieGenreRequest(query: MovieGenreQuery) async -> Result<[MovieGenre], TMDBError> {
-        let requestDTO = GenreRequestDTO(language: query.language)
+    func movieGenreRequest() async -> Result<[MovieGenre], TMDBError> {
+        let requestDTO = GenreRequestDTO(language: R.Phrase.longLanguageCode)
         let result = await networkManager.request(.genres(requestDTO), of: GenreResponseDTO.self)
         switch result {
         case .success(let success):
@@ -47,8 +47,8 @@ final class DefaultTMDBRepository: TMDBRepository {
         }
     }
     
-    func trendingMovieRequest(query: TrendingQuery) async -> Result<[MovieData], TMDBError> {
-        let requestDTO = TrendingRequestDTO(language: query.language)
+    func trendingMovieRequest() async -> Result<[MovieData], TMDBError> {
+        let requestDTO = TrendingRequestDTO(language: R.Phrase.longLanguageCode)
         let result = await networkManager.request(.trendingMovie(requestDTO), of: TrendingMovieResponseDTO.self)
         switch result {
         case .success(let success):
@@ -60,9 +60,9 @@ final class DefaultTMDBRepository: TMDBRepository {
     
     func nowPlayingRequest(query: HomeMovieQuery) async -> Result<HomeMovie, TMDBError> {
         let requestDTO = NowPlayingRequestDTO(
-            language: query.language,
+            language: R.Phrase.longLanguageCode,
             page: query.page,
-            region: query.region
+            region: R.Phrase.regionCode
         )
         let result = await networkManager.request(
             .nowPlaying(requestDTO),
@@ -78,9 +78,9 @@ final class DefaultTMDBRepository: TMDBRepository {
     
     func upcomingRequest(query: HomeMovieQuery) async -> Result<HomeMovie, TMDBError> {
         let requestDTO = UpcomingRequestDTO(
-            language: query.language,
+            language: R.Phrase.longLanguageCode,
             page: query.page,
-            region: query.region
+            region: R.Phrase.regionCode
         )
         let result = await networkManager.request(
             .upcoming(requestDTO),
@@ -96,9 +96,9 @@ final class DefaultTMDBRepository: TMDBRepository {
     
     func discoverRequest(query: HomeMovieQuery) async -> Result<HomeMovie, TMDBError> {
         let requestDTO = DiscoverRequestDTO(
-            language: query.language,
+            language: R.Phrase.longLanguageCode,
             page: query.page,
-            region: query.region,
+            region: R.Phrase.regionCode,
             withGenres: query.withGenres ?? ""
         )
         let result = await networkManager.request(
@@ -116,7 +116,7 @@ final class DefaultTMDBRepository: TMDBRepository {
     func searchMultiRequest(query: SearchQuery) async -> Result<[RelatedKeyword], TMDBError> {
         let requestDTO = SearchMultiRequestDTO(
             query: query.query,
-            language: "longLanguageCode".localized
+            language: R.Phrase.longLanguageCode
         )
         let result = await networkManager.request(.searchMulti(requestDTO), of: SearchMultiResponseDTO.self)
         switch result {
@@ -130,7 +130,7 @@ final class DefaultTMDBRepository: TMDBRepository {
     func searchMovieRequest(query: SearchMovieQuery) async -> Result<HomeMovie, TMDBError> {
         let requestDTO = SearchMovieRequestDTO(
             query: query.query,
-            language: "longLanguageCode".localized,
+            language: R.Phrase.longLanguageCode,
             page: query.page,
             region: "regionCode".localized
         )
@@ -146,7 +146,7 @@ final class DefaultTMDBRepository: TMDBRepository {
     func searchPersonRequest(query: SearchPersonQuery) async -> Result<PagingPeople, TMDBError> {
         let requestDTO = SearchPersonRequestDTO(
             query: query.query,
-            language: "longLanguageCode".localized,
+            language: R.Phrase.longLanguageCode,
             page: query.page
         )
         let result = await networkManager.request(.searchPerson(requestDTO), of: SearchPersonResposeDTO.self)
@@ -159,7 +159,7 @@ final class DefaultTMDBRepository: TMDBRepository {
     }
     
     func detailRequest(query: MovieDetailQuery) async -> Result<MovieInfo, TMDBError> {
-        let requestDTO = MovieDetailRequestDTO(language: query.language)
+        let requestDTO = MovieDetailRequestDTO(language: R.Phrase.longLanguageCode)
         let result = await networkManager.request(
             .movieDetail(requestDTO, movieId: query.movieId),
             of: MovieDetailResponseDTO.self
@@ -173,7 +173,7 @@ final class DefaultTMDBRepository: TMDBRepository {
     }
     
     func creditRequest(query: MovieCreditQuery) async -> Result<[CreditInfo], TMDBError> {
-        let requestDTO = MovieCreditRequestDTO(language: query.language)
+        let requestDTO = MovieCreditRequestDTO(language: R.Phrase.longLanguageCode)
         let result = await networkManager.request(
             .movieCredit(requestDTO, movieId: query.movieId),
             of: MovieCreditResponseDTO.self
@@ -187,7 +187,10 @@ final class DefaultTMDBRepository: TMDBRepository {
     }
     
     func similarRequest(query: MovieSimilarQuery) async -> Result<MovieSimilar, TMDBError> {
-        let requestDTO = MovieSimilarRequestDTO(language: query.language, page: query.page)
+        let requestDTO = MovieSimilarRequestDTO(
+            language: R.Phrase.longLanguageCode,
+            page: query.page
+        )
         let result = await networkManager.request(
             .movieSimilar(requestDTO, movieId: query.movieId),
             of: MovieSimilarResponseDTO.self
@@ -201,7 +204,10 @@ final class DefaultTMDBRepository: TMDBRepository {
     }
     
     func similarRequest(query: MovieSimilarQuery) async -> Result<HomeMovie, TMDBError> {
-        let requestDTO = MovieSimilarRequestDTO(language: query.language, page: query.page)
+        let requestDTO = MovieSimilarRequestDTO(
+            language: R.Phrase.longLanguageCode,
+            page: query.page
+        )
         let result = await networkManager.request(
             .movieSimilar(requestDTO, movieId: query.movieId),
             of: MovieSimilarResponseDTO.self
@@ -229,7 +235,7 @@ final class DefaultTMDBRepository: TMDBRepository {
     }
     
     func videosRequest(query: MovieVideosQuery) async -> Result<[MovieVideo], TMDBError> {
-        let requestDTO = MovieVideoRequestDTO(language: query.language)
+        let requestDTO = MovieVideoRequestDTO(language: R.Phrase.longLanguageCode)
         let result = await networkManager.request(
             .movieVideo(requestDTO, movieId: query.movieId),
             of: MovieVideoResponseDTO.self
@@ -242,8 +248,8 @@ final class DefaultTMDBRepository: TMDBRepository {
         }
     }
     
-    func popularPeopleRequest(query: PopularQuery) async -> Result<[PopularPerson], TMDBError> {
-        let requestDTO = PopularPeopleRequestDTO(language: query.language)
+    func popularPeopleRequest() async -> Result<[PopularPerson], TMDBError> {
+        let requestDTO = PopularPeopleRequestDTO(language: R.Phrase.longLanguageCode)
         let result = await networkManager.request(.popularPeople(requestDTO), of: PopularPeopleResponseDTO.self)
         switch result {
         case .success(let success):
@@ -254,7 +260,7 @@ final class DefaultTMDBRepository: TMDBRepository {
     }
     
     func personDetailRequest(query: PersonQuery) async -> Result<PersonDetail, TMDBError> {
-        let requestDTO = PeopleDetailRequestDTO(language: query.language)
+        let requestDTO = PeopleDetailRequestDTO(language: R.Phrase.longLanguageCode)
         let result = await networkManager.request(
             .peopleDetail(requestDTO, personId: query.personId),
             of: PeopleDetailResponseDTO.self
@@ -268,7 +274,7 @@ final class DefaultTMDBRepository: TMDBRepository {
     }
     
     func personMovieRequest(query: PersonQuery) async -> Result<PersonMovie, TMDBError> {
-        let requestDTO = PeopleMovieRequestDTO(language: query.language)
+        let requestDTO = PeopleMovieRequestDTO(language: R.Phrase.longLanguageCode)
         let result = await networkManager.request(
             .peopleMovie(requestDTO, personId: query.personId),
             of: PeopleMovieResponseDTO.self

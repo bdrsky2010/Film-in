@@ -6,21 +6,10 @@
 //
 
 import SwiftUI
-import Combine
-
-fileprivate extension SearchType {
-    @ViewBuilder
-    func makeView(query: String, isShowAlert: Binding<Bool>, isRefresh: Binding<Bool>) -> some View {
-        switch self {
-        case .movie:
-            MultiListFactory.makeView(to: .searchMovie(query), isShowAlert: isShowAlert, isRefresh: isRefresh)
-        case .person:
-            MultiListFactory.makeView(to: .searchPerson(query), isShowAlert: isShowAlert, isRefresh: isRefresh)
-        }
-    }
-}
 
 struct SearchResultView: View {
+    @EnvironmentObject var coordinator: Coordinator
+    
     @StateObject private var viewModel: SearchResultViewModel
     
     @AppStorage("recentQuery") private var recentQuery: [String : Date] = [:]
@@ -31,11 +20,11 @@ struct SearchResultView: View {
     @State private var isShowAlert = false
     @State private var isRefresh = false
     
-    @Binding private var isShowSearch: Bool
+    @Binding var isShowSearch: Bool
     
-    private var focusedField: FocusState<FocusField?>.Binding
+    var focusedField: FocusState<FocusField?>.Binding
     
-    private let namespace: Namespace.ID
+    let namespace: Namespace.ID
     
     init(
         viewModel: SearchResultViewModel,
@@ -66,9 +55,9 @@ struct SearchResultView: View {
                     set: { _ in viewModel.action(.onDismissAlert) }
                 ),
                 contentModel: .init(
-                    systemImage: "wifi.exclamationmark",
-                    phrase: "apiRequestError",
-                    normal: "refresh"
+                    systemImage: R.AssetImage.wifi,
+                    phrase: R.Phrase.apiRequestError,
+                    normal: R.Phrase.refresh
                 ),
                 heightType: .middle
             ) {
@@ -77,9 +66,9 @@ struct SearchResultView: View {
             .popupAlert(
                 isPresented: $isShowAlert,
                 contentModel: .init(
-                    systemImage: "wifi.exclamationmark",
-                    phrase: "apiRequestError",
-                    normal: "refresh"
+                    systemImage: R.AssetImage.wifi,
+                    phrase: R.Phrase.apiRequestError,
+                    normal: R.Phrase.refresh
                 ),
                 heightType: .middle
             ) {
@@ -112,7 +101,7 @@ extension SearchResultView {
                         isShowSearch = false
                     }
                 } label: {
-                    Image(systemName: "chevron.backward")
+                    Image(systemName: R.AssetImage.back)
                         .tint(.app)
                         .font(.title.bold())
                         .padding(.trailing, 8)
@@ -120,7 +109,7 @@ extension SearchResultView {
             }
             
             HStack {
-                TextField("searchPlaceholder", text: $searchQuery)
+                TextField(R.Phrase.searchPlaceholder, text: $searchQuery)
                     .focused(focusedField, equals: .search)
                     .autocorrectionDisabled()
                     .submitLabel(.search)
@@ -140,7 +129,7 @@ extension SearchResultView {
                     Button {
                         searchQuery = ""
                     } label: {
-                        Image(systemName: "xmark.app.fill")
+                        Image(systemName: R.AssetImage.xmark)
                             .resizable()
                             .frame(width: 30, height: 30)
                             .foregroundStyle(.app)
@@ -166,7 +155,7 @@ extension SearchResultView {
                         }
                     }
                 } label: {
-                    Text("cancel")
+                    Text(R.Phrase.cancel)
                         .tint(.app)
                         .font(.ibmPlexMonoSemiBold(size: 20))
                         .padding(.leading, 8)
@@ -195,7 +184,7 @@ extension SearchResultView {
                     .onDelete(perform: deleteRecentQuery)
                 } header: {
                     HStack(alignment: .lastTextBaseline) {
-                        Text(verbatim: "최근 검색어")
+                        Text(R.Phrase.recents)
                             .font(.ibmPlexMonoSemiBold(size: 20))
                             .bold()
                             .foregroundStyle(.appText)
@@ -206,7 +195,7 @@ extension SearchResultView {
                         Button {
                             recentQuery.removeAll()
                         } label: {
-                            Text(verbatim: "전체삭제")
+                            Text(R.Phrase.removeAll)
                                 .font(.ibmPlexMonoSemiBold(size: 14))
                                 .bold()
                                 .foregroundStyle(.app)
@@ -219,7 +208,7 @@ extension SearchResultView {
                 Section {
                     ForEach(viewModel.output.multiSearchList, id: \.self) { item in
                         HStack{
-                            Image(systemName: item.type == .movie ? "movieclapper.fill" : "person.fill")
+                            Image(systemName: item.type == .movie ? R.AssetImage.movie : R.AssetImage.actor)
                                 .resizable()
                                 .frame(width: 20, height: 20)
                             Text(verbatim: item.keyword)
@@ -233,7 +222,7 @@ extension SearchResultView {
                         }
                     }
                 } header: {
-                    Text(verbatim: "연관 검색어")
+                    Text(R.Phrase.relatedSearches)
                         .font(.ibmPlexMonoSemiBold(size: 20))
                         .bold()
                         .foregroundStyle(.appText)
@@ -275,14 +264,26 @@ extension SearchResultView {
             .padding(.horizontal, 20)
             
             TabView(selection: $selection) {
-                ForEach(SearchType.allCases, id: \.self) { tab in
-                    LazyView(tab.makeView(
-                        query: searchQuery,
-                        isShowAlert: $isShowAlert,
-                        isRefresh: $isRefresh
-                    ))
+                ForEach(SearchType.allCases, id: \.self) { type in
+                    switch type {
+                    case .movie:
+                        MultiListView(
+                            viewModel: coordinator.diContainer.makeMultiListViewModel(usedTo: .searchMovie(searchQuery)),
+                            isShowAlert: $isShowAlert,
+                            isRefresh: $isRefresh
+                        )
                         .tabItem { }
-                        .tag(tab)
+                        .tag(type)
+                        
+                    case .person:
+                        MultiListView(
+                            viewModel: coordinator.diContainer.makeMultiListViewModel(usedTo: .searchPerson(searchQuery)),
+                            isShowAlert: $isShowAlert,
+                            isRefresh: $isRefresh
+                        )
+                        .tabItem { }
+                        .tag(type)
+                    }
                 }
             }
             .tabViewStyle(.page(indexDisplayMode: .never))

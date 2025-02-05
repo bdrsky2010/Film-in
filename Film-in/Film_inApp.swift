@@ -31,6 +31,8 @@ struct Film_inApp: App {
     @AppStorage("onboarding") private var isOnboarding = false
     @State private var isLaunch = false
     
+    let diContainer = DefaultDIContainer()
+    
     var body: some Scene {
         WindowGroup {
             if isOnboarding {
@@ -38,11 +40,13 @@ struct Film_inApp: App {
                     LaunchScreenView(isWave: $isLaunch)
                 } else {
                     MainTabView()
+                        .environmentObject(diContainer)
                 }
             } else {
-                GenreSelectFactory.makeView()
+                GenreSelectView(
+                    viewModel: diContainer.makeGenreSelectViewModel()
+                )
             }
-//            CustomPagingView()
         }
     }
 }

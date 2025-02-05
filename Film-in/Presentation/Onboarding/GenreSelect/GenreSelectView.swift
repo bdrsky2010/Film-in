@@ -32,9 +32,9 @@ struct GenreSelectView: View {
                 set: { _ in viewModel.action(.onDismissAlert) }
             ),
             contentModel: .init(
-                systemImage: "wifi.exclamationmark",
-                phrase: "apiRequestError",
-                normal: "refresh"
+                systemImage: R.AssetImage.wifi,
+                phrase: R.Phrase.apiRequestError,
+                normal: R.Phrase.refresh
             ),
             heightType: .middle
         ) {
@@ -44,7 +44,7 @@ struct GenreSelectView: View {
     
     @ViewBuilder
     private func titleSection() -> some View {
-        Text("genreSelectTitle")
+        Text(R.Phrase.genreSelectTitle)
             .font(.ibmPlexMonoSemiBold(size: 30))
             .foregroundStyle(.appText)
             .frame(maxWidth: .infinity, alignment: .leading)
@@ -119,7 +119,7 @@ fileprivate struct SelectedGenreSheetView: View {
                 viewModel.action(.createUser)
                 isOnboarding = true
             } label: {
-                Text("done")
+                Text(R.Phrase.done)
                     .appButtonText()
             }
         }

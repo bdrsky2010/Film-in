@@ -10,6 +10,8 @@ import SwiftUI
 struct PersonDetailView: View {
     @Environment(\.colorScheme) var colorScheme
     
+    @EnvironmentObject var diContainer: DefaultDIContainer
+    
     @StateObject private var viewModel: PersonDetailViewModel
     
     @State private var posterSize: CGSize = .zero
@@ -52,9 +54,9 @@ struct PersonDetailView: View {
                 set: { _ in viewModel.action(.onDismissAlert) }
             ),
             contentModel: .init(
-                systemImage: "wifi.exclamationmark",
-                phrase: "apiRequestError",
-                normal: "refresh"
+                systemImage: R.AssetImage.wifi,
+                phrase: R.Phrase.apiRequestError,
+                normal: R.Phrase.refresh
             ),
             heightType: .middle
         ) {
@@ -108,12 +110,18 @@ struct PersonDetailView: View {
     
     @ViewBuilder
     private func filmographySection(size: CGSize) -> some View {
-        InfoHeader(titleKey: "filmography")
+        InfoHeader(titleKey: R.Phrase.filmography)
             .padding(.vertical)
         LazyVGrid(columns: gridItemLayout) {
             ForEach(viewModel.output.personMovie.movies, id: \.id) { movie in
                 NavigationLink {
-                    LazyView(MovieDetailFactory.makeView(movie: movie, posterSize: posterSize))
+                    LazyView(
+                        MovieDetailView(
+                            viewModel: diContainer.makeMovieDetailViewModel(movieID: movie._id),
+                            movie: movie,
+                            size: posterSize
+                        )
+                    )
                 } label: {
                     let url = URL(string: ImageURL.tmdb(image: movie.poster).urlString)
                     PosterImage(

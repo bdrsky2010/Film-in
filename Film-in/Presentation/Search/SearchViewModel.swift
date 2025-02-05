@@ -100,8 +100,7 @@ extension SearchViewModel {
     }
     
     private func fetchTrendingMovie() {
-        let query = TrendingQuery(language: "longLanguageCode".localized)
-        let publisher = searchSerivce.fetchTrendingMovie(query: query)
+        let publisher = searchSerivce.fetchTrendingMovie()
         publisher
             .receive(on: DispatchQueue.main)
             .sink(with: self) { owner, result in
@@ -118,8 +117,7 @@ extension SearchViewModel {
     }
     
     private func fetchTrendingPeople() {
-        let query = PopularQuery(language: "longLanguageCode".localized)
-        let publisher = searchSerivce.fetchPopularPeople(query: query)
+        let publisher = searchSerivce.fetchPopularPeople()
         publisher
             .receive(on: DispatchQueue.main)
             .sink(with: self) { owner, result in

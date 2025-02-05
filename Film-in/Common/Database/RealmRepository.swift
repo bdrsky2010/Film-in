@@ -26,8 +26,6 @@ final class RealmRepository: DatabaseRepository {
     
     var user: UserTable? { realm.objects(UserTable.self).first }
     
-    private init() { }
-    
     func createUser() {
         do {
             try realm.write {

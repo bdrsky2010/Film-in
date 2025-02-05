@@ -14,13 +14,12 @@ enum FocusField {
 struct SearchView: View {
     @Environment(\.colorScheme) var colorScheme
     
+    @EnvironmentObject var coordinator: Coordinator
+    
     @StateObject private var viewModel: SearchViewModel
     
     @FocusState private var focusedField: FocusField?
     
-    @State private var visibility: Visibility = .visible
-    @State private var isSearchAppear = true
-    @State private var isDetailDisappear = false
     @State private var cellSize: CGSize = .zero
     @State private var posterSize: CGSize = .zero
     @State private var isShowSearch = false
@@ -42,8 +41,6 @@ struct SearchView: View {
                 contentSection()
             }
         }
-        .toolbar(visibility, for: .tabBar)
-        .animation(.easeInOut, value: visibility)
         .task { viewModel.action(.viewOnTask) }
         .popupAlert(
             isPresented: Binding(
@@ -51,29 +48,28 @@ struct SearchView: View {
                 set: { _ in viewModel.action(.onDismissAlert) }
             ),
             contentModel: .init(
-                systemImage: "wifi.exclamationmark",
-                phrase: "apiRequestError",
-                normal: "refresh"
+                systemImage: R.AssetImage.wifi,
+                phrase: R.Phrase.apiRequestError,
+                normal: R.Phrase.refresh
             ),
             heightType: .middle
         ) {
             viewModel.action(.refresh)
         }
-        .valueChanged(value: isDetailDisappear) { _ in
-            if isSearchAppear && isDetailDisappear { visibility = .visible }
-        }
     }
-    
+}
+
+extension SearchView {
     @ViewBuilder
     private func contentSection() -> some View {
         VStack {
             if isShowSearch {
-                SearchFactory
-                    .makeView(
-                        isShowSearch: $isShowSearch,
-                        focusedField: $focusedField,
-                        namespace: namespace
-                    )
+                SearchResultView(
+                    viewModel: coordinator.diContainer.makeSearchResultViewModel(),
+                    isShowSearch: $isShowSearch,
+                    focusedField: $focusedField,
+                    namespace: namespace
+                )
             } else {
                 VStack {
                     textFieldSection()
@@ -81,7 +77,6 @@ struct SearchView: View {
                 }
             }
         }
-        .onAppear { isSearchAppear = true }
         .valueChanged(value: focusedField) { _ in
             if focusedField == .cover {
                 withAnimation {
@@ -95,7 +90,7 @@ struct SearchView: View {
     @ViewBuilder
     private func textFieldSection() -> some View {
         HStack {
-            TextField("searchPlaceholder", text: $searchQuery)
+            TextField(R.Phrase.searchPlaceholder, text: $searchQuery)
                 .focused($focusedField, equals: .cover)
                 .padding()
                 .font(.ibmPlexMonoSemiBold(size: 16))
@@ -104,7 +99,7 @@ struct SearchView: View {
                 Button {
                     searchQuery = ""
                 } label: {
-                    Image(systemName: "xmark.app.fill")
+                    Image(systemName: R.AssetImage.xmark)
                         .resizable()
                         .frame(width: 30, height: 30)
                         .foregroundStyle(.app)
@@ -125,7 +120,7 @@ struct SearchView: View {
         GeometryReader { proxy in
             ScrollView(.vertical) {
                 ForEach(SearchType.allCases, id: \.self) { tab in
-                    VStack { 
+                    VStack {
                         HStack {
                             Text(verbatim: tab.description)
                                 .font(.ibmPlexMonoSemiBold(size: 20))
@@ -174,67 +169,77 @@ struct SearchView: View {
     @ViewBuilder
     private func trendingMovieSection() -> some View {
         ForEach(viewModel.output.trendingMovie, id: \.id) { movie in
-            NavigationLink {
-                LazyView(MovieDetailFactory.makeView(movie: movie, posterSize: posterSize))
-                    .onAppear {
-                        if visibility == .visible {
-                            visibility = .hidden
-                        }
-                        isSearchAppear = false
-                        isDetailDisappear = false
-                    }
-                    .onDisappear {
-                        isDetailDisappear = true
-                    }
-                
-            } label: {
-                let url = URL(string: ImageURL.tmdb(image: movie.poster).urlString)
-                PosterImage(
-                    url: url,
-                    size: cellSize,
-                    title: movie.title,
-                    isDownsampling: true
-                )
-            }
+            posterButton(movie: movie, size: (poster: posterSize, cell: cellSize))
         }
     }
     
     @ViewBuilder
     private func popularPeopleSection() -> some View {
         ForEach(viewModel.output.popularPeople, id: \.id) { person in
-            NavigationLink {
-                LazyView(PersonDetailFactory.makeView(personId: person._id))
-                    .onAppear {
-                        if visibility == .visible {
-                            visibility = .hidden
-                        }
-                        isSearchAppear = false
-                        isDetailDisappear = false
-                    }
-                    .onDisappear {
-                        isDetailDisappear = true
-                    }
-                
-            } label: {
-                VStack {
-                    let url = URL(string: ImageURL.tmdb(image: person.profilePath).urlString)
-                    PosterImage(
-                        url: url,
-                        size: CGSize(width: 90, height: 90),
-                        title: person.name.replacingOccurrences(of: " ", with: "\n"),
-                        isDownsampling: true
-                    )
-                    .clipShape(Circle())
-                    .grayscale(colorScheme == .dark ? 1 : 0)
-                    
-                    Text(verbatim: "\(person.name)")
-                        .font(.ibmPlexMonoRegular(size: 14))
-                        .foregroundStyle(.appText)
-                        .frame(width: 90)
-                }
-                .frame(maxHeight: .infinity, alignment: .top)
-                .padding(.horizontal, 4)
-            }
+            personButton(person: person, size: CGSize(width: 90, height: 90))
         }
+    }
+}
+
+extension SearchView {
+    @ViewBuilder
+    private func posterButton(movie: MovieData, size: (poster: CGSize, cell: CGSize)) -> some View {
+        Button {
+            posterTapped(movie: movie, size: size.poster)
+        } label: {
+            posterLabel(movie: movie, size: size.cell)
+        }
+    }
+    
+    private func posterTapped(movie: MovieData, size: CGSize) {
+        coordinator.push(.movieDetail(movie, size))
+    }
+    
+    @ViewBuilder
+    private func posterLabel(movie: MovieData, size: CGSize) -> some View {
+        let url = URL(string: ImageURL.tmdb(image: movie.poster).urlString)
+        PosterImage(
+            url: url,
+            size: size,
+            title: movie.title,
+            isDownsampling: true
+        )
+    }
+}
+
+extension SearchView {
+    @ViewBuilder
+    private func personButton(person: PopularPerson, size: CGSize) -> some View {
+        Button {
+            personTapped(person: person)
+        } label: {
+            personLabel(person: person, size: size)
+        }
+    }
+    
+    private func personTapped(person: PopularPerson) {
+        coordinator.push(.personDetail(person._id))
+    }
+    
+    @ViewBuilder
+    private func personLabel(person: PopularPerson, size: CGSize) -> some View {
+        VStack {
+            let url = URL(string: ImageURL.tmdb(image: person.profilePath).urlString)
+            PosterImage(
+                url: url,
+                size: size,
+                title: person.name.replacingOccurrences(of: " ", with: "\n"),
+                isDownsampling: true
+            )
+            .clipShape(.circle)
+            .grayscale(self.colorScheme == .dark ? 1 : 0)
+            
+            Text(verbatim: "\(person.name)")
+                .font(.ibmPlexMonoRegular(size: 14))
+                .foregroundStyle(.appText)
+                .frame(width: 90)
+        }
+        .frame(maxHeight: .infinity, alignment: .top)
+        .padding(.horizontal, 4)
     }
 }

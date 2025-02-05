@@ -8,27 +8,26 @@
 import SwiftUI
 
 struct MainTabView: View {
+    @EnvironmentObject var diContainer: DefaultDIContainer
+    
     var body: some View {
         TabView {
-            HomeFactory
-                .makeView()
+            CoordinatorView(destination: .home)
                 .tabItem {
                     Image("home")
-                    Text(verbatim: "HOME")
+                    Text(R.Phrase.home)
                 }
             
-            SearchFactory
-                .makeView()
+            CoordinatorView(destination: .search)
                 .tabItem {
                     Image("search")
-                    Text(verbatim: "SEARCH")
+                    Text(R.Phrase.search)
                 }
             
-            MyFactory
-                .makeView()
+            CoordinatorView(destination: .my)
                 .tabItem {
                     Image("movie")
-                    Text(verbatim: "MY")
+                    Text(R.Phrase.my)
                 }
         }
         .tint(.app)

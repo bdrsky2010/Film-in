@@ -7,29 +7,29 @@
 
 import SwiftUI
 import RealmSwift
-import PopupView
 
 struct MyView: View {
+    enum Section: CaseIterable {
+        case want, watched
+    }
+    
     @ObservedResults(UserTable.self) var user
+    
+    @EnvironmentObject var coordinator: Coordinator
     
     @StateObject private var viewModel: MyViewModel
     
-    @State private var visibility: Visibility
-    @State private var isMyAppear: Bool
-    @State private var isDetailDisappear: Bool
+    @State private var wantMovies: [MovieTable]
+    @State private var watchedMovies: [MovieTable]
     @State private var posterSize: CGSize
     
     init(
         viewModel: MyViewModel,
-        visibility: Visibility = .visible,
-        isMyAppear: Bool = true,
-        isDetailDisappear: Bool = false,
         posterSize: CGSize = .zero
     ) {
         self._viewModel = StateObject(wrappedValue: viewModel)
-        self._visibility = State(initialValue: visibility)
-        self._isMyAppear = State(initialValue: isMyAppear)
-        self._isDetailDisappear = State(initialValue: isDetailDisappear)
+        self._wantMovies = State(wrappedValue: [])
+        self._watchedMovies = State(wrappedValue: [])
         self._posterSize = State(wrappedValue: posterSize)
     }
     
@@ -39,27 +39,23 @@ struct MyView: View {
                 calendarSection()
                 contentSection()
             }
-            .onAppear { isMyAppear = true }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
-        .toolbar(visibility, for: .tabBar)
-        .animation(.easeInOut, value: visibility)
         .popupAlert(
             isPresented: $viewModel.output.isRequestDelete,
             contentModel: PopupAlertModel(
-                phrase: "deleteRequestPhrase",
-                normal: "delete",
-                cancel: "cancel"
+                phrase: R.Phrase.deleteRequest,
+                normal: R.Phrase.delete,
+                cancel: R.Phrase.cancel
             ),
             heightType: .normal
         ) {
             viewModel.action(.realDelete(movieId: viewModel.output.deleteMovieId))
         }
-        .valueChanged(value: isDetailDisappear) { _ in
-            if isMyAppear && isDetailDisappear { visibility = .visible }
-        }
     }
-    
+}
+
+extension MyView {
     @ViewBuilder
     private func calendarSection() -> some View {
         CalendarView(viewModel: viewModel)
@@ -73,66 +69,32 @@ struct MyView: View {
                 wantSection(proxy: proxy)
                 watchedSection(proxy: proxy)
             }
+            .listStyle(.plain)
             .task {
-                posterSize = CGSize(width: proxy.size.width * 0.7, height: proxy.size.width * 0.7 * 1.5)
+                updateData(by: user, when: viewModel.output.selectDate)
+                
+                posterSize = CGSize(
+                    width: proxy.size.width * 0.7,
+                    height: proxy.size.width * 0.7 * 1.5
+                )
                 viewModel.action(.viewOnTask)
             }
-            .listStyle(.plain)
+        }
+        .valueChanged(value: user) { _ in
+            updateData(by: user, when: viewModel.output.selectDate)
         }
     }
     
     @ViewBuilder
     private func wantSection(proxy: GeometryProxy) -> some View {
-        Text(verbatim: "WANT")
+        Text(R.Phrase.want)
             .font(.ibmPlexMonoSemiBold(size: 24))
             .foregroundStyle(.appText)
             .frame(maxWidth: proxy.size.width, alignment: .leading)
         
-        let wantMovies = user.first?.wantMovies.filter({ Calendar.current.isDate(viewModel.output.selectDate, inSameDayAs: $0.date) }) ?? []
         ForEach(wantMovies, id: \.id) { movie in
-            ZStack {
-                let url = URL(string: ImageURL.tmdb(image: movie.backdrop).urlString)
-                PosterImage(
-                    url: url,
-                    size: CGSize(
-                        width: proxy.size.width - 40,
-                        height: (proxy.size.width - 40) * 0.56
-                    ),
-                    title: movie.title,
-                    isDownsampling: true
-                )
-                .overlay(alignment: .bottom) {
-                    Rectangle()
-                        .foregroundStyle(.black).opacity(0.5)
-                        .frame(height: proxy.size.width * 0.56 * 0.2)
-                }
-                .overlay(alignment: .bottomLeading) {
-                    Text(verbatim: movie.title)
-                        .foregroundStyle(.app)
-                        .font(.ibmPlexMonoRegular(size: 16))
-                        .lineLimit(2)
-                        .frame(height: proxy.size.width * 0.56 * 0.2)
-                        .padding(.leading, 20)
-                }
-                
-                NavigationLink {
-                    LazyView(MovieDetailFactory.makeView(movie: convertToMovieData(by: movie), posterSize: posterSize))
-                        .onAppear {
-                            if visibility == .visible {
-                                visibility = .hidden
-                            }
-                            isMyAppear = false
-                            isDetailDisappear = false
-                        }
-                        .onDisappear {
-                            isDetailDisappear = true
-                        }
-                    
-                } label: {
-                    EmptyView()
-                }
-                .opacity(0)
-            }
+            let movie = convertToMovieData(by: movie)
+            movieButton(proxy: proxy, movie: movie, size: posterSize)
         }
         .onDelete { indexSet in
             guard let index = indexSet.first else { return }
@@ -143,61 +105,65 @@ struct MyView: View {
     
     @ViewBuilder
     private func watchedSection(proxy: GeometryProxy) -> some View {
-        Text(verbatim: "WATCHED")
+        Text(R.Phrase.watched)
             .font(.ibmPlexMonoSemiBold(size: 24))
             .foregroundStyle(.appText)
             .frame(maxWidth: proxy.size.width, alignment: .leading)
         
-        let watchedMovies = user.first?.watchedMovies.filter({ Calendar.current.isDate(viewModel.output.selectDate, inSameDayAs: $0.date) }) ?? []
         ForEach(watchedMovies, id: \.id) { movie in
-            ZStack {
-                let url = URL(string: ImageURL.tmdb(image: movie.backdrop).urlString)
-                PosterImage(
-                    url: url,
-                    size: CGSize(
-                        width: proxy.size.width - 40,
-                        height: (proxy.size.width - 40) * 0.56
-                    ),
-                    title: movie.title,
-                    isDownsampling: true
-                )
-                .overlay(alignment: .bottom) {
-                    Rectangle()
-                        .foregroundStyle(.black).opacity(0.5)
-                        .frame(height: proxy.size.width * 0.56 * 0.2)
-                }
-                .overlay(alignment: .bottomLeading) {
-                    Text(verbatim: movie.title)
-                        .foregroundStyle(.app)
-                        .font(.ibmPlexMonoRegular(size: 16))
-                        .lineLimit(2)
-                        .frame(height: proxy.size.width * 0.56 * 0.2)
-                        .padding(.leading, 20)
-                }
-                
-                NavigationLink {
-                    LazyView(MovieDetailFactory.makeView(movie: convertToMovieData(by: movie), posterSize: posterSize))
-                        .onAppear {
-                            if visibility == .visible {
-                                visibility = .hidden
-                            }
-                            isMyAppear = false
-                            isDetailDisappear = false
-                        }
-                        .onDisappear {
-                            isDetailDisappear = true
-                        }
-                    
-                } label: {
-                    EmptyView()
-                }
-                .opacity(0)
-            }
+            let movie = convertToMovieData(by: movie)
+            movieButton(proxy: proxy, movie: movie, size: posterSize)
         }
         .onDelete { indexSet in
             guard let index = indexSet.first else { return }
             let watchedMovieId = watchedMovies[index].id
             viewModel.action(.deleteGesture(movieId: watchedMovieId))
+        }
+    }
+}
+
+extension MyView {
+    @ViewBuilder
+    private func movieButton(proxy: GeometryProxy, movie: MovieData, size: CGSize) -> some View {
+        ZStack {
+            movieLabel(proxy: proxy, movie: movie)
+            Button {
+                movieTapped(movie: movie, size: size)
+            } label: {
+                EmptyView()
+            }
+            .opacity(0)
+        }
+    }
+    
+    private func movieTapped(movie: MovieData, size: CGSize) {
+        coordinator.push(.movieDetail(movie, size))
+    }
+    
+    @ViewBuilder
+    private func movieLabel(proxy: GeometryProxy, movie: MovieData) -> some View {
+        let url = URL(string: ImageURL.tmdb(image: movie.backdrop).urlString)
+        PosterImage(
+            url: url,
+            size: CGSize(
+                width: proxy.size.width - 40,
+                height: (proxy.size.width - 40) * 0.56
+            ),
+            title: movie.title,
+            isDownsampling: true
+        )
+        .overlay(alignment: .bottom) {
+            Rectangle()
+                .foregroundStyle(.black).opacity(0.5)
+                .frame(height: proxy.size.width * 0.56 * 0.2)
+        }
+        .overlay(alignment: .bottomLeading) {
+            Text(verbatim: movie.title)
+                .foregroundStyle(.app)
+                .font(.ibmPlexMonoRegular(size: 16))
+                .lineLimit(2)
+                .frame(height: proxy.size.width * 0.56 * 0.2)
+                .padding(.leading, 20)
         }
     }
 }
@@ -210,5 +176,23 @@ extension MyView {
             poster: movieTable.poster,
             backdrop: movieTable.backdrop
         )
+    }
+    
+    private func updateData(by user: Results<UserTable>, when date: Date) {
+        wantMovies = updateMovieData(by: user, for: .want, when: date)
+        watchedMovies = updateMovieData(by: user, for: .watched, when: date)
+    }
+    
+    private func updateMovieData(
+        by user: Results<UserTable>,
+        for section: Section,
+        when date: Date
+    ) -> [MovieTable] {
+        switch section {
+        case .want:
+            user.first?.wantMovies.filter({ Calendar.current.isDate(viewModel.output.selectDate, inSameDayAs: $0.date) }) ?? []
+        case .watched:
+            user.first?.watchedMovies.filter({ Calendar.current.isDate(viewModel.output.selectDate, inSameDayAs: $0.date) }) ?? []
+        }
     }
 }

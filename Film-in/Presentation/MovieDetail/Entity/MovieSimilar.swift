@@ -8,14 +8,7 @@
 import Foundation
 
 struct MovieSimilar {
-    struct Movie: Hashable, Identifiable {
-        let id: Int
-        let title: String
-        let poster: String
-        let backdrop: String
-    }
-    
     let page: Int
     let totalPage: Int
-    let movies: [Movie]
+    let movies: [MovieData]
 }

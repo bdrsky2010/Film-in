@@ -14,16 +14,16 @@ enum DateSetupType {
 }
 
 struct DateSetupView: View {
+    @EnvironmentObject var coordinator: Coordinator
+    
     @StateObject private var viewModel: DateSetupViewModel
+    
     @State private var displayedComponents: DatePicker<Label>.Components = [.date]
-    @Binding var isPresented: Bool
     
     init(
-        viewModel: DateSetupViewModel,
-        isPresented: Binding<Bool>
+        viewModel: DateSetupViewModel
     ) {
         self._viewModel = StateObject(wrappedValue: viewModel)
-        self._isPresented = isPresented
     }
     
     var body: some View {
@@ -56,7 +56,7 @@ struct DateSetupView: View {
             Button {
                 viewModel.action(.done)
             } label: {
-                Text("done")
+                Text(R.Phrase.done)
                     .font(.ibmPlexMonoSemiBold(size: 20))
                     .frame(maxWidth: .infinity)
                     .padding(.horizontal, 20)
@@ -78,15 +78,15 @@ struct DateSetupView: View {
         }
         .valueChanged(value: viewModel.output.isSuccess) { newValue in
             if newValue {
-                isPresented.toggle()
+                coordinator.dismissSheet()
             }
         }
         .popupAlert(
             isPresented: $viewModel.output.isDone,
             contentModel: PopupAlertModel(
-                phrase: "saveRequestPhrase",
-                normal: "save",
-                cancel: "cancel"
+                phrase: R.Phrase.saveRequest,
+                normal: R.Phrase.save,
+                cancel: R.Phrase.cancel
             ),
             heightType: .normal
         ) {
@@ -95,9 +95,9 @@ struct DateSetupView: View {
         .popupAlert(
             isPresented: $viewModel.output.isError,
             contentModel: PopupAlertModel(
-                phrase: "notificationRequestPhrase",
-                normal: "move",
-                cancel: "cancel"
+                phrase: R.Phrase.notificationRequest,
+                normal: R.Phrase.move,
+                cancel: R.Phrase.cancel
             ),
             heightType: .middle
         ) {

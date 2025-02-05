@@ -27,6 +27,29 @@
         }
       }
     },
+    "appTitle" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Film-in"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Film-in"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Film-in"
+          }
+        }
+      }
+    },
     "backdrop" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -119,7 +142,7 @@
         }
       }
     },
-    "deleteRequestPhrase" : {
+    "deleteRequest" : {
       "extractionState" : "manual",
       "localizations" : {
         "en" : {
@@ -234,6 +257,29 @@
         }
       }
     },
+    "home" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "HOME"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "HOME"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "HOME"
+          }
+        }
+      }
+    },
     "inquiry" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -326,6 +372,29 @@
         }
       }
     },
+    "my" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "MY"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "MY"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "MY"
+          }
+        }
+      }
+    },
     "notConnectInternet" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -372,7 +441,7 @@
         }
       }
     },
-    "notificationRequestPhrase" : {
+    "notificationRequest" : {
       "extractionState" : "manual",
       "localizations" : {
         "en" : {
@@ -510,6 +579,29 @@
         }
       }
     },
+    "recents" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Recents"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "最近の検索"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "최근 검색"
+          }
+        }
+      }
+    },
     "recommend" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -579,6 +671,52 @@
         }
       }
     },
+    "relatedSearches" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Related Searches"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "関連キーワード"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "연관 검색어"
+          }
+        }
+      }
+    },
+    "removeAll" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Remove All"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "全削除"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "전체 삭제"
+          }
+        }
+      }
+    },
     "save" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -602,7 +740,7 @@
         }
       }
     },
-    "saveRequestPhrase" : {
+    "saveRequest" : {
       "extractionState" : "manual",
       "localizations" : {
         "en" : {
@@ -621,6 +759,29 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "저장하시겠습니까?"
+          }
+        }
+      }
+    },
+    "search" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "SEARCH"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "SEARCH"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "SEARCH"
           }
         }
       }
@@ -759,6 +920,52 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "동영상"
+          }
+        }
+      }
+    },
+    "want" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "WANT"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "WANT"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "WANT"
+          }
+        }
+      }
+    },
+    "watched" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "WATCHED"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "WATCHED"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "WATCHED"
           }
         }
       }

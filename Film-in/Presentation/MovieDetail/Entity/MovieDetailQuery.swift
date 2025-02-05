@@ -9,5 +9,4 @@ import Foundation
 
 struct MovieDetailQuery {
     let movieId: Int
-    let language: String
 }

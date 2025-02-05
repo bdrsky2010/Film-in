@@ -8,27 +8,24 @@
 import SwiftUI
 
 struct SeeMoreView: View {
-    private let usedTo: UsedTo
+    @EnvironmentObject var diConatiner: DefaultDIContainer
     
     @State private var isShowAlert = false
     @State private var isRefresh = false
-    
-    init(usedTo: UsedTo) {
-        self.usedTo = usedTo
-    }
+    let viewModel: MultiListViewModel
     
     var body: some View {
-        MultiListFactory.makeView(
-            to: usedTo,
+        MultiListView(
+            viewModel: viewModel,
             isShowAlert: $isShowAlert,
             isRefresh: $isRefresh
         )
         .popupAlert(
             isPresented: $isShowAlert,
             contentModel: .init(
-                systemImage: "wifi.exclamationmark",
-                phrase: "apiRequestError",
-                normal: "refresh"
+                systemImage: R.AssetImage.wifi,
+                phrase: R.Phrase.apiRequestError,
+                normal: R.Phrase.refresh
             ),
             heightType: .middle
         ){
